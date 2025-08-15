@@ -6,8 +6,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pizzeria.menu.mapper.PizzaMapper;
 import pizzeria.menu.model.Pizza;
+import pizzeria.menu.model.PizzaIngredient;
+import pizzeria.menu.payloads.request.PizzaIngredientRequest;
 import pizzeria.menu.payloads.request.PizzaPatchRequest;
 import pizzeria.menu.payloads.request.PizzaRequest;
+import pizzeria.menu.payloads.response.PizzaIngredientResponse;
 import pizzeria.menu.payloads.response.PizzaResponse;
 import pizzeria.menu.service.PizzaService;
 
@@ -78,7 +81,7 @@ public class PizzaController {
         return ResponseEntity.notFound().build();
     }
 
-    @PatchMapping("{id}")
+    @PatchMapping("/{id}")
     public ResponseEntity<PizzaResponse> patchPizza(@PathVariable Long id, @Valid @RequestBody PizzaPatchRequest request) {
         Optional<Pizza> pizza = pizzaService.patch(id, request);
         if (pizza.isPresent()) {
@@ -87,5 +90,28 @@ public class PizzaController {
         }
 
         return ResponseEntity.notFound().build();
+    }
+
+    @PostMapping("/pizzaIngredients")
+    public ResponseEntity<PizzaIngredientResponse> addIngredientToPizza(@Valid @RequestBody PizzaIngredientRequest request) {
+        PizzaIngredient pizzaIngredient = pizzaService.addIngredientToPizza(request);
+        PizzaIngredientResponse response = new PizzaIngredientResponse(pizzaIngredient.getPizza().getId(),  pizzaIngredient.getIngredient().getId(), pizzaIngredient.getQuantity());
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/pizzaIngredients/{pizzaId}")
+    public ResponseEntity<List<PizzaIngredientResponse>> getPizzaIngredientById(@PathVariable Long pizzaId) {
+        List<PizzaIngredient> pizzaIngredients = pizzaService.getAllPizzasIngredients(pizzaId);
+        if (pizzaIngredients.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        List<PizzaIngredientResponse> responses = pizzaIngredients.stream()
+                .map(ing -> new PizzaIngredientResponse(
+                        ing.getPizza().getId(),
+                        ing.getIngredient().getId(),
+                        ing.getQuantity()
+                )).toList();
+        return ResponseEntity.ok(responses);
     }
 }

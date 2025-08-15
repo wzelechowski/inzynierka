@@ -1,6 +1,8 @@
 package pizzeria.menu.service;
 
 import pizzeria.menu.model.Pizza;
+import pizzeria.menu.model.PizzaIngredient;
+import pizzeria.menu.payloads.request.PizzaIngredientRequest;
 import pizzeria.menu.payloads.request.PizzaPatchRequest;
 import pizzeria.menu.payloads.request.PizzaRequest;
 
@@ -19,4 +21,8 @@ public interface PizzaService {
     Optional<Pizza> update(Long id, PizzaRequest request);
 
     Optional<Pizza> patch(Long id, PizzaPatchRequest request);
+
+    PizzaIngredient addIngredientToPizza(PizzaIngredientRequest request);
+
+    List<PizzaIngredient> getAllPizzasIngredients(Long pizzaId);
 }

@@ -61,11 +61,11 @@ public class IngredientServiceImpl implements IngredientService {
     public Optional<Ingredient> patch(Long id, IngredientPatchRequest request) {
         return ingredientRepository.findById(id)
                 .map(ing -> {
-                    if (request.getName() != null) {
-                        ing.setName(request.getName());
+                    if (request.name() != null) {
+                        ing.setName(request.name());
                     }
-                    if (request.getPrice() != null) {
-                        ing.setPrice(request.getPrice());
+                    if (request.price() != null) {
+                        ing.setPrice(request.price());
                     }
                     return ingredientRepository.save(ing);
                 });

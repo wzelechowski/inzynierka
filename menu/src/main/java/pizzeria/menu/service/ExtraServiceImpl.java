@@ -61,11 +61,11 @@ public class ExtraServiceImpl implements ExtraService {
     public Optional<Extra> patch(Long id, ExtraPatchRequest request) {
         return extraRepository.findById(id)
                 .map(extra -> {
-                    if (request.getName() != null) {
-                        extra.setName(request.getName());
+                    if (request.name() != null) {
+                        extra.setName(request.name());
                     }
-                    if (request.getPrice() != null) {
-                        extra.setPrice(request.getPrice());
+                    if (request.price() != null) {
+                        extra.setPrice(request.price());
                     }
                     return extraRepository.save(extra);
                 });

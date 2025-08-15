@@ -61,14 +61,14 @@ public class DrinkServiceImpl implements DrinkService {
     public Optional<Drink> patch(Long id, DrinkPatchRequest request) {
         return drinkRepository.findById(id)
                 .map(drink -> {
-                    if (request.getName() != null) {
-                        drink.setName(request.getName());
+                    if (request.name() != null) {
+                        drink.setName(request.name());
                     }
-                    if (request.getPrice() != null) {
-                        drink.setPrice(request.getPrice());
+                    if (request.price() != null) {
+                        drink.setPrice(request.price());
                     }
-                    if (request.getVolume() != null) {
-                        drink.setVolume(request.getVolume());
+                    if (request.volume() != null) {
+                        drink.setVolume(request.volume());
                     }
                     return drinkRepository.save(drink);
                 });
