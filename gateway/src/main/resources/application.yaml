@@ -1,0 +1,20 @@
+spring:
+  cloud:
+    gateway:
+      server:
+        webflux:
+          routes:
+            - id: menu_routes
+              uri: ${MENU_ROUTE_URI:http://localhost:8081}
+              predicates:
+                - Path=/menu/**
+              filters:
+                - PrefixPath=/api/v1
+                - AddResponseHeader=X-Powered-By,DanSON
+            - id: profile_routes
+              uri: ${PROFILE_ROUTE_URI:http://localhost:8082}
+              predicates:
+                - Path=/profiles/**
+              filters:
+                - PrefixPath=/api/v1
+                - AddResponseHeader=X-Powered-By,DanSON
