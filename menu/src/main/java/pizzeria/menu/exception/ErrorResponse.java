@@ -1,4 +1,4 @@
-package exception;
+package pizzeria.menu.exception;
 
 import org.springframework.http.HttpStatus;
 
