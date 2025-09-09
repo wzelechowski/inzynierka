@@ -19,10 +19,10 @@ public class GatewayConfig {
     @Bean
     public RouteLocator routes(RouteLocatorBuilder builder) {
         return builder.routes()
-                .route("menu-service", r -> r.path("/menu/**")
+                .route("menu-service", r -> r.path("/api/v1/menu/**")
                         .filters(f -> f.filter(authenticationFilter))
                                 .uri("lb://menu-service"))
-                .route("auth-service", r -> r.path("/auth/**")
+                .route("auth-service", r -> r.path("/api/v1/auth/**")
                         .filters(f -> f.filter(authenticationFilter))
                         .uri("lb://auth-service"))
                 .build();

@@ -3,7 +3,6 @@ package pizzeria.menu.controller;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import pizzeria.menu.mapper.PizzaMapper;
 import pizzeria.menu.model.Pizza;
@@ -31,7 +30,6 @@ public class PizzaController {
     }
 
     @GetMapping("")
-    @PreAuthorize(value = "hasAuthority('SCOPE_write')")
     public ResponseEntity<List<PizzaResponse>> getAllPizzas() {
         List<Pizza> pizzas = pizzaService.getAllPizzas();
         if (pizzas.isEmpty()) {
