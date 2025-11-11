@@ -1,7 +1,17 @@
 spring:
   application:
     name: api-gateway
+  config:
+    import: "optional:configserver:http://config-server:8888"
+
   cloud:
+    config:
+      fail-fast: true
+      retry:
+        max-attempts: 20
+        initial-interval: 2000
+        multiplier: 1.5
+        max-interval: 10000
     gateway:
       server:
         webflux:
@@ -9,3 +19,4 @@ spring:
             locator:
               enabled: true
               lower-case-service-id: true
+JWT_SECRET: ${JWT_SECRET:}

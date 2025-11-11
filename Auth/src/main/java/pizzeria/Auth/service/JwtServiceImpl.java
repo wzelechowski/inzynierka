@@ -1,9 +1,9 @@
 package pizzeria.auth.service;
 
-import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -13,65 +13,30 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Service
-public class JwtServiceImpl implements JwtService {
-    @Value("${jwt.secret}")
-    private String secret;
+public class JWTServiceImpl implements JWTService {
+    @Value("${JWT_SECRET}")
+    private String SECRET;
 
-    @Value("${jwt.expiration}")
-    private String expirationTime;
-
-    private Key key;
-
-    @Override
-    @PostConstruct
-    public void init() {
-        this.key = Keys.hmacShaKeyFor(secret.getBytes());
+    public void validateToken(String token) {
+        Jwts.parserBuilder().setSigningKey(getSignKey()).build().parseClaimsJws(token);
     }
 
-    @Override
-    public Claims getAllClaimsFromToken(String token) {
-        return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
-    }
-
-    @Override
-    public Date getExpirationDateFromToken(String token) {
-        return getAllClaimsFromToken(token).getExpiration();
-    }
-
-    private Boolean isTokenExpired(String token) {
-        final Date expiration = getExpirationDateFromToken(token);
-        return expiration.before(new Date());
-    }
-
-    @Override
-    public String generate(String email, String type) {
+    public String generateToken(String username) {
         Map<String, Object> claims = new HashMap<>();
-        claims.put("email", email);
-        claims.put("type", type);
-        return doGenerateToken(claims, email, type);
+        return createToken(claims, username);
     }
 
-    private String doGenerateToken(Map<String, Object> claims, String username, String type) {
-        long expirationTimeLong;
-        if ("ACCESS".equals(type)) {
-            expirationTimeLong = Long.parseLong(expirationTime) * 1000;
-        } else {
-            expirationTimeLong = Long.parseLong(expirationTime) * 1000 * 5;
-        }
-        final Date createdDate = new Date();
-        final Date expirationDate = new Date(createdDate.getTime() + expirationTimeLong);
-
+    private String createToken(Map<String, Object> claims, String username) {
         return Jwts.builder()
                 .setClaims(claims)
                 .setSubject(username)
-                .setIssuedAt(createdDate)
-                .setExpiration(expirationDate)
-                .signWith(key)
-                .compact();
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + 1000*60*30))
+                .signWith(getSignKey(), SignatureAlgorithm.HS256).compact();
     }
 
-    @Override
-    public Boolean validateToken(String token) {
-        return !isTokenExpired(token);
+    private Key getSignKey() {
+        byte[] keyBytes = Decoders.BASE64.decode(SECRET);
+        return Keys.hmacShaKeyFor(keyBytes);
     }
 }
