@@ -2,28 +2,11 @@ spring:
   application:
     name: menu-service
 
-  config:
-    import: "optional:configserver:http://config-server:8888"
-
-  cloud:
-    config:
-      fail-fast: true
-      retry:
-        max-attempts: 20
-        initial-interval: 2000
-        multiplier: 1.5
-        max-interval: 10000
-
   jpa:
     generate-ddl: true
     hibernate:
       ddl-auto: update
     show-sql: true
-
-  datasource:
-    url: jdbc:postgresql://postgres:5432/postgres
-    username: postgres
-    password: password
 
 server:
   servlet:

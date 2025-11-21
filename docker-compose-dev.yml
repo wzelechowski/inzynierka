@@ -7,6 +7,7 @@ networks:
     driver: bridge
 
 services:
+
   postgres:
     container_name: pizzeria_postgres
     image: postgres:17
@@ -18,7 +19,7 @@ services:
       - postgres:/data/postgres
       - ./db/docker_postgres_init.sql:/docker-entrypoint-initdb.d/docker_postgres_init.sql
     ports:
-      - "${PG_PORT:-15432}:5432"
+      - "15432:5432"
     restart: unless-stopped
     networks:
       - backend
@@ -35,7 +36,7 @@ services:
       - pgadmin:/var/lib/pgadmin
       - ./db/docker_pgadmin_servers.json:/pgadmin4/servers.json
     ports:
-      - "${PGADMIN_PORT:-15433}:80"
+      - "15433:80"
     entrypoint:
       - /bin/sh
       - -c
@@ -47,8 +48,8 @@ services:
   redis:
     image: redis:7
     container_name: redis
-    expose:
-      - "6379"
+    ports:
+      - "6379:6379"
     command: ["redis-server", "--appendonly", "no"]
     networks:
       - backend
@@ -56,8 +57,8 @@ services:
   config-server:
     container_name: config-server
     build: ./config
-    expose:
-      - "8888"
+    ports:
+      - "8888:8888"
     depends_on:
       - postgres
     networks:
@@ -66,33 +67,19 @@ services:
   eureka-server:
     container_name: eureka-server
     build: ./eureka
-    expose:
-      - "8761"
+    ports:
+      - "8761:8761"
     depends_on:
       - config-server
     networks:
       - backend
-
-  auth:
-    container_name: auth-service
-    build: ./auth
-    expose:
-      - "8083"
-    depends_on:
-      - postgres
-      - config-server
-      - eureka-server
-    networks:
-      - backend
-    environment:
-        - JWT_SECRET=${JWT_SECRET}
 
   keycloak:
     container_name: keycloak
     image: quay.io/keycloak/keycloak:25.0.2
     restart: always
     ports:
-      - "8443:8080"
+      - "8443:8443"
     networks:
       - backend
     environment:
@@ -102,6 +89,7 @@ services:
       KC_DB_URL: jdbc:postgresql://postgres:5432/keycloak_db
       KC_DB_USERNAME: postgres
       KC_DB_PASSWORD: password
+      KC_HTTP_PORT: 8443
     command:
       - start-dev
     depends_on:
@@ -110,8 +98,8 @@ services:
   menu:
     container_name: menu-service
     build: ./menu
-    expose:
-      - "8081"
+    ports:
+      - "8081:8081"
     depends_on:
       - postgres
       - config-server
@@ -120,22 +108,23 @@ services:
       - backend
     environment:
       - JWT_SECRET=${JWT_SECRET}
+      - SPRING_PROFILES_ACTIVE=docker
 
   gateway:
     container_name: gateway
     build: ./gateway
-    expose:
-      - "8080"
+    ports:
+      - "8080:8080"
     depends_on:
       - eureka-server
       - config-server
-      - auth
       - menu
     restart: on-failure
     networks:
       - backend
     environment:
       - JWT_SECRET=${JWT_SECRET}
+      - SPRING_PROFILES_ACTIVE=docker
 
   nginx:
     image: nginx:latest

@@ -1,4 +1,4 @@
-CREATE DATABASE demo1
+CREATE DATABASE pizzeria_db
     WITH
     OWNER = postgres
     ENCODING = 'UTF8'
@@ -7,7 +7,7 @@ CREATE DATABASE demo1
     TABLESPACE = pg_default
     CONNECTION LIMIT = -1;
 
-CREATE DATABASE demo2
+CREATE DATABASE keycloak_db
     WITH
     OWNER = postgres
     ENCODING = 'UTF8'

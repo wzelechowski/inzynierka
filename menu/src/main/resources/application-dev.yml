@@ -1,0 +1,8 @@
+spring:
+  config:
+    import: "optional:configserver:http://localhost:8888"
+
+  datasource:
+    url: jdbc:postgresql://localhost:15432/pizzeria_db
+    username: postgres
+    password: password
