@@ -1,5 +1,7 @@
 package pizzeria.gateway.config;
 
+import org.springframework.cloud.gateway.filter.ratelimit.KeyResolver;
+import org.springframework.cloud.gateway.filter.ratelimit.RedisRateLimiter;
 import org.springframework.cloud.gateway.route.RouteLocator;
 import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
 import org.springframework.context.annotation.Bean;
@@ -7,13 +9,16 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class GatewayConfig {
+
     @Bean
-    public RouteLocator routes(RouteLocatorBuilder builder) {
+    public RouteLocator routes(RouteLocatorBuilder builder, RedisRateLimiter rateLimiter, KeyResolver ipKeyResolver) {
         return builder.routes()
                 .route("menu-service", r -> r.path("/api/v1/menu/**")
+                        .filters(f -> f.requestRateLimiter(rl -> {
+                            rl.setRateLimiter(rateLimiter);
+                            rl.setKeyResolver(ipKeyResolver);
+                        }))
                                 .uri("lb://menu-service"))
-                .route("auth-service", r -> r.path("/api/v1/auth/**")
-                        .uri("lb://auth-service"))
                 .build();
     }
 }

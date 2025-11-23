@@ -1,7 +1,12 @@
 spring:
   application:
     name: menu-service
-
+  cache:
+    type: redis
+    redis:
+      key-prefix: "menu::"
+      time-to-live: 5m
+      cache-null-values: false
   jpa:
     generate-ddl: true
     hibernate:
