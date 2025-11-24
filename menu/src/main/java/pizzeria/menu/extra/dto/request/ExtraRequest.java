@@ -10,5 +10,5 @@ public record ExtraRequest(
         @NotNull
         @Positive
         @Digits(integer = 3, fraction = 2)
-        Double price
+        Double weight
 ){}

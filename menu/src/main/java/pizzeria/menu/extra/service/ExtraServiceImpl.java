@@ -15,6 +15,7 @@ import pizzeria.menu.extra.dto.request.ExtraRequest;
 import pizzeria.menu.extra.repository.ExtraRepository;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -38,7 +39,7 @@ public class ExtraServiceImpl implements ExtraService {
 
     @Override
     @Cacheable(value = "extra", key = "#id")
-    public ExtraResponse getExtraById(Long id) {
+    public ExtraResponse getExtraById(UUID id) {
         Extra extra = extraRepository.findById(id).orElseThrow(() -> new RuntimeException(String.valueOf(HttpStatus.NOT_FOUND)));
         return  extraMapper.toResponse(extra);
     }
@@ -63,7 +64,7 @@ public class ExtraServiceImpl implements ExtraService {
                     @CacheEvict(value = "extras", allEntries = true)
             }
     )
-    public void delete(Long id) {
+    public void delete(UUID id) {
         Extra extra = extraRepository.findById(id).orElseThrow(() -> new RuntimeException(String.valueOf(HttpStatus.NOT_FOUND)));
         extraRepository.delete(extra);
     }
@@ -74,7 +75,7 @@ public class ExtraServiceImpl implements ExtraService {
             put = @CachePut(value = "extra", key = "#result.id"),
             evict = @CacheEvict(value = "extras", allEntries = true)
     )
-    public ExtraResponse update(Long id, ExtraRequest request) {
+    public ExtraResponse update(UUID id, ExtraRequest request) {
         Extra extra = extraRepository.findById(id).orElseThrow(() -> new RuntimeException(String.valueOf(HttpStatus.NOT_FOUND)));
         extraMapper.updateEntity(extra, request);
         extraRepository.save(extra);
@@ -87,15 +88,9 @@ public class ExtraServiceImpl implements ExtraService {
             put = @CachePut(value = "extra", key = "#result.id"),
             evict = @CacheEvict(value = "extras", allEntries = true)
     )
-    public ExtraResponse patch(Long id, ExtraPatchRequest request) {
+    public ExtraResponse patch(UUID id, ExtraPatchRequest request) {
         Extra extra = extraRepository.findById(id).orElseThrow(() -> new RuntimeException(String.valueOf(HttpStatus.NOT_FOUND)));
-        if (request.name() != null) {
-            extra.setName(request.name());
-        }
-        if (request.price() != null) {
-            extra.setPrice(request.price());
-        }
-
+        extraMapper.patchEntity(extra, request);
         extraRepository.save(extra);
         return extraMapper.toResponse(extra);
     }

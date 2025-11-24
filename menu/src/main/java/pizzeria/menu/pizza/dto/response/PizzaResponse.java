@@ -1,10 +1,11 @@
 package pizzeria.menu.pizza.dto.response;
 
-import pizzeria.menu.common.model.enums.Size;
+import pizzeria.menu.pizza.model.PizzaSize;
+
+import java.util.UUID;
 
 public record PizzaResponse(
-    Long id,
+    UUID id,
     String name,
-    Double price,
-    Size size
+    PizzaSize pizzaSize
 ) {}

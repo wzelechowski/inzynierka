@@ -1,6 +1,9 @@
 package pizzeria.menu.pizza.dto.request;
 
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+import pizzeria.menu.pizza.model.PizzaSize;
 
 public record PizzaRequest(
         @NotBlank
@@ -8,10 +11,5 @@ public record PizzaRequest(
         String name,
 
         @NotNull
-        @Positive
-        @Digits(integer = 3, fraction = 2)
-        Double price,
-
-        @NotNull
-        pizzeria.menu.common.model.enums.Size size
+        PizzaSize pizzaSize
 ){}

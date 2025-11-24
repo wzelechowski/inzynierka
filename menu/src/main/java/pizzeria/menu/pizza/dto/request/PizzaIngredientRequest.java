@@ -4,12 +4,14 @@ import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 
+import java.util.UUID;
+
 public record PizzaIngredientRequest(
         @NotNull
-        Long pizzaId,
+        UUID pizzaId,
 
         @NotNull
-        Long ingredientId,
+        UUID ingredientId,
 
         @NotNull
         @Positive

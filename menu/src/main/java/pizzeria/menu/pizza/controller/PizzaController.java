@@ -31,7 +31,7 @@ public class PizzaController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<PizzaResponse> getPizzaById(@PathVariable Long id) {
+    public ResponseEntity<PizzaResponse> getPizzaById(@PathVariable UUID id) {
         PizzaResponse pizza = pizzaService.getPizzaById(id);
         return ResponseEntity.ok(pizza);
     }
@@ -43,19 +43,19 @@ public class PizzaController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<PizzaResponse> updatePizza(@PathVariable Long id, @Valid @RequestBody PizzaRequest request) {
+    public ResponseEntity<PizzaResponse> updatePizza(@PathVariable UUID id, @Valid @RequestBody PizzaRequest request) {
         PizzaResponse response = pizzaService.update(id, request);
         return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<PizzaResponse> deletePizza(@PathVariable Long id) {
+    public ResponseEntity<PizzaResponse> deletePizza(@PathVariable UUID id) {
         pizzaService.delete(id);
         return ResponseEntity.noContent().build();
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<PizzaResponse> patchPizza(@PathVariable Long id, @Valid @RequestBody PizzaPatchRequest request) {
+    public ResponseEntity<PizzaResponse> patchPizza(@PathVariable UUID id, @Valid @RequestBody PizzaPatchRequest request) {
         PizzaResponse response = pizzaService.patch(id, request);
         return ResponseEntity.ok(response);
     }
@@ -68,7 +68,7 @@ public class PizzaController {
     }
 
     @GetMapping("/pizzaIngredients/{pizzaId}")
-    public ResponseEntity<List<PizzaIngredientResponse>> getPizzaIngredientById(@PathVariable Long pizzaId) {
+    public ResponseEntity<List<PizzaIngredientResponse>> getPizzaIngredientById(@PathVariable UUID pizzaId) {
         List<PizzaIngredient> pizzaIngredients = pizzaService.getAllPizzasIngredients(pizzaId);
         if (pizzaIngredients.isEmpty()) {
             return ResponseEntity.notFound().build();

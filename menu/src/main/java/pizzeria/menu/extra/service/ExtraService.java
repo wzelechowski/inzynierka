@@ -5,17 +5,18 @@ import pizzeria.menu.extra.dto.request.ExtraPatchRequest;
 import pizzeria.menu.extra.dto.request.ExtraRequest;
 
 import java.util.List;
+import java.util.UUID;
 
 public interface ExtraService {
     List<ExtraResponse> getAllExtras();
 
-    ExtraResponse getExtraById(Long id);
+    ExtraResponse getExtraById(UUID id);
 
     ExtraResponse save(ExtraRequest request);
 
-    void delete(Long id);
+    void delete(UUID id);
 
-    ExtraResponse update(Long id, ExtraRequest request);
+    ExtraResponse update(UUID id, ExtraRequest request);
 
-    ExtraResponse patch(Long id, ExtraPatchRequest request);
+    ExtraResponse patch(UUID id, ExtraPatchRequest request);
 }

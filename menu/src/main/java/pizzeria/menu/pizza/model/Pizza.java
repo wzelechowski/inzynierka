@@ -3,10 +3,10 @@ package pizzeria.menu.pizza.model;
 import jakarta.persistence.*;
 import jakarta.persistence.Table;
 import lombok.*;
-import pizzeria.menu.common.model.enums.Size;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 
 @Entity
@@ -17,19 +17,16 @@ import java.util.List;
 @Builder
 public class Pizza {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(name = "id", columnDefinition = "uuid")
+    private UUID id;
 
     @Column(name = "name")
     private String name;
 
-    @Column(name = "price")
-    private Double price;
-
     @Enumerated(EnumType.STRING)
-    @Column(name = "size")
-    private Size size;
+    @Column(name = "pizzaSize")
+    private PizzaSize pizzaSize;
 
     @OneToMany(mappedBy = "pizza", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PizzaIngredient> ingredientList = new ArrayList<>();

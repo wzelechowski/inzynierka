@@ -15,6 +15,7 @@ import pizzeria.menu.ingredient.dto.request.IngredientRequest;
 import pizzeria.menu.ingredient.repository.IngredientRepository;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -38,7 +39,7 @@ public class IngredientServiceImpl implements IngredientService {
 
     @Override
     @Cacheable(value = "ingredient", key = "#id")
-    public IngredientResponse getIngredientById(Long id) {
+    public IngredientResponse getIngredientById(UUID id) {
         Ingredient ingredient = ingredientRepository.findById(id).orElseThrow(() -> new RuntimeException(String.valueOf(HttpStatus.NOT_FOUND)));
         return ingredientMapper.toResponse(ingredient);
     }
@@ -63,7 +64,7 @@ public class IngredientServiceImpl implements IngredientService {
                     @CacheEvict(value = "ingredients", allEntries = true)
             }
     )
-    public void delete(Long id) {
+    public void delete(UUID id) {
         Ingredient ingredient = ingredientRepository.findById(id).orElseThrow(() -> new RuntimeException(String.valueOf(HttpStatus.NOT_FOUND)));
         ingredientRepository.delete(ingredient);
     }
@@ -74,7 +75,7 @@ public class IngredientServiceImpl implements IngredientService {
             put = @CachePut(value = "ingredient", key = "#result.id"),
             evict = @CacheEvict(value = "ingredients", allEntries = true)
     )
-    public IngredientResponse update(Long id, IngredientRequest request) {
+    public IngredientResponse update(UUID id, IngredientRequest request) {
         Ingredient ingredient = ingredientRepository.findById(id).orElseThrow(() -> new RuntimeException(String.valueOf(HttpStatus.NOT_FOUND)));
         ingredientMapper.updateEntity(ingredient, request);
         ingredientRepository.save(ingredient);
@@ -87,15 +88,9 @@ public class IngredientServiceImpl implements IngredientService {
             put = @CachePut(value = "ingredient", key = "#result.id"),
             evict = @CacheEvict(value = "ingredients", allEntries = true)
     )
-    public IngredientResponse patch(Long id, IngredientPatchRequest request) {
+    public IngredientResponse patch(UUID id, IngredientPatchRequest request) {
         Ingredient ingredient = ingredientRepository.findById(id).orElseThrow(() -> new RuntimeException(String.valueOf(HttpStatus.NOT_FOUND)));
-        if (request.name() != null) {
-            ingredient.setName(request.name());
-        }
-        if (request.price() != null) {
-            ingredient.setPrice(request.price());
-        }
-
+        ingredientMapper.patchEntity(ingredient, request);
         ingredientRepository.save(ingredient);
         return ingredientMapper.toResponse(ingredient);
     }

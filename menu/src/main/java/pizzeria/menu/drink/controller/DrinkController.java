@@ -10,6 +10,7 @@ import pizzeria.menu.drink.dto.response.DrinkResponse;
 import pizzeria.menu.drink.service.DrinkService;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @CrossOrigin(origins = "*")
@@ -28,7 +29,7 @@ public class DrinkController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<DrinkResponse> getDrinkById(@PathVariable Long id) {
+    public ResponseEntity<DrinkResponse> getDrinkById(@PathVariable UUID id) {
         DrinkResponse response = drinkService.getDrinkById(id);
         return ResponseEntity.ok(response);
     }
@@ -40,19 +41,19 @@ public class DrinkController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<DrinkResponse> deleteDrink(@PathVariable Long id) {
+    public ResponseEntity<DrinkResponse> deleteDrink(@PathVariable UUID id) {
         drinkService.delete(id);
         return ResponseEntity.noContent().build();
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<DrinkResponse> updateDrink(@PathVariable Long id, @Valid @RequestBody DrinkRequest request) {
+    public ResponseEntity<DrinkResponse> updateDrink(@PathVariable UUID id, @Valid @RequestBody DrinkRequest request) {
         DrinkResponse response = drinkService.update(id, request);
         return ResponseEntity.ok(response);
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<DrinkResponse> patchDrink(@PathVariable Long id, @Valid @RequestBody DrinkPatchRequest request) {
+    public ResponseEntity<DrinkResponse> patchDrink(@PathVariable UUID id, @Valid @RequestBody DrinkPatchRequest request) {
         DrinkResponse response = drinkService.patch(id, request);
         return ResponseEntity.ok(response);
     }

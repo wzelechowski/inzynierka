@@ -47,7 +47,7 @@ public class PizzaServiceImpl implements PizzaService {
 
     @Override
     @Cacheable(value = "pizza", key = "#id")
-    public PizzaResponse getPizzaById(Long id) {
+    public PizzaResponse getPizzaById(UUID id) {
         Pizza pizza = pizzaRepository.findById(id).orElseThrow(() -> new RuntimeException(String.valueOf(HttpStatus.NOT_FOUND)));
         return pizzaMapper.toResponse(pizza);
     }
@@ -72,7 +72,7 @@ public class PizzaServiceImpl implements PizzaService {
                     @CacheEvict(value = "pizzas", allEntries = true)
             }
     )
-    public void delete(Long id) {
+    public void delete(UUID id) {
         Pizza pizza = pizzaRepository.findById(id).orElseThrow(() -> new RuntimeException(String.valueOf(HttpStatus.NOT_FOUND)));
         pizzaRepository.delete(pizza);
     }
@@ -83,7 +83,7 @@ public class PizzaServiceImpl implements PizzaService {
             put = @CachePut(value = "pizza", key = "#result.id"),
             evict = @CacheEvict(value = "pizzas", allEntries = true)
     )
-    public PizzaResponse update(Long id, PizzaRequest request) {
+    public PizzaResponse update(UUID id, PizzaRequest request) {
         Pizza pizza = pizzaRepository.findById(id).orElseThrow(() -> new RuntimeException(String.valueOf(HttpStatus.NOT_FOUND)));
         pizzaMapper.updateEntity(pizza, request);
         pizzaRepository.save(pizza);
@@ -96,18 +96,9 @@ public class PizzaServiceImpl implements PizzaService {
             put = @CachePut(value = "pizza", key = "#result.id"),
             evict = @CacheEvict(value = "pizzas", allEntries = true)
     )
-    public PizzaResponse patch(Long id, PizzaPatchRequest request) {
+    public PizzaResponse patch(UUID id, PizzaPatchRequest request) {
         Pizza pizza = pizzaRepository.findById(id).orElseThrow(() -> new RuntimeException(String.valueOf(HttpStatus.NOT_FOUND)));
-        if (request.name() != null) {
-            pizza.setName(request.name());
-        }
-        if (request.price() != null) {
-            pizza.setPrice(request.price());
-        }
-        if (request.size() != null) {
-            pizza.setSize(request.size());
-        }
-
+        pizzaMapper.patchEntity(pizza, request);
         pizzaRepository.save(pizza);
         return pizzaMapper.toResponse(pizza);
     }
@@ -125,7 +116,7 @@ public class PizzaServiceImpl implements PizzaService {
     }
 
     @Override
-    public List<PizzaIngredient> getAllPizzasIngredients(Long pizzaId) {
+    public List<PizzaIngredient> getAllPizzasIngredients(UUID pizzaId) {
         return pizzaRepository.findById(pizzaId)
                 .map(Pizza::getIngredientList).orElse(Collections.emptyList());
     }

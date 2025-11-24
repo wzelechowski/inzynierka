@@ -7,21 +7,22 @@ import pizzeria.menu.pizza.dto.request.PizzaPatchRequest;
 import pizzeria.menu.pizza.dto.request.PizzaRequest;
 
 import java.util.List;
+import java.util.UUID;
 
 public interface PizzaService {
     List<PizzaResponse> getAllPizzas();
 
-    PizzaResponse getPizzaById(Long id);
+    PizzaResponse getPizzaById(UUID id);
 
     PizzaResponse save(PizzaRequest request);
 
-    void delete(Long id);
+    void delete(UUID id);
 
-    PizzaResponse update(Long id, PizzaRequest request);
+    PizzaResponse update(UUID id, PizzaRequest request);
 
-    PizzaResponse patch(Long id, PizzaPatchRequest request);
+    PizzaResponse patch(UUID id, PizzaPatchRequest request);
 
     PizzaIngredient addIngredientToPizza(PizzaIngredientRequest request);
 
-    List<PizzaIngredient> getAllPizzasIngredients(Long pizzaId);
+    List<PizzaIngredient> getAllPizzasIngredients(UUID pizzaId);
 }

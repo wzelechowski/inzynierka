@@ -15,6 +15,7 @@ import pizzeria.menu.drink.dto.request.DrinkRequest;
 import pizzeria.menu.drink.repository.DrinkRepository;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -38,7 +39,7 @@ public class DrinkServiceImpl implements DrinkService {
 
     @Override
     @Cacheable(value = "drink", key = "#id")
-    public DrinkResponse getDrinkById(Long id) {
+    public DrinkResponse getDrinkById(UUID id) {
         Drink drink = drinkRepository.findById(id).orElseThrow(() ->  new RuntimeException(String.valueOf(HttpStatus.NOT_FOUND)));
         return drinkMapper.toResponse(drink);
     }
@@ -63,7 +64,7 @@ public class DrinkServiceImpl implements DrinkService {
                     @CacheEvict(value = "drinks", allEntries = true)
             }
     )
-    public void delete(Long id) {
+    public void delete(UUID id) {
         Drink drink = drinkRepository.findById(id).orElseThrow(() ->  new RuntimeException(String.valueOf(HttpStatus.NOT_FOUND)));
         drinkRepository.delete(drink);
     }
@@ -74,7 +75,7 @@ public class DrinkServiceImpl implements DrinkService {
             put = @CachePut(value = "drink", key = "#result.id"),
             evict = @CacheEvict(value = "drinks", allEntries = true)
     )
-    public DrinkResponse update(Long id, DrinkRequest request) {
+    public DrinkResponse update(UUID id, DrinkRequest request) {
         Drink drink =  drinkRepository.findById(id).orElseThrow(() ->  new RuntimeException(String.valueOf(HttpStatus.NOT_FOUND)));
         drinkMapper.updateEntity(drink, request);
         drinkRepository.save(drink);
@@ -87,17 +88,9 @@ public class DrinkServiceImpl implements DrinkService {
             put = @CachePut(value = "drink", key = "#result.id"),
             evict = @CacheEvict(value = "drinks", allEntries = true)
     )
-    public DrinkResponse patch(Long id, DrinkPatchRequest request) {
+    public DrinkResponse patch(UUID id, DrinkPatchRequest request) {
         Drink drink = drinkRepository.findById(id).orElseThrow(() ->  new RuntimeException(String.valueOf(HttpStatus.NOT_FOUND)));
-        if (request.name() != null) {
-            drink.setName(request.name());
-        }
-        if (request.price() != null) {
-            drink.setPrice(request.price());
-        }
-        if (request.volume() != null) {
-            drink.setVolume(request.volume());
-        }
+        drinkMapper.patchEntity(drink, request);
         drinkRepository.save(drink);
         return drinkMapper.toResponse(drink);
     }

@@ -9,11 +9,6 @@ public record DrinkRequest(
 
         @NotNull
         @Positive
-        @Digits(integer = 3, fraction = 2)
-        Double price,
-
-        @NotNull
-        @Positive
         @Digits(integer = 1, fraction = 2)
         Double volume
 ){}

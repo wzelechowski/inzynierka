@@ -5,18 +5,19 @@ import pizzeria.menu.ingredient.dto.request.IngredientPatchRequest;
 import pizzeria.menu.ingredient.dto.request.IngredientRequest;
 
 import java.util.List;
+import java.util.UUID;
 
 public interface IngredientService {
     List<IngredientResponse> getAllIngredients();
 
-    IngredientResponse getIngredientById(Long id);
+    IngredientResponse getIngredientById(UUID id);
 
     IngredientResponse save(IngredientRequest request);
 
-    void delete(Long id);
+    void delete(UUID id);
 
-    IngredientResponse update(Long id, IngredientRequest request);
+    IngredientResponse update(UUID id, IngredientRequest request);
 
-    IngredientResponse patch(Long id, IngredientPatchRequest request);
+    IngredientResponse patch(UUID id, IngredientPatchRequest request);
 
 }

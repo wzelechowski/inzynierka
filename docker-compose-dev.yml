@@ -1,6 +1,7 @@
 volumes:
   postgres:
   pgadmin:
+  keycloak:
 
 networks:
   backend:
@@ -92,6 +93,9 @@ services:
       KC_HTTP_PORT: 8443
     command:
       - start-dev
+      - --import-realm
+    volumes:
+      - ./keycloak:/opt/keycloak/data/import
     depends_on:
       - postgres
 

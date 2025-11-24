@@ -1,5 +1,6 @@
 package pizzeria.menu.ingredient.dto.request;
 
+
 import jakarta.validation.constraints.*;
 
 public record IngredientRequest(
@@ -10,5 +11,5 @@ public record IngredientRequest(
         @NotNull
         @Positive
         @Digits(integer = 3, fraction = 2)
-        Double price
+        Double weight
 ){}

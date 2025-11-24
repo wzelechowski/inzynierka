@@ -7,10 +7,6 @@ public record DrinkPatchRequest(
     String name,
 
     @Positive
-    @Digits(integer = 3, fraction = 2)
-    Double price,
-
-    @Positive
     @Digits(integer = 1, fraction = 2)
     Double volume
 ){}

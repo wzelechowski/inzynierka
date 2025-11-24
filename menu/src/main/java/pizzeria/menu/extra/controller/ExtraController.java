@@ -10,6 +10,7 @@ import pizzeria.menu.extra.dto.response.ExtraResponse;
 import pizzeria.menu.extra.service.ExtraService;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -28,7 +29,7 @@ public class ExtraController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ExtraResponse> getExtraById(@PathVariable Long id) {
+    public ResponseEntity<ExtraResponse> getExtraById(@PathVariable UUID id) {
         ExtraResponse response = extraService.getExtraById(id);
         return ResponseEntity.ok(response);
     }
@@ -40,19 +41,19 @@ public class ExtraController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<ExtraResponse> deleteExtra(@PathVariable Long id) {
+    public ResponseEntity<ExtraResponse> deleteExtra(@PathVariable UUID id) {
         extraService.delete(id);
         return ResponseEntity.noContent().build();
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ExtraResponse> updateExtra(@PathVariable Long id, @Valid @RequestBody ExtraRequest request) {
+    public ResponseEntity<ExtraResponse> updateExtra(@PathVariable UUID id, @Valid @RequestBody ExtraRequest request) {
         ExtraResponse response = extraService.update(id, request);
         return ResponseEntity.ok(response);
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<ExtraResponse> patchExtra(@PathVariable Long id, @Valid @RequestBody ExtraPatchRequest request) {
+    public ResponseEntity<ExtraResponse> patchExtra(@PathVariable UUID id, @Valid @RequestBody ExtraPatchRequest request) {
         ExtraResponse response = extraService.patch(id, request);
         return ResponseEntity.ok(response);
     }

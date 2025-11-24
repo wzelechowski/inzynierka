@@ -10,6 +10,7 @@ import pizzeria.menu.ingredient.dto.response.IngredientResponse;
 import pizzeria.menu.ingredient.service.IngredientService;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -28,7 +29,7 @@ public class IngredientController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<IngredientResponse> getIngredientById(@PathVariable Long id) {
+    public ResponseEntity<IngredientResponse> getIngredientById(@PathVariable UUID id) {
         IngredientResponse response = ingredientService.getIngredientById(id);
         return ResponseEntity.ok(response);
     }
@@ -40,19 +41,19 @@ public class IngredientController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<IngredientResponse> deleteIngredient(@PathVariable Long id) {
+    public ResponseEntity<IngredientResponse> deleteIngredient(@PathVariable UUID id) {
         ingredientService.delete(id);
         return ResponseEntity.noContent().build();
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<IngredientResponse> updateIngredient(@PathVariable Long id, @Valid @RequestBody IngredientRequest request) {
+    public ResponseEntity<IngredientResponse> updateIngredient(@PathVariable UUID id, @Valid @RequestBody IngredientRequest request) {
         IngredientResponse response = ingredientService.update(id, request);
         return ResponseEntity.ok(response);
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<IngredientResponse> patchIngredient(@PathVariable Long id, @Valid @RequestBody IngredientPatchRequest request) {
+    public ResponseEntity<IngredientResponse> patchIngredient(@PathVariable UUID id, @Valid @RequestBody IngredientPatchRequest request) {
         IngredientResponse response = ingredientService.patch(id, request);
         return ResponseEntity.ok(response);
     }

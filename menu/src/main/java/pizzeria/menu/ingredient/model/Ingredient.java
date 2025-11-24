@@ -9,6 +9,7 @@ import pizzeria.menu.pizza.model.PizzaIngredient;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Table(name = "ingredient")
@@ -18,15 +19,15 @@ import java.util.List;
 @Builder
 public class Ingredient {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(name = "id", columnDefinition = "uuid")
+    private UUID id;
 
     @Column(name = "name")
     private String name;
 
-    @Column(name = "price")
-    private Double price;
+    @Column(name = "weight")
+    private Double weight;
 
     @OneToMany(mappedBy = "ingredient", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PizzaIngredient> pizzaList = new ArrayList<>();

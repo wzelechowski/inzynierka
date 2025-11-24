@@ -1,7 +1,9 @@
 package pizzeria.menu.ingredient.dto.response;
 
+import java.util.UUID;
+
 public record IngredientResponse(
-    Long id,
+    UUID id,
     String name,
-    Double price
+    Double weight
 ){}

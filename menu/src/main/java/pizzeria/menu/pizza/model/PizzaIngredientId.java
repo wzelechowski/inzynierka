@@ -6,12 +6,13 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+import java.util.UUID;
 
 @Embeddable
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class PizzaIngredientId implements Serializable {
-    private Long pizzaId;
-    private Long ingredientId;
+    private UUID pizzaId;
+    private UUID ingredientId;
 }
