@@ -1,0 +1,19 @@
+spring:
+  application:
+    name: order-service
+  cache:
+    type: redis
+    redis:
+      key-prefix: "order::"
+      time-to-live: 5m
+      cache-null-values: false
+  jpa:
+    generate-ddl: true
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+server:
+  servlet:
+    context-path: /api/v1/order
+  port: 8082

@@ -6,7 +6,7 @@ spring:
       host: localhost
       port: 6379
       client-type: lettuce
-      database: 1
+      database: 2
       connect-timeout: 2s
       timeout: 5s
       lettuce:
@@ -15,7 +15,7 @@ spring:
           max-idle: 5
           max-active: 20
   datasource:
-    url: jdbc:postgresql://localhost:15432/menu_db
+    url: jdbc:postgresql://localhost:15432/order_db
     username: postgres
     password: password
 
@@ -23,3 +23,6 @@ logging:
   level:
     org.springframework.cache: TRACE
     org.springframework.data.redis.cache: TRACE
+
+menu-service:
+  url: "http://localhost:8081/api/v1/menu"

@@ -6,7 +6,7 @@ import lombok.*;
 import java.util.UUID;
 
 @Entity
-@Table(name = "drink")
+@Table(name = "drinks")
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
@@ -14,12 +14,8 @@ import java.util.UUID;
 public class Drink {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "id", columnDefinition = "uuid")
     private UUID id;
 
-    @Column(name = "name")
     private String name;
-
-    @Column(name = "volume")
     private Double volume;
 }

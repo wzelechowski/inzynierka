@@ -10,7 +10,7 @@ import java.util.UUID;
 
 
 @Entity
-@Table(name = "pizza")
+@Table(name = "pizzas")
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
@@ -18,14 +18,11 @@ import java.util.UUID;
 public class Pizza {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "id", columnDefinition = "uuid")
     private UUID id;
 
-    @Column(name = "name")
     private String name;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "pizzaSize")
     private PizzaSize pizzaSize;
 
     @OneToMany(mappedBy = "pizza", cascade = CascadeType.ALL, orphanRemoval = true)

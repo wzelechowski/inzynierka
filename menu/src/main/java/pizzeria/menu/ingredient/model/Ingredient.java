@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Entity
-@Table(name = "ingredient")
+@Table(name = "ingredients")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -20,13 +20,9 @@ import java.util.UUID;
 public class Ingredient {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "id", columnDefinition = "uuid")
     private UUID id;
 
-    @Column(name = "name")
     private String name;
-
-    @Column(name = "weight")
     private Double weight;
 
     @OneToMany(mappedBy = "ingredient", cascade = CascadeType.ALL, orphanRemoval = true)
