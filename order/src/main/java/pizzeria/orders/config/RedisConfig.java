@@ -1,5 +1,8 @@
 package pizzeria.orders.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.cache.RedisCacheConfiguration;
@@ -22,11 +25,19 @@ public class RedisConfig {
     }
 
     @Bean
-    RedisCacheConfiguration redisCacheConfiguration() {
+    RedisCacheConfiguration redisCacheConfiguration(ObjectMapper redisObjectMapper) {
         return RedisCacheConfiguration.defaultCacheConfig()
                 .serializeValuesWith(
                         RedisSerializationContext.SerializationPair
-                                .fromSerializer(new GenericJackson2JsonRedisSerializer())
+                                .fromSerializer(new GenericJackson2JsonRedisSerializer(redisObjectMapper))
                 );
+    }
+
+    @Bean
+    ObjectMapper redisObjectMapper() {
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+        objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        return  objectMapper;
     }
 }

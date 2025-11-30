@@ -2,9 +2,11 @@ package pizzeria.orders.order.dto.request;
 
 import pizzeria.orders.order.model.OrderStatus;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 public record OrderPatchRequest (
         UUID supplierId,
-        OrderStatus orderStatus
+        OrderStatus orderStatus,
+        LocalDateTime deliveredAt
 ) {}

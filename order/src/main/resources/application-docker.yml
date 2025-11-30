@@ -28,4 +28,4 @@ spring:
     password: password
 
 menu-service:
-  url: "http://menu-service:8081/api/v1/menu"
+  url: "http://menu-service:8081"

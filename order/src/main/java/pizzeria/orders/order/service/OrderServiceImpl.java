@@ -1,8 +1,8 @@
 package pizzeria.orders.order.service;
 
 import jakarta.ws.rs.NotFoundException;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import pizzeria.orders.client.menu.MenuItemClient;
 import pizzeria.orders.client.menu.dto.MenuItemResponse;
 import pizzeria.orders.order.dto.request.OrderPatchRequest;
@@ -31,7 +31,6 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    @Cacheable(value = "orders")
     public List<OrderResponse> getAllUsersOrders(UUID userId) {
         return orderRepository.findAllByUserId(userId)
                 .stream()
@@ -46,6 +45,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional
     public OrderResponse save(OrderRequest request, UUID userId) {
         Order order = orderMapper.toEntity(request);
         order.setUserId(userId);

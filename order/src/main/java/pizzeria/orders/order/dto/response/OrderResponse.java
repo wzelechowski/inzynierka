@@ -10,8 +10,6 @@ import java.util.UUID;
 
 public record OrderResponse(
         UUID id,
-        UUID orderId,
-        UUID itemId,
         OrderStatus status,
         BigDecimal totalPrice,
         LocalDateTime createdAt,

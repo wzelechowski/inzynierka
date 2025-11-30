@@ -25,4 +25,4 @@ logging:
     org.springframework.data.redis.cache: TRACE
 
 menu-service:
-  url: "http://localhost:8081/api/v1/menu"
+  url: "http://localhost:8081"

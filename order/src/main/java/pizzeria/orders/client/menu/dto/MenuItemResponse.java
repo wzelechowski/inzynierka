@@ -4,8 +4,7 @@ import java.math.BigDecimal;
 import java.util.UUID;
 
 public record MenuItemResponse(
-        UUID itemId,
-        Integer quantity,
-        BigDecimal basePrice,
-        String name
+        UUID id,
+        String name,
+        BigDecimal basePrice
 ) {}
