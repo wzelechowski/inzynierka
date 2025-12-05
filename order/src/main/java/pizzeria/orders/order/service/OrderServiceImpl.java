@@ -1,6 +1,7 @@
 package pizzeria.orders.order.service;
 
 import jakarta.ws.rs.NotFoundException;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pizzeria.orders.client.menu.MenuItemClient;
@@ -39,6 +40,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Cacheable(value = "order", key = "#orderId")
     public OrderResponse getOrderById(UUID orderId, UUID userId) {
         Order order = orderRepository.findByIdAndUserId(orderId, userId).orElseThrow(NotFoundException::new);
         return orderMapper.toResponse(order);
@@ -65,12 +67,14 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional
     public void delete(UUID orderId, UUID userId) {
         Order order = orderRepository.findByIdAndUserId(orderId, userId).orElseThrow(NotFoundException::new);
         orderRepository.delete(order);
     }
 
     @Override
+    @Transactional
     public OrderResponse update(UUID orderId, UUID userId, OrderRequest request) {
         Order order = orderRepository.findByIdAndUserId(orderId, userId).orElseThrow(NotFoundException::new);
         orderMapper.updateEntity(order, request);
@@ -78,6 +82,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional
     public OrderResponse patch(UUID orderId, UUID userId, OrderPatchRequest request) {
         Order order = orderRepository.findByIdAndUserId(orderId, userId).orElseThrow(NotFoundException::new);
         orderMapper.patchEntity(order, request);
