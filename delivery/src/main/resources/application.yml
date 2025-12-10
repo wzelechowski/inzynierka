@@ -1,0 +1,19 @@
+spring:
+  application:
+    name: delivery-service
+  cache:
+    type: redis
+    redis:
+      key-prefix: "delivery::"
+      time-to-live: 5m
+      cache-null-values: false
+  jpa:
+    generate-ddl: true
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+server:
+  servlet:
+    context-path: /api/v1/delivery
+  port: 8083

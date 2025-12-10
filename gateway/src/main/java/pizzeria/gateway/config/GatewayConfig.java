@@ -25,6 +25,12 @@ public class GatewayConfig {
                             rl.setKeyResolver(ipKeyResolver);
                         }))
                         .uri("lb://order-service"))
+                .route("delivery-service", r -> r.path("/api/v1/delivery/**")
+                        .filters(f -> f.requestRateLimiter(rl -> {
+                            rl.setRateLimiter(rateLimiter);
+                            rl.setKeyResolver(ipKeyResolver);
+                        }))
+                        .uri("lb://delivery-service"))
                 .build();
     }
 }

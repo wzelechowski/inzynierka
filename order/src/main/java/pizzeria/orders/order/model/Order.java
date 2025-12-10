@@ -29,11 +29,13 @@ public class Order {
     private UUID id;
 
     private UUID userId;
-    private UUID supplierId;
 
     @Enumerated(EnumType.STRING)
     @Builder.Default
     private OrderStatus status = OrderStatus.NEW;
+
+    @Enumerated(EnumType.STRING)
+    private OrderType type;
 
     @Builder.Default
     private BigDecimal totalPrice = BigDecimal.ZERO;
@@ -44,7 +46,7 @@ public class Order {
     @LastModifiedDate
     private LocalDateTime updatedAt;
 
-    private LocalDateTime deliveredAt;
+    private LocalDateTime completedAt;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @Builder.Default

@@ -1,7 +1,7 @@
 package pizzeria.orders.order.service;
 
 import jakarta.ws.rs.NotFoundException;
-import org.springframework.cache.annotation.Cacheable;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pizzeria.orders.client.menu.MenuItemClient;
@@ -11,6 +11,9 @@ import pizzeria.orders.order.dto.request.OrderRequest;
 import pizzeria.orders.order.dto.response.OrderResponse;
 import pizzeria.orders.order.mapper.OrderMapper;
 import pizzeria.orders.order.model.Order;
+import pizzeria.orders.order.model.OrderType;
+import pizzeria.orders.order.dto.event.DeliveryRequestedEvent;
+import pizzeria.orders.order.publisher.OrderEventPublisher;
 import pizzeria.orders.order.repository.OrderRepository;
 import pizzeria.orders.orderItem.model.OrderItem;
 
@@ -20,16 +23,12 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class OrderServiceImpl implements OrderService {
     private final OrderRepository orderRepository;
     private final OrderMapper orderMapper;
     private final MenuItemClient menuItemClient;
-
-    public OrderServiceImpl(OrderRepository orderRepository, OrderMapper orderMapper, MenuItemClient menuItemClient) {
-        this.orderRepository = orderRepository;
-        this.orderMapper = orderMapper;
-        this.menuItemClient = menuItemClient;
-    }
+    private final OrderEventPublisher orderEventPublisher;
 
     @Override
     public List<OrderResponse> getAllUsersOrders(UUID userId) {
@@ -40,7 +39,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    @Cacheable(value = "order", key = "#orderId")
+//    @Cacheable(value = "order", key = "#orderId")
     public OrderResponse getOrderById(UUID orderId, UUID userId) {
         Order order = orderRepository.findByIdAndUserId(orderId, userId).orElseThrow(NotFoundException::new);
         return orderMapper.toResponse(order);
@@ -63,6 +62,12 @@ public class OrderServiceImpl implements OrderService {
         }
 
         orderRepository.save(order);
+
+        if (order.getType() == OrderType.TAKE_AWAY) {
+            var event = new DeliveryRequestedEvent(order.getId());
+            orderEventPublisher.publishDeliveryRequested(event);
+        }
+
         return orderMapper.toResponse(order);
     }
 

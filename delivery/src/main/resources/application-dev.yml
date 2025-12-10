@@ -6,7 +6,7 @@ spring:
       host: localhost
       port: 6379
       client-type: lettuce
-      database: 2
+      database: 3
       connect-timeout: 2s
       timeout: 5s
       lettuce:
@@ -14,14 +14,8 @@ spring:
           min-idle: 1
           max-idle: 5
           max-active: 20
-  rabbitmq:
-    host: localhost
-    port: 5672
-    username: guest
-    password: guest
-
   datasource:
-    url: jdbc:postgresql://localhost:15432/order_db
+    url: jdbc:postgresql://localhost:15432/delivery_db
     username: postgres
     password: password
 
@@ -30,5 +24,5 @@ logging:
     org.springframework.cache: TRACE
     org.springframework.data.redis.cache: TRACE
 
-menu-service:
-  url: "http://localhost:8081"
+order-service:
+  url: "http://localhost:8082"
