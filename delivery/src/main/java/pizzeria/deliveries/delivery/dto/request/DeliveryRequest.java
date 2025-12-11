@@ -9,9 +9,6 @@ import java.util.UUID;
 
 public record DeliveryRequest(
         @NotNull
-        UUID orderId,
-
-        @NotNull
         UUID supplierId,
 
         @NotBlank
@@ -23,7 +20,7 @@ public record DeliveryRequest(
         String deliveryCity,
 
         @NotBlank
-        @Pattern(regexp = "\\d{2}-\\d{3}", message = "Postal code must be in format 00-000")
+        @Pattern(regexp = "\\d{2}-\\d{3}")
         String postalCode
 ) {
 }

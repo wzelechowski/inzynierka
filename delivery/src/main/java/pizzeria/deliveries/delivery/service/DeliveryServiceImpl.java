@@ -1,14 +1,17 @@
 package pizzeria.deliveries.delivery.service;
 
 import jakarta.ws.rs.NotFoundException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import pizzeria.deliveries.delivery.dto.event.DeliveryStatusEvent;
 import pizzeria.deliveries.delivery.dto.request.DeliveryPatchRequest;
 import pizzeria.deliveries.delivery.dto.request.DeliveryRequest;
 import pizzeria.deliveries.delivery.dto.response.DeliveryResponse;
 import pizzeria.deliveries.delivery.mapper.DeliveryMapper;
 import pizzeria.deliveries.delivery.model.Delivery;
+import pizzeria.deliveries.delivery.publisher.DeliveryEventPublisher;
 import pizzeria.deliveries.delivery.repository.DeliveryRepository;
-import pizzeria.deliveries.supplier.mapper.SupplierMapper;
+import pizzeria.deliveries.delivery.validator.DeliveryStatusValidator;
 import pizzeria.deliveries.supplier.model.Supplier;
 import pizzeria.deliveries.supplier.repository.SupplierRepository;
 
@@ -17,16 +20,14 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class DeliveryServiceImpl implements DeliveryService {
+
     private final DeliveryRepository deliveryRepository;
     private final DeliveryMapper deliveryMapper;
     private final SupplierRepository supplierRepository;
-
-    public DeliveryServiceImpl(DeliveryRepository deliveryRepository, DeliveryMapper deliveryMapper, SupplierRepository supplierRepository) {
-        this.deliveryRepository = deliveryRepository;
-        this.deliveryMapper = deliveryMapper;
-        this.supplierRepository = supplierRepository;
-    }
+    private final DeliveryStatusValidator deliveryStatusValidator;
+    private final DeliveryEventPublisher deliveryEventPublisher;
 
     @Override
     public List<DeliveryResponse> getAllDeliveries() {
@@ -67,6 +68,13 @@ public class DeliveryServiceImpl implements DeliveryService {
     @Override
     public DeliveryResponse patch(UUID id, DeliveryPatchRequest request) {
         Delivery delivery = deliveryRepository.findById(id).orElseThrow(NotFoundException::new);
+        if (request.status() != null) {
+            deliveryStatusValidator.validate(delivery.getStatus(), request.status());
+            delivery.setStatus(request.status());
+            var event = new DeliveryStatusEvent(delivery.getOrderId(), request.status());
+            deliveryEventPublisher.publishDeliveryStatus(event);
+        }
+
         deliveryMapper.patchEntity(delivery, request);
         return deliveryMapper.toResponse(delivery);
     }

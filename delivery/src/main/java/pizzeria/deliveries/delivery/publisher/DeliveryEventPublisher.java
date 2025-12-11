@@ -1,20 +1,20 @@
-package pizzeria.orders.order.publisher;
+package pizzeria.deliveries.delivery.publisher;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
-import pizzeria.orders.config.RabbitConfig;
-import pizzeria.orders.order.dto.event.OrderRequestedEvent;
+import pizzeria.deliveries.config.RabbitConfig;
+import pizzeria.deliveries.delivery.dto.event.DeliveryStatusEvent;
 
 @Service
 @RequiredArgsConstructor
-public class OrderEventPublisher {
+public class DeliveryEventPublisher {
     private final RabbitTemplate rabbitTemplate;
 
-    public void publishDeliveryRequested(OrderRequestedEvent event) {
+    public void publishDeliveryStatus(DeliveryStatusEvent event) {
         rabbitTemplate.convertAndSend(
                 RabbitConfig.EXCHANGE,
-                RabbitConfig.DELIVERY_ROUTING_KEY,
+                RabbitConfig.ORDER_ROUTING_KEY,
                 event
         );
     }

@@ -1,4 +1,4 @@
-package pizzeria.orders.config;
+package pizzeria.deliveries.config;
 
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
@@ -11,12 +11,13 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class RabbitConfig {
+
     public static final String EXCHANGE = "pizzeria.exchange";
 
-    public static final String ORDER_QUEUE = "order.queue";
-    public static final String ORDER_ROUTING_KEY = "delivery.status.changed";
-
+    public static final String DELIVERY_QUEUE = "delivery.queue";
     public static final String DELIVERY_ROUTING_KEY = "order.delivery.requested";
+
+    public static final String ORDER_ROUTING_KEY = "delivery.status.changed";
 
 
     @Bean
@@ -25,15 +26,14 @@ public class RabbitConfig {
     }
 
     @Bean
-    Queue deliveryQueue() {
-        return new Queue(ORDER_QUEUE, true);
+    Queue orderQueue() {
+        return new Queue(DELIVERY_QUEUE, true);
     }
 
     @Bean
-    Binding deliveryBinding(Queue deliveryQueue, TopicExchange exchange) {
-        return BindingBuilder.bind(deliveryQueue).to(exchange).with(ORDER_ROUTING_KEY);
+    Binding orderBinding(Queue orderQueue, TopicExchange exchange) {
+        return BindingBuilder.bind(orderQueue).to(exchange).with(DELIVERY_ROUTING_KEY);
     }
-
 
     @Bean
     MessageConverter messageConverter() {

@@ -14,6 +14,11 @@ spring:
           min-idle: 1
           max-idle: 5
           max-active: 20
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
   datasource:
     url: jdbc:postgresql://localhost:15432/delivery_db
     username: postgres
@@ -23,6 +28,3 @@ logging:
   level:
     org.springframework.cache: TRACE
     org.springframework.data.redis.cache: TRACE
-
-order-service:
-  url: "http://localhost:8082"

@@ -12,7 +12,7 @@ import pizzeria.orders.order.dto.response.OrderResponse;
 import pizzeria.orders.order.mapper.OrderMapper;
 import pizzeria.orders.order.model.Order;
 import pizzeria.orders.order.model.OrderType;
-import pizzeria.orders.order.dto.event.DeliveryRequestedEvent;
+import pizzeria.orders.order.dto.event.OrderRequestedEvent;
 import pizzeria.orders.order.publisher.OrderEventPublisher;
 import pizzeria.orders.order.repository.OrderRepository;
 import pizzeria.orders.orderItem.model.OrderItem;
@@ -64,7 +64,7 @@ public class OrderServiceImpl implements OrderService {
         orderRepository.save(order);
 
         if (order.getType() == OrderType.TAKE_AWAY) {
-            var event = new DeliveryRequestedEvent(order.getId());
+            var event = new OrderRequestedEvent(order.getId(), userId);
             orderEventPublisher.publishDeliveryRequested(event);
         }
 
