@@ -1,0 +1,19 @@
+spring:
+  application:
+    name: promotion-service
+  cache:
+    type: redis
+    redis:
+      key-prefix: "promotion::"
+      time-to-live: 5m
+      cache-null-values: false
+  jpa:
+    generate-ddl: true
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+server:
+  servlet:
+    context-path: /api/v1/promotion
+  port: 8085

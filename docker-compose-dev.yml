@@ -36,6 +36,37 @@ services:
     restart: unless-stopped
     networks:
       - backend
+    
+  mongo:
+    container_name: mongo
+    image: mongo:7
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo:/data/db
+    networks:
+      - backend
+
+  mongo-express:
+    container_name: mongo-express
+    image: mongo-express:latest
+    restart: unless-stopped
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: root
+      ME_CONFIG_MONGODB_ADMINPASSWORD: example
+      ME_CONFIG_MONGODB_URL: mongodb://root:example@mongo:27017/
+      ME_CONFIG_SITE_BASEURL: "/"
+    ports:
+      - "18081:8081"
+    depends_on:
+      - mongo
+    networks:
+      - backend
+
 
   redis:
     image: redis:7
@@ -95,6 +126,8 @@ services:
     ports:
       - "5672:5672"
       - "15672:15672"
+    networks:
+      - backend
 
   menu:
     container_name: menu-service
@@ -141,6 +174,22 @@ services:
       - JWT_SECRET=${JWT_SECRET}
       - SPRING_PROFILES_ACTIVE=docker
 
+  promotion:
+    container_name: promotion-service
+    build: ./promotions
+    ports:
+      - "8085:8085"
+    depends_on:
+      - postgres
+      - config-server
+      - eureka-server
+    networks:
+      - backend
+    environment:
+      - JWT_SECRET=${JWT_SECRET}
+      - SPRING_PROFILES_ACTIVE=docker
+
+
   gateway:
     container_name: gateway
     build: ./gateway
@@ -174,6 +223,7 @@ volumes:
   postgres:
   pgadmin:
   keycloak:
+  mongo:
 
 networks:
   backend:

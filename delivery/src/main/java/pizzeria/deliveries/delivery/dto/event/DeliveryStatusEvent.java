@@ -6,6 +6,7 @@ import java.util.UUID;
 
 public record DeliveryStatusEvent(
         UUID orderId,
+        UUID userId,
         DeliveryStatus status
 ) {
 }

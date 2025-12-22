@@ -14,10 +14,11 @@ public class RabbitConfig {
     public static final String EXCHANGE = "pizzeria.exchange";
 
     public static final String ORDER_QUEUE = "order.queue";
+    public static final String AI_QUEUE = "ai.queue";
+
     public static final String ORDER_ROUTING_KEY = "delivery.status.changed";
-
     public static final String DELIVERY_ROUTING_KEY = "order.delivery.requested";
-
+    public static final String AI_ROUTING_KEY = "order.completed";
 
     @Bean
     TopicExchange exchange() {
@@ -34,6 +35,15 @@ public class RabbitConfig {
         return BindingBuilder.bind(deliveryQueue).to(exchange).with(ORDER_ROUTING_KEY);
     }
 
+    @Bean
+    Queue aiQueue() {
+        return new Queue(AI_QUEUE, true);
+    }
+
+    @Bean
+    Binding aiBinding(Queue aiQueue, TopicExchange exchange) {
+        return BindingBuilder.bind(aiQueue).to(exchange).with(AI_ROUTING_KEY);
+    }
 
     @Bean
     MessageConverter messageConverter() {

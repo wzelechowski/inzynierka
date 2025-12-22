@@ -71,7 +71,7 @@ public class DeliveryServiceImpl implements DeliveryService {
         if (request.status() != null) {
             deliveryStatusValidator.validate(delivery.getStatus(), request.status());
             delivery.setStatus(request.status());
-            var event = new DeliveryStatusEvent(delivery.getOrderId(), request.status());
+            var event = new DeliveryStatusEvent(delivery.getOrderId(), delivery.getUserId(), request.status());
             deliveryEventPublisher.publishDeliveryStatus(event);
         }
 

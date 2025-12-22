@@ -15,7 +15,7 @@ spring:
           max-idle: 5
           max-active: 20
   rabbitmq:
-    host: rabbitmq-1
+    host: rabbitmq
     port: 5672
     username: guest
     password: guest

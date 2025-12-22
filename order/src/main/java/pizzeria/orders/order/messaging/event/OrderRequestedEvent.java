@@ -1,4 +1,4 @@
-package pizzeria.orders.order.dto.event;
+package pizzeria.orders.order.messaging.event;
 
 import java.util.UUID;
 

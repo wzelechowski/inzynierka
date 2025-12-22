@@ -2,18 +2,21 @@ package pizzeria.orders.order.service;
 
 import jakarta.ws.rs.NotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pizzeria.orders.client.menu.MenuItemClient;
 import pizzeria.orders.client.menu.dto.MenuItemResponse;
+import pizzeria.orders.order.dto.event.OrderCompletedDomainEvent;
 import pizzeria.orders.order.dto.request.OrderPatchRequest;
 import pizzeria.orders.order.dto.request.OrderRequest;
 import pizzeria.orders.order.dto.response.OrderResponse;
 import pizzeria.orders.order.mapper.OrderMapper;
+import pizzeria.orders.order.messaging.event.OrderRequestedEvent;
+import pizzeria.orders.order.messaging.publisher.OrderEventPublisher;
 import pizzeria.orders.order.model.Order;
+import pizzeria.orders.order.model.OrderStatus;
 import pizzeria.orders.order.model.OrderType;
-import pizzeria.orders.order.dto.event.OrderRequestedEvent;
-import pizzeria.orders.order.publisher.OrderEventPublisher;
 import pizzeria.orders.order.repository.OrderRepository;
 import pizzeria.orders.orderItem.model.OrderItem;
 
@@ -29,6 +32,7 @@ public class OrderServiceImpl implements OrderService {
     private final OrderMapper orderMapper;
     private final MenuItemClient menuItemClient;
     private final OrderEventPublisher orderEventPublisher;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Override
     public List<OrderResponse> getAllUsersOrders(UUID userId) {
@@ -90,7 +94,15 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     public OrderResponse patch(UUID orderId, UUID userId, OrderPatchRequest request) {
         Order order = orderRepository.findByIdAndUserId(orderId, userId).orElseThrow(NotFoundException::new);
+        OrderStatus previousStatus = order.getStatus();
         orderMapper.patchEntity(order, request);
+
+        if (previousStatus != OrderStatus.COMPLETED && request.status() == OrderStatus.COMPLETED) {
+            eventPublisher.publishEvent(
+                    new OrderCompletedDomainEvent(order)
+            );
+        }
+
         return orderMapper.toResponse(order);
     }
 }
