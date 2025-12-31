@@ -13,6 +13,6 @@ class OrderEventHandler:
         self.extractor = extractor
         self.repository = repository
 
-    async def handle(self, event: OrderEvent):
+    def handle(self, event: OrderEvent):
         features = self.extractor.extract(event)
-        await self.repository.save(features)
+        self.repository.save(features)

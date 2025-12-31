@@ -25,7 +25,7 @@ public class DomainListener {
 
         List<UUID> orderItemsIds = order.getOrderItems()
                 .stream()
-                .map(OrderItem::getId)
+                .map(OrderItem::getItemId)
                 .toList();
 
         var event = new OrderCompletedEvent(

@@ -7,7 +7,8 @@ class Settings(BaseSettings):
     mongo_url: str = "mongodb://root:example@localhost:27017/?authSource=admin"
     mongo_db: str = "ai_db"
 
-    rabbit_url: str = "localhost:5672"
+    rabbit_host: str = "localhost"
+    rabbit_port: int = 5672
 
     class Config:
         env_file = ".env"

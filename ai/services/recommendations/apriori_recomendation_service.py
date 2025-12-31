@@ -1,4 +1,6 @@
+from models.promotion_proposal import PromotionProposal
 from repositories.feature_store import FeatureStoreRepository
+from services.promotion_effect_detector import detect_effect_type
 from services.apriori.apriori_service import AprioriService
 from services.apriori.rule_filter import RulesFilter
 from services.apriori.rule_mapper import RulesMapper
@@ -35,4 +37,25 @@ class AprioriRecommendationService:
         rules_df = self.apriori_service.run(transactions)
 
         filtered = self.rules_filter.filter_rules(rules_df)
-        return self.rules_mapper.map_rules(filtered)
+        rules = self.rules_mapper.map_rules(filtered)
+
+        proposals = []
+
+        for rule in rules:
+            effect_type, reason = detect_effect_type(rule)
+
+            proposals.append(
+                PromotionProposal(
+                    antecedents=rule.antecedents,
+                    consequents=rule.consequents,
+                    effect_type=effect_type,
+                    support=rule.support,
+                    confidence=rule.confidence,
+                    lift=rule.lift,
+                    score=rule.score,
+                    reason=reason
+                )
+            )
+
+        return proposals
+

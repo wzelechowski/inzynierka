@@ -12,8 +12,8 @@ class OrderFeatureExtractor:
             is_weekend=dt.weekday() >= 5,
             is_holiday=self.is_holiday(),
             total_price=event.total_price,
-            product_ids=[str(pid) for pid in event.product_ids],
-            cart_size=len(event.product_ids)
+            product_ids=[str(pid) for pid in event.order_item_ids],
+            cart_size=len(event.order_item_ids)
         )
 
     def is_holiday(self) -> bool:

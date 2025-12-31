@@ -76,6 +76,7 @@ public class DeliveryServiceImpl implements DeliveryService {
         }
 
         deliveryMapper.patchEntity(delivery, request);
+        deliveryRepository.save(delivery);
         return deliveryMapper.toResponse(delivery);
     }
 }
