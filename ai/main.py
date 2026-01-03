@@ -1,18 +1,18 @@
 from fastapi import FastAPI
+from contextlib import asynccontextmanager
 
 from api import order_events
 from api import recommendations
+from core.rabbit import init_global
 
-app = FastAPI()
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    init_global()
+    yield
+
+
+app = FastAPI(lifespan=lifespan)
+
 app.include_router(order_events.router)
 app.include_router(recommendations.router)
-
-
-@app.get("/")
-async def root():
-    return {"message": "Hello World"}
-
-
-@app.get("/hello/{name}")
-async def say_hello(name: str):
-    return {"message": f"Hello {name}"}

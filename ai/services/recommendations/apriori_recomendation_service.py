@@ -1,4 +1,5 @@
 from models.promotion_proposal import PromotionProposal
+from rabbit.rabbit_publisher import RabbitPublisher
 from repositories.feature_store import FeatureStoreRepository
 from services.promotion_effect_detector import detect_effect_type
 from services.apriori.apriori_service import AprioriService
@@ -12,12 +13,14 @@ class AprioriRecommendationService:
             feature_repository: FeatureStoreRepository,
             apriori_service: AprioriService,
             rules_mapper: RulesMapper,
-            rules_filter: RulesFilter
+            rules_filter: RulesFilter,
+            publisher: RabbitPublisher | None
     ):
         self.feature_repository = feature_repository
         self.apriori_service = apriori_service
         self.rules_mapper = rules_mapper
         self.rules_filter = rules_filter
+        self.publisher = publisher
 
     async def generate(self):
         features = await self.feature_repository.find_all()
@@ -57,5 +60,8 @@ class AprioriRecommendationService:
                 )
             )
 
-        return proposals
+        if self.publisher and proposals:
+            for proposal in proposals:
+                self.publisher.publish(payload=proposal.model_dump())
 
+        return proposals

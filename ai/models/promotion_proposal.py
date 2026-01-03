@@ -1,10 +1,11 @@
 from dataclasses import dataclass
 from typing import List
 
+from pydantic import BaseModel
+
 from services.promotion_effect_detector import EffectType
 
-@dataclass
-class PromotionProposal:
+class PromotionProposal(BaseModel):
     antecedents: List[str]
     consequents: List[str]
     effect_type: EffectType
