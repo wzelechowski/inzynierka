@@ -32,6 +32,9 @@ public record PromotionProposalRequest(
         BigDecimal score,
 
         @NotBlank
-        String reason
+        String reason,
+
+        @NotNull
+        BigDecimal discount
 ) {
 }

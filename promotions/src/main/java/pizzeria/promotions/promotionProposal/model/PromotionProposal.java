@@ -32,6 +32,7 @@ public class PromotionProposal {
     private BigDecimal lift;
     private BigDecimal score;
     private String reason;
+    private BigDecimal discount;
 
     @Builder.Default
     private Boolean approved = false;

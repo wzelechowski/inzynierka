@@ -7,7 +7,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
+import pizzeria.promotions.promotionProposal.model.PromotionProposal;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -29,10 +31,13 @@ public class Promotion {
 
     private LocalDateTime startDate;
     private LocalDateTime endDate;
+    private BigDecimal discount;
 
-    private Integer priority;
-
-    @Column(columnDefinition = "jsonb")
-    @JdbcTypeCode(SqlTypes.JSON)
-    private PromotionRule promotionRule;
+    @OneToOne(
+            optional = false,
+            fetch = FetchType.LAZY,
+            cascade = {CascadeType.MERGE, CascadeType.PERSIST}
+    )
+    @JoinColumn(name = "proposal_id", nullable = false, unique = true)
+    private PromotionProposal proposal;
 }

@@ -1,10 +1,13 @@
 from models.promotion_proposal import PromotionProposal
 from rabbit.rabbit_publisher import RabbitPublisher
 from repositories.feature_store import FeatureStoreRepository
+from services.promotion_discount_generator import generate_percent_discount, generate_fixed_discount
 from services.promotion_effect_detector import detect_effect_type
 from services.apriori.apriori_service import AprioriService
 from services.apriori.rule_filter import RulesFilter
 from services.apriori.rule_mapper import RulesMapper
+
+from services.promotion_effect_detector import EffectType
 
 
 class AprioriRecommendationService:
@@ -46,6 +49,14 @@ class AprioriRecommendationService:
 
         for rule in rules:
             effect_type, reason = detect_effect_type(rule)
+            if effect_type == EffectType.PERCENT:
+                discount = generate_percent_discount(rule)
+
+            if effect_type == EffectType.FIXED:
+                discount = generate_fixed_discount(rule)
+
+            if effect_type == EffectType.FREE_PRODUCT:
+                discount = 1.00
 
             proposals.append(
                 PromotionProposal(
@@ -56,12 +67,13 @@ class AprioriRecommendationService:
                     confidence=rule.confidence,
                     lift=rule.lift,
                     score=rule.score,
-                    reason=reason
+                    reason=reason,
+                    discount=discount
                 )
             )
 
         if self.publisher and proposals:
             for proposal in proposals:
-                self.publisher.publish(payload=proposal.model_dump())
+                self.publisher.publish(payload=proposal)
 
         return proposals

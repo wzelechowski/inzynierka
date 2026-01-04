@@ -13,6 +13,7 @@ public record PromotionProposalResponse(
         BigDecimal lift,
         BigDecimal score,
         String reason,
+        BigDecimal discount,
         List<PromotionProposalProductResponse> products
 ) {
 }

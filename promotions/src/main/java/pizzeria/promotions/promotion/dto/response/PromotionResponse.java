@@ -1,7 +1,8 @@
 package pizzeria.promotions.promotion.dto.response;
 
-import pizzeria.promotions.promotion.model.PromotionRule;
+import pizzeria.promotions.promotionProposal.dto.response.PromotionProposalResponse;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -11,7 +12,7 @@ public record PromotionResponse(
         Boolean active,
         LocalDateTime startDate,
         LocalDateTime endDate,
-        Integer priority,
-        PromotionRule promotionRule
+        BigDecimal discount,
+        PromotionProposalResponse proposal
 ) {
 }
