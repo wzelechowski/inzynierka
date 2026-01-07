@@ -31,6 +31,9 @@ public record PromotionProposedEvent(
         BigDecimal score,
 
         @NotBlank
-        String reason
+        String reason,
+
+        @NotNull
+        BigDecimal discount
 ) {
 }

@@ -5,8 +5,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import pizzeria.promotions.promotion.dto.request.PromotionCheckRequest;
 import pizzeria.promotions.promotion.dto.request.PromotionPatchRequest;
 import pizzeria.promotions.promotion.dto.request.PromotionRequest;
+import pizzeria.promotions.promotion.dto.response.PromotionCheckResponse;
 import pizzeria.promotions.promotion.dto.response.PromotionResponse;
 import pizzeria.promotions.promotion.service.PromotionService;
 
@@ -53,6 +55,12 @@ public class PromotionController {
     @PatchMapping("/{id}")
     public ResponseEntity<PromotionResponse> patchPromotion(@PathVariable UUID id, @Valid @RequestBody PromotionPatchRequest request) {
         PromotionResponse response = promotionService.patch(id, request);
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/check")
+    public ResponseEntity<PromotionCheckResponse> checkPromotion(@Valid @RequestBody PromotionCheckRequest request) {
+        PromotionCheckResponse response = promotionService.checkPromotion(request);
         return ResponseEntity.ok(response);
     }
 }

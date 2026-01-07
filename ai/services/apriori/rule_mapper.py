@@ -15,7 +15,7 @@ class RulesMapper:
         for r in rules.itertuples():
             if (
                 r.confidence < 0.6
-                or r.lift < 1.2
+                or r.lift < 1.0
                 or len(r.consequents) != 1
             ):
                 continue

@@ -43,8 +43,8 @@ public class PromotionProposalServiceImpl implements PromotionProposalService {
         PromotionProposal promotionProposal = promotionProposalMapper.toEntity(request);
         request.antecedents().forEach(id -> promotionProposal.addProduct(id, ProposalProductRole.ANTECEDENT));
         request.consequents().forEach(id -> promotionProposal.addProduct(id, ProposalProductRole.CONSEQUENT));
-        promotionProposalRepository.save(promotionProposal);
-        return promotionProposalMapper.toResponse(promotionProposal);
+        PromotionProposal saved = promotionProposalRepository.saveAndFlush(promotionProposal);
+        return promotionProposalMapper.toResponse(saved);
     }
 
     @Override

@@ -5,7 +5,7 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Service;
 import pizzeria.promotions.config.RabbitConfig;
 import pizzeria.promotions.promotionProposal.dto.request.PromotionProposalRequest;
-import pizzeria.promotions.promotionProposal.mapper.PromotionProposedEventMapper;
+import pizzeria.promotions.promotionProposal.messaging.mapper.PromotionProposedEventMapper;
 import pizzeria.promotions.promotionProposal.messaging.event.PromotionProposedEvent;
 import pizzeria.promotions.promotionProposal.service.PromotionProposalService;
 

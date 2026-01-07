@@ -1,8 +1,8 @@
-package pizzeria.orders.order.messaging.event;
+package pizzeria.deliveries.delivery.messaging.event;
 
 import java.util.UUID;
 
-public record OrderRequestedEvent(
+public record DeliveryRequestedEvent(
         UUID orderId,
         String deliveryAddress,
         String deliveryCity,

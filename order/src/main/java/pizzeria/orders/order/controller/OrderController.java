@@ -4,9 +4,11 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import pizzeria.orders.order.dto.request.OrderDeliveryRequest;
 import pizzeria.orders.order.dto.request.OrderPatchRequest;
 import pizzeria.orders.order.dto.request.OrderRequest;
 import pizzeria.orders.order.dto.response.OrderResponse;
+import pizzeria.orders.order.model.OrderType;
 import pizzeria.orders.order.service.OrderService;
 
 import java.util.List;
@@ -36,6 +38,20 @@ public class OrderController {
 
     @PostMapping("")
     public ResponseEntity<OrderResponse> createOrder(@Valid @RequestBody OrderRequest request, @RequestHeader("X-User-Id") UUID userId) {
+        if (request.type() == OrderType.DELIVERY) {
+            throw new IllegalArgumentException("Order type cannot be DELIVERY");
+        }
+
+        OrderResponse response = orderService.save(request, userId);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    @PostMapping("/delivery")
+    public ResponseEntity<OrderResponse> createDeliveryOrder(@Valid @RequestBody OrderDeliveryRequest request, @RequestHeader("X-User-Id") UUID userId) {
+        if (request.type() != OrderType.DELIVERY) {
+            throw new IllegalArgumentException("Order type have to be DELIVERY");
+        }
+
         OrderResponse response = orderService.save(request, userId);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }

@@ -1,4 +1,4 @@
-package pizzeria.promotions.promotionProposal.mapper;
+package pizzeria.promotions.promotionProposal.messaging.mapper;
 
 import org.mapstruct.Mapper;
 import pizzeria.promotions.promotionProposal.dto.request.PromotionProposalRequest;

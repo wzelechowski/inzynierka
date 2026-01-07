@@ -12,9 +12,7 @@ import pizzeria.orders.orderItem.model.OrderItem;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Entity
 @Table(name = "orders")
@@ -47,6 +45,9 @@ public class Order {
     private LocalDateTime updatedAt;
 
     private LocalDateTime completedAt;
+
+    @Builder.Default
+    private Set<UUID> promotionIds = new HashSet<>();
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @Builder.Default

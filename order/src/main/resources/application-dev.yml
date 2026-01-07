@@ -32,3 +32,6 @@ logging:
 
 menu-service:
   url: "http://localhost:8081"
+
+promotion-service:
+  url: "http://localhost:8085"

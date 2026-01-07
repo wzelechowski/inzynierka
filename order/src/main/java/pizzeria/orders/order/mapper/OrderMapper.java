@@ -1,6 +1,7 @@
 package pizzeria.orders.order.mapper;
 
 import org.mapstruct.*;
+import pizzeria.orders.order.dto.request.OrderDeliveryRequest;
 import pizzeria.orders.order.dto.request.OrderPatchRequest;
 import pizzeria.orders.order.dto.request.OrderRequest;
 import pizzeria.orders.order.dto.response.OrderResponse;
@@ -12,6 +13,8 @@ public interface OrderMapper {
     OrderResponse toResponse(Order order);
 
     Order toEntity(OrderRequest request);
+
+    Order toDeliveryEntity(OrderDeliveryRequest request);
 
     void updateEntity(@MappingTarget Order order, OrderRequest request);
 

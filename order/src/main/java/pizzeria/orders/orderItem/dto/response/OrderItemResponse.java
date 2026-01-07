@@ -8,5 +8,7 @@ public record OrderItemResponse(
         UUID itemId,
         Integer quantity,
         BigDecimal basePrice,
-        BigDecimal totalPrice
+        BigDecimal finalPrice,
+        BigDecimal totalPrice,
+        Boolean discounted
 ) {}

@@ -6,23 +6,32 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import pizzeria.promotions.promotion.dto.AppliedPromotion;
+import pizzeria.promotions.promotion.dto.request.PromotionCheckRequest;
 import pizzeria.promotions.promotion.dto.request.PromotionPatchRequest;
 import pizzeria.promotions.promotion.dto.request.PromotionRequest;
+import pizzeria.promotions.promotion.dto.response.PromotionCheckResponse;
 import pizzeria.promotions.promotion.dto.response.PromotionResponse;
 import pizzeria.promotions.promotion.mapper.PromotionMapper;
 import pizzeria.promotions.promotion.model.Promotion;
 import pizzeria.promotions.promotion.repository.PromotionRepository;
+import pizzeria.promotions.promotionProposal.model.PromotionProposal;
+import pizzeria.promotions.promotionProposal.repository.PromotionProposalRepository;
+import pizzeria.promotions.promotionProposalProduct.model.PromotionProposalProduct;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
+
+import static pizzeria.promotions.promotionProposalProduct.model.ProposalProductRole.ANTECEDENT;
+import static pizzeria.promotions.promotionProposalProduct.model.ProposalProductRole.CONSEQUENT;
 
 @Service
 @RequiredArgsConstructor
 public class PromotionServiceImpl implements PromotionService {
     private final PromotionRepository promotionRepository;
     private final PromotionMapper promotionMapper;
+    private final PromotionProposalRepository promotionProposalRepository;
 
 
     @Override
@@ -43,7 +52,9 @@ public class PromotionServiceImpl implements PromotionService {
     @Transactional
     public PromotionResponse save(PromotionRequest request) {
         Promotion promotion = promotionMapper.toEntity(request);
-        promotion.getProposal().setApproved(true);
+        PromotionProposal proposal = promotionProposalRepository.findById(request.proposalId()).orElseThrow(NotFoundException::new);
+        proposal.setApproved(true);
+        promotion.setProposal(proposal);
         promotionRepository.save(promotion);
         return promotionMapper.toResponse(promotion);
     }
@@ -77,6 +88,40 @@ public class PromotionServiceImpl implements PromotionService {
 
         promotionMapper.patchEntity(promotion, request);
         return promotionMapper.toResponse(promotion);
+    }
+
+    @Override
+    public PromotionCheckResponse checkPromotion(PromotionCheckRequest request) {
+        Set<UUID> orderProductids = new HashSet<>(request.productIds());
+        List<Promotion> promotions = promotionRepository.findByActive(true);
+        List<AppliedPromotion> appliedPromotions = new ArrayList<>();
+        for (Promotion promotion : promotions) {
+            Set<UUID> requiredProducts = promotion.getProposal().getProducts()
+                    .stream()
+                    .filter(product -> product.getRole() == ANTECEDENT)
+                    .map(PromotionProposalProduct::getProductId)
+                    .collect(Collectors.toSet());
+
+            if (orderProductids.containsAll(requiredProducts)) {
+                promotion.getProposal().getProducts()
+                        .stream()
+                        .filter(product -> product.getRole() == CONSEQUENT)
+                        .map(PromotionProposalProduct::getProductId)
+                                .filter(orderProductids::contains)
+                                        .forEach(productId ->
+                                                appliedPromotions.add(
+                                                        new AppliedPromotion(
+                                                                promotion.getId(),
+                                                                productId,
+                                                                promotion.getProposal().getEffectType(),
+                                                                promotion.getDiscount()
+                                                        )
+                                                ));
+
+            }
+        }
+
+        return new PromotionCheckResponse(appliedPromotions);
     }
 
     @Scheduled(cron = "0 0 0 * * *")

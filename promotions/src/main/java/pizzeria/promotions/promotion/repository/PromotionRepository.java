@@ -9,4 +9,5 @@ import java.util.UUID;
 
 public interface PromotionRepository extends JpaRepository<Promotion, UUID> {
     List<Promotion> findByActiveTrueAndEndDateBefore(LocalDateTime time);
+    List<Promotion> findByActive(Boolean active);
 }

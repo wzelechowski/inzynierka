@@ -3,16 +3,17 @@ package pizzeria.deliveries.delivery.service;
 import jakarta.ws.rs.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import pizzeria.deliveries.delivery.dto.event.DeliveryStatusEvent;
+import org.springframework.transaction.annotation.Transactional;
+import pizzeria.deliveries.delivery.messaging.event.DeliveryStatusEvent;
 import pizzeria.deliveries.delivery.dto.request.DeliveryPatchRequest;
 import pizzeria.deliveries.delivery.dto.request.DeliveryRequest;
 import pizzeria.deliveries.delivery.dto.response.DeliveryResponse;
 import pizzeria.deliveries.delivery.mapper.DeliveryMapper;
 import pizzeria.deliveries.delivery.model.Delivery;
-import pizzeria.deliveries.delivery.publisher.DeliveryEventPublisher;
+import pizzeria.deliveries.delivery.messaging.publisher.DeliveryEventPublisher;
+import pizzeria.deliveries.delivery.model.DeliveryStatus;
 import pizzeria.deliveries.delivery.repository.DeliveryRepository;
 import pizzeria.deliveries.delivery.validator.DeliveryStatusValidator;
-import pizzeria.deliveries.supplier.model.Supplier;
 import pizzeria.deliveries.supplier.repository.SupplierRepository;
 
 import java.util.List;
@@ -44,21 +45,22 @@ public class DeliveryServiceImpl implements DeliveryService {
     }
 
     @Override
+    @Transactional
     public DeliveryResponse save(DeliveryRequest request) {
-        Supplier supplier = supplierRepository.findById(request.supplierId()).orElseThrow(NotFoundException::new);
         Delivery delivery = deliveryMapper.toEntity(request);
-        delivery.setSupplier(supplier);
         deliveryRepository.save(delivery);
         return deliveryMapper.toResponse(delivery);
     }
 
     @Override
+    @Transactional
     public void delete(UUID id) {
         Delivery delivery =  deliveryRepository.findById(id).orElseThrow(NotFoundException::new);
         deliveryRepository.delete(delivery);
     }
 
     @Override
+    @Transactional
     public DeliveryResponse update(UUID id, DeliveryRequest request) {
         Delivery delivery = deliveryRepository.findById(id).orElseThrow(NotFoundException::new);
         deliveryMapper.updateEntity(delivery, request);
@@ -66,12 +68,19 @@ public class DeliveryServiceImpl implements DeliveryService {
     }
 
     @Override
+    @Transactional
     public DeliveryResponse patch(UUID id, DeliveryPatchRequest request) {
         Delivery delivery = deliveryRepository.findById(id).orElseThrow(NotFoundException::new);
         if (request.status() != null) {
+            if (request.status() != DeliveryStatus.CANCELLED) {
+                if (request.supplierId() == null && delivery.getSupplier() == null) {
+                    throw new IllegalArgumentException("Cannot change delivery status without supplier");
+                }
+            }
+
             deliveryStatusValidator.validate(delivery.getStatus(), request.status());
             delivery.setStatus(request.status());
-            var event = new DeliveryStatusEvent(delivery.getOrderId(), delivery.getUserId(), request.status());
+            var event = new DeliveryStatusEvent(delivery.getOrderId(), request.status());
             deliveryEventPublisher.publishDeliveryStatus(event);
         }
 

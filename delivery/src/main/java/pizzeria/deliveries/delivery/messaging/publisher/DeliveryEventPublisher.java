@@ -1,10 +1,10 @@
-package pizzeria.deliveries.delivery.publisher;
+package pizzeria.deliveries.delivery.messaging.publisher;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
 import pizzeria.deliveries.config.RabbitConfig;
-import pizzeria.deliveries.delivery.dto.event.DeliveryStatusEvent;
+import pizzeria.deliveries.delivery.messaging.event.DeliveryStatusEvent;
 
 @Service
 @RequiredArgsConstructor

@@ -34,3 +34,6 @@ spring:
 
 menu-service:
   url: "http://menu-service:8081"
+
+promotion-service:
+  url: "http://promotion-service:8085"

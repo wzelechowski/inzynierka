@@ -21,9 +21,6 @@ public class Delivery {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
-
-    private UUID userId;
-
     private UUID orderId;
 
     @ManyToOne(fetch = FetchType.LAZY)

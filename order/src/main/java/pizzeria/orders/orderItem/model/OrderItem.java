@@ -24,7 +24,11 @@ public class OrderItem {
     private UUID itemId;
     private Integer quantity;
     private BigDecimal basePrice;
+    private BigDecimal finalPrice;
     private BigDecimal totalPrice;
+
+    @Builder.Default
+    private Boolean discounted = false;
 
     @ManyToOne
     @JoinColumn(name = "order_id")
@@ -33,8 +37,8 @@ public class OrderItem {
     @PrePersist
     @PreUpdate
     public void calculateTotalPrice() {
-        if (basePrice != null && quantity != null) {
-            this.totalPrice = basePrice.multiply(BigDecimal.valueOf(quantity));
+        if (finalPrice != null && quantity != null) {
+            this.totalPrice = finalPrice.multiply(BigDecimal.valueOf(quantity));
         }
     }
 }

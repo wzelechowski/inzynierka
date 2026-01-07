@@ -1,7 +1,9 @@
 package pizzeria.promotions.promotion.service;
 
+import pizzeria.promotions.promotion.dto.request.PromotionCheckRequest;
 import pizzeria.promotions.promotion.dto.request.PromotionPatchRequest;
 import pizzeria.promotions.promotion.dto.request.PromotionRequest;
+import pizzeria.promotions.promotion.dto.response.PromotionCheckResponse;
 import pizzeria.promotions.promotion.dto.response.PromotionResponse;
 
 import java.util.List;
@@ -19,4 +21,6 @@ public interface PromotionService {
     PromotionResponse update(UUID id, PromotionRequest request);
 
     PromotionResponse patch(UUID id, PromotionPatchRequest request);
+
+    PromotionCheckResponse checkPromotion(PromotionCheckRequest request);
 }
