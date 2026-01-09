@@ -25,6 +25,7 @@ import pizzeria.orders.orderItem.model.OrderItem;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -105,14 +106,14 @@ public class OrderServiceImpl implements OrderService {
     public OrderResponse patch(UUID orderId, UUID userId, OrderPatchRequest request) {
         Order order = orderRepository.findByIdAndUserId(orderId, userId).orElseThrow(NotFoundException::new);
         OrderStatus previousStatus = order.getStatus();
-        orderMapper.patchEntity(order, request);
-
         if (previousStatus != OrderStatus.COMPLETED && request.status() == OrderStatus.COMPLETED) {
+            order.setCompletedAt(LocalDateTime.now());
             eventPublisher.publishEvent(
                     new OrderCompletedDomainEvent(order)
             );
         }
 
+        orderMapper.patchEntity(order, request);
         return orderMapper.toResponse(order);
     }
 
@@ -136,6 +137,7 @@ public class OrderServiceImpl implements OrderService {
         BigDecimal finalPrice = applyPromotion(orderItem.getBasePrice(), promotion);
         if (orderItem.getQuantity() > 1) {
             orderItem.setQuantity(orderItem.getQuantity() - 1);
+            orderItem.setTotalPrice(orderItem.getFinalPrice().multiply(BigDecimal.valueOf(orderItem.getQuantity())));
             OrderItem discountedOrderItem = modelDiscountedOrderItem(orderItem, finalPrice);
             discountedOrderItem.setOrder(order);
             discountedItems.add(discountedOrderItem);
@@ -152,6 +154,7 @@ public class OrderServiceImpl implements OrderService {
         discountedOrderItem.setQuantity(1);
         discountedOrderItem.setBasePrice(orderItem.getBasePrice());
         discountedOrderItem.setFinalPrice(finalPrice);
+        discountedOrderItem.setTotalPrice(finalPrice);
         discountedOrderItem.setDiscounted(true);
         return discountedOrderItem;
     }
@@ -189,7 +192,6 @@ public class OrderServiceImpl implements OrderService {
             orderItem.setBasePrice(menuItem.basePrice());
             orderItem.setFinalPrice(basePrice);
             orderItem.setTotalPrice(basePrice.multiply(BigDecimal.valueOf(orderItem.getQuantity())));
-//            orderItem.setDiscounted(false);
             AppliedPromotion promotion = getBestPromotion(orderPromotions, orderItem);
             if (promotion != null) {
                 order.getPromotionIds().add(promotion.promotionId());

@@ -1,4 +1,4 @@
-package pizzeria.orders.order.mapper;
+package pizzeria.orders.order.messaging.mapper;
 
 import org.springframework.stereotype.Component;
 import pizzeria.orders.order.messaging.event.OrderStatusEvent;
@@ -25,9 +25,7 @@ public class OrderEventMapper {
 
     private OrderStatus mapStatus(DeliveryStatus status) {
         return switch (status) {
-            case ASSIGNED -> OrderStatus.IN_PREPARATION;
-            case PICKED_UP -> OrderStatus.READY;
-            case IN_TRANSIT -> OrderStatus.DELIVERY;
+            case PICKED_UP -> OrderStatus.DELIVERY;
             case DELIVERED -> OrderStatus.COMPLETED;
             case CANCELLED -> OrderStatus.CANCELLED;
         };

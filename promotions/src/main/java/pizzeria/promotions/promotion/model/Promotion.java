@@ -39,5 +39,6 @@ public class Promotion {
             cascade = {CascadeType.MERGE, CascadeType.PERSIST}
     )
     @JoinColumn(name = "proposal_id", nullable = false, unique = true)
-    private PromotionProposal proposal;
+    @Builder.Default
+    private PromotionProposal proposal = null;
 }

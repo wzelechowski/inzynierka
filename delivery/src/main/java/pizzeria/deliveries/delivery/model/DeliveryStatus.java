@@ -1,5 +1,14 @@
 package pizzeria.deliveries.delivery.model;
 
 public enum DeliveryStatus {
-    ASSIGNED, PICKED_UP, IN_TRANSIT, DELIVERED, CANCELLED
+    PENDING, ASSIGNED, PICKED_UP, DELIVERED, CANCELLED;
+
+    public boolean canTransitionTo(DeliveryStatus target) {
+        return switch (this) {
+            case PENDING -> target == ASSIGNED;
+            case ASSIGNED -> target == PICKED_UP || target == CANCELLED;
+            case PICKED_UP -> target == DELIVERED;
+            default -> false;
+        };
+    }
 }

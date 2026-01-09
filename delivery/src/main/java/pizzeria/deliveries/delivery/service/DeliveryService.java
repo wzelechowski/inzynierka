@@ -1,7 +1,8 @@
 package pizzeria.deliveries.delivery.service;
 
-import pizzeria.deliveries.delivery.dto.request.DeliveryPatchRequest;
+import pizzeria.deliveries.delivery.dto.request.DeliveryChangeStatus;
 import pizzeria.deliveries.delivery.dto.request.DeliveryRequest;
+import pizzeria.deliveries.delivery.dto.request.DeliverySupplierAssignRequest;
 import pizzeria.deliveries.delivery.dto.response.DeliveryResponse;
 
 import java.util.List;
@@ -18,5 +19,7 @@ public interface DeliveryService {
 
     DeliveryResponse update(UUID id, DeliveryRequest request);
 
-    DeliveryResponse patch(UUID id, DeliveryPatchRequest request);
+    DeliveryResponse changeStatus(UUID id, DeliveryChangeStatus request);
+
+    DeliveryResponse assignSupplier(UUID id, DeliverySupplierAssignRequest request);
 }

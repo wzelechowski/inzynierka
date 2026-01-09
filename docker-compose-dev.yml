@@ -189,6 +189,41 @@ services:
       - JWT_SECRET=${JWT_SECRET}
       - SPRING_PROFILES_ACTIVE=docker
 
+  ai-service:
+    container_name: ai-service
+    build:
+      context: ./ai
+    ports:
+      - "8000:8000"
+    environment:
+      ENV: docker
+      MONGO_URL: mongodb://root:example@mongo:27017/?authSource=admin
+      MONGO_DB: ai_db
+      RABBIT_HOST: rabbitmq
+      RABBIT_PORT: 5672
+    depends_on:
+      - mongo
+      - rabbitmq
+    networks:
+      - backend
+
+  ai-consumer:
+    container_name: ai-consumer
+    build:
+      context: ./ai
+      dockerfile: Dockerfile.consumer
+    environment:
+      ENV: docker
+      MONGO_URL: mongodb://root:example@mongo:27017/?authSource=admin
+      MONGO_DB: ai_db
+      RABBIT_HOST: rabbitmq
+      RABBIT_PORT: 5672
+    depends_on:
+      - ai-service
+    restart: unless-stopped
+    networks:
+      - backend
+
 
   gateway:
     container_name: gateway

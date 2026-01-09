@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import pizzeria.promotions.promotion.model.Promotion;
 import pizzeria.promotions.promotionProposalProduct.model.PromotionProposalProduct;
 import pizzeria.promotions.promotionProposalProduct.model.ProposalProductRole;
 
@@ -36,6 +37,12 @@ public class PromotionProposal {
 
     @Builder.Default
     private Boolean approved = false;
+
+    @OneToOne(fetch = FetchType.LAZY,
+            cascade = {CascadeType.MERGE, CascadeType.PERSIST}
+    )
+    @Builder.Default
+    private Promotion promotion = null;
 
     @OneToMany(mappedBy = "proposal", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @Builder.Default

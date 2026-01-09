@@ -6,6 +6,7 @@ from services.order_event_handler import OrderEventHandler
 from services.order_feature_extractor import OrderFeatureExtractor
 from .order_completed_consumer import OrderCompletedConsumer
 
+
 connection = pika.BlockingConnection(
     pika.ConnectionParameters(host=settings.rabbit_host, port=settings.rabbit_port)
 )

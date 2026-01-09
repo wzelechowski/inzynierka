@@ -7,7 +7,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import pizzeria.deliveries.supplier.model.Supplier;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -29,7 +28,7 @@ public class Delivery {
 
     @Enumerated(EnumType.STRING)
     @Builder.Default
-    private DeliveryStatus status = DeliveryStatus.ASSIGNED;
+    private DeliveryStatus status = DeliveryStatus.PENDING;
 
     private String deliveryAddress;
     private String deliveryCity;
@@ -38,6 +37,35 @@ public class Delivery {
     private LocalDateTime pickedUpAt;
     private LocalDateTime deliveredAt;
 
-    @Builder.Default
-    private BigDecimal fee = BigDecimal.ZERO;
+    public void assignSupplier(Supplier supplier) {
+        this.supplier = supplier;
+        this.status = DeliveryStatus.ASSIGNED;
+        this.assignedAt = LocalDateTime.now();
+    }
+
+    public void changeStatus(DeliveryStatus newStatus) {
+        if (newStatus == null) {
+            return;
+        }
+
+        if (newStatus != DeliveryStatus.CANCELLED) {
+            if (this.supplier == null) {
+                throw new IllegalArgumentException("Cannot change delivery status without supplier");
+            }
+        }
+
+       if(!this.status.canTransitionTo(newStatus)) {
+           throw new IllegalArgumentException("Cannot change delivery status");
+       }
+
+        this.status = newStatus;
+        setTimestamps(newStatus);
+    }
+
+    private void setTimestamps(DeliveryStatus status) {
+        switch (status) {
+            case PICKED_UP -> this.pickedUpAt = LocalDateTime.now();
+            case DELIVERED -> this.deliveredAt = LocalDateTime.now();
+        }
+    }
 }

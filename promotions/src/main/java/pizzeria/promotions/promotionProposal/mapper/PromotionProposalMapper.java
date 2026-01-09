@@ -1,9 +1,6 @@
 package pizzeria.promotions.promotionProposal.mapper;
 
-import org.mapstruct.BeanMapping;
-import org.mapstruct.Mapper;
-import org.mapstruct.MappingTarget;
-import org.mapstruct.NullValuePropertyMappingStrategy;
+import org.mapstruct.*;
 import pizzeria.promotions.promotionProposal.dto.request.PromotionProposalPatchRequest;
 import pizzeria.promotions.promotionProposal.dto.request.PromotionProposalRequest;
 import pizzeria.promotions.promotionProposal.dto.response.PromotionProposalResponse;
@@ -22,4 +19,11 @@ public interface PromotionProposalMapper {
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     void patchEntity(@MappingTarget PromotionProposal promotionProposal,
                      PromotionProposalPatchRequest request);
+
+    @AfterMapping
+    default void linkProducts(@MappingTarget PromotionProposal proposal) {
+        if (proposal.getProducts() != null) {
+            proposal.getProducts().forEach(product -> product.setProposal(proposal));
+        }
+    }
 }

@@ -4,8 +4,9 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import pizzeria.deliveries.delivery.dto.request.DeliveryPatchRequest;
+import pizzeria.deliveries.delivery.dto.request.DeliveryChangeStatus;
 import pizzeria.deliveries.delivery.dto.request.DeliveryRequest;
+import pizzeria.deliveries.delivery.dto.request.DeliverySupplierAssignRequest;
 import pizzeria.deliveries.delivery.dto.response.DeliveryResponse;
 import pizzeria.deliveries.delivery.service.DeliveryService;
 
@@ -52,9 +53,15 @@ public class DeliveryController {
         return ResponseEntity.ok(response);
     }
 
-    @PatchMapping("/{id}")
-    public ResponseEntity<DeliveryResponse> patchDelivery(@PathVariable UUID id, @Valid @RequestBody DeliveryPatchRequest request) {
-        DeliveryResponse response = deliveryService.patch(id, request);
+    @PutMapping("/{id}/status")
+    public ResponseEntity<DeliveryResponse> patchDelivery(@PathVariable UUID id, @Valid @RequestBody DeliveryChangeStatus request) {
+        DeliveryResponse response = deliveryService.changeStatus(id, request);
+        return ResponseEntity.ok(response);
+    }
+
+    @PutMapping("/{id}/supplier")
+    public ResponseEntity<DeliveryResponse> updateSupplier(@PathVariable UUID id, @Valid @RequestBody DeliverySupplierAssignRequest request) {
+        DeliveryResponse response = deliveryService.assignSupplier(id, request);
         return ResponseEntity.ok(response);
     }
 }

@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import pizzeria.orders.config.RabbitConfig;
 import pizzeria.orders.order.messaging.event.OrderStatusEvent;
 import pizzeria.orders.order.dto.request.OrderPatchRequest;
-import pizzeria.orders.order.mapper.OrderEventMapper;
+import pizzeria.orders.order.messaging.mapper.OrderEventMapper;
 import pizzeria.orders.order.service.OrderService;
 
 import java.util.UUID;

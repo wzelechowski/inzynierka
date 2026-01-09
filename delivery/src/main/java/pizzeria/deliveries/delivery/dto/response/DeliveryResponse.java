@@ -3,7 +3,6 @@ package pizzeria.deliveries.delivery.dto.response;
 import pizzeria.deliveries.delivery.model.DeliveryStatus;
 import pizzeria.deliveries.supplier.dto.response.SupplierResponse;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -17,7 +16,6 @@ public record DeliveryResponse(
         String postalCode,
         LocalDateTime assignedAt,
         LocalDateTime pickedUpAt,
-        LocalDateTime deliveredAt,
-        BigDecimal fee
+        LocalDateTime deliveredAt
 ) {
 }

@@ -1,11 +1,13 @@
+from math import ceil
+
 def generate_percent_discount(rule):
     confidence = rule.confidence
     lift = rule.lift
     support = rule.support
 
-    if support < 0.02: return 0
-    if confidence < 0.4: return 0
-    if lift < 1.2: return 0
+    if support < 0.02: return 5
+    if confidence < 0.4: return 5
+    if lift < 1.0: return 5
 
     discount = clamp(
         (lift - 1) * 20 + confidence * 10,
@@ -15,8 +17,6 @@ def generate_percent_discount(rule):
 
     return discount / 100.0
 
-
-from math import ceil
 
 def generate_fixed_discount(rule):
     base = 2.0

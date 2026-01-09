@@ -1,10 +1,6 @@
 package pizzeria.deliveries.delivery.mapper;
 
-import org.mapstruct.BeanMapping;
-import org.mapstruct.Mapper;
-import org.mapstruct.MappingTarget;
-import org.mapstruct.NullValuePropertyMappingStrategy;
-import pizzeria.deliveries.delivery.dto.request.DeliveryPatchRequest;
+import org.mapstruct.*;
 import pizzeria.deliveries.delivery.dto.request.DeliveryRequest;
 import pizzeria.deliveries.delivery.dto.response.DeliveryResponse;
 import pizzeria.deliveries.delivery.model.Delivery;
@@ -18,6 +14,6 @@ public interface DeliveryMapper {
 
     void updateEntity(@MappingTarget Delivery delivery, DeliveryRequest request);
 
-    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    void patchEntity(@MappingTarget Delivery delivery, DeliveryPatchRequest request);
+//    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+//    void patchEntity(@MappingTarget Delivery delivery, DeliveryPatchRequest request);
 }
