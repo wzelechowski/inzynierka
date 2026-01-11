@@ -3,6 +3,7 @@ package pizzeria.gateway.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.converter.Converter;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
@@ -17,13 +18,16 @@ public class SecurityConfig {
     SecurityWebFilterChain resourceServerSecurityFilterChain(
             ServerHttpSecurity http,
             Converter<Jwt, Mono<AbstractAuthenticationToken>> authenticationConverter) {
+        http.csrf(ServerHttpSecurity.CsrfSpec::disable);
         http.oauth2ResourceServer(resourceServer ->
                 resourceServer.jwt(jwtDecoder ->
                         jwtDecoder.jwtAuthenticationConverter(authenticationConverter)));
 
         http.authorizeExchange(exchanges ->
-                exchanges.pathMatchers("/eureka/**")
-                        .permitAll()
+                exchanges
+                        .pathMatchers(HttpMethod.POST, "/api/v1/user/register").permitAll()
+                        .pathMatchers(HttpMethod.POST, "/api/v1/user/login").permitAll()
+                        .pathMatchers("/eureka/**").permitAll()
                         .anyExchange()
                         .authenticated());
 

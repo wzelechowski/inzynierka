@@ -20,6 +20,7 @@ public class AuthConfig {
     @Bean
     GlobalFilter authFilter() {
         return (exchange, chain) -> exchange.getPrincipal()
+                .filter(principal -> principal instanceof JwtAuthenticationToken)
                 .cast(JwtAuthenticationToken.class)
                 .switchIfEmpty(Mono.empty())
                 .flatMap(auth -> {
@@ -49,6 +50,7 @@ public class AuthConfig {
                             .build();
 
                     return chain.filter(newExchange);
-                });
+                })
+                .switchIfEmpty(chain.filter(exchange));
     }
 }
