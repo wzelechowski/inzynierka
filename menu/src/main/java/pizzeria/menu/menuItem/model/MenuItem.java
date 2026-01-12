@@ -28,5 +28,7 @@ public class MenuItem {
     private String name;
     private String description;
     private BigDecimal basePrice;
+
+    @Builder.Default
     private Boolean isAvailable = true;
 }

@@ -1,213 +1,231 @@
-// app/index.tsx
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, ImageBackground } from 'react-native';
-import { useRouter } from 'expo-router';
-import { colors } from '@/src/theme/colors';
-import { Ionicons } from '@expo/vector-icons';
+import React, { useEffect, useState } from 'react';
+import { View, StyleSheet, ScrollView, Text, ActivityIndicator, TouchableOpacity } from 'react-native';
+import { useRouter } from 'expo-router'; // <--- Import routera
+
+import { PromotionService } from '../src/service/promotionService';
+import { MenuItemService } from '../src/service/menuItemService';
+import PromotionCard, { PromotionItem } from '../src/components/PromotionCard';
+import { useCart } from '@/src/context/CartContext';
+import { colors } from '../src/constants/colors';
+import { CartItem } from '@/src/types/cart'
+
+interface MergedPromotionData {
+  id: string;
+  promotionName: string;
+  items: PromotionItem[];
+}
 
 export default function HomeScreen() {
   const router = useRouter();
+  const { addItems } = useCart(); 
+
+const handleAddPromotionToCart = (promo: MergedPromotionData) => {
+  const itemsToCart: CartItem[] = promo.items.map(item => ({
+    id: item.id,
+    name: item.productName,
+    price: item.originalPrice,
+    quantity: 1,
+    description: item.description || '', 
+  }));
+
+  addItems(itemsToCart);
+  alert(`Dodano zestaw "${promo.promotionName}" do koszyka!`);
+};
+
+  const [data, setData] = useState<MergedPromotionData[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const loadPromotions = async () => {
+      setIsLoading(true);
+      try {
+        const promotions = await PromotionService.getActivePromotions();
+
+        const mergedPromotions = await Promise.all(
+          promotions.map(async (promo) => {
+            const productsRefs = promo.proposal?.products;
+            if (!productsRefs || productsRefs.length === 0) return null;
+
+            const productsDetailsPromises = productsRefs.map(async (prodRef) => {
+              const menuItem = await MenuItemService.getMenuItemById(prodRef.productId);
+              if (!menuItem) return null;
+
+              const isConsequent = prodRef.role === 'CONSEQUENT';
+              const discountValue = isConsequent ? (promo.proposal?.discount || 0) : 0;
+              
+              let finalPrice = menuItem.basePrice - discountValue;
+              if (finalPrice < 0) finalPrice = 0;
+
+              return {
+                id: menuItem.id,
+                productName: String(menuItem.name),
+                description: String(menuItem.description),
+                originalPrice: menuItem.basePrice,
+                finalPrice: finalPrice,
+                discountAmount: discountValue,
+              } as PromotionItem;
+            });
+
+            const productsDetails = await Promise.all(productsDetailsPromises);
+            const validProducts = productsDetails.filter((p): p is PromotionItem => p !== null);
+
+            if (validProducts.length === 0) return null;
+
+            return {
+              id: promo.id,
+              promotionName: String(promo.name),
+              items: validProducts,
+            } as MergedPromotionData;
+          })
+        );
+
+        const validPromotions = mergedPromotions.filter((p): p is MergedPromotionData => p !== null);
+        setData(validPromotions);
+
+      } catch (error) {
+        console.error("Błąd:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadPromotions();
+  }, []);
+
+  if (isLoading) {
+    return (
+      <View style={styles.center}>
+        <ActivityIndicator size="large" color={colors.primary} />
+        <Text style={{ marginTop: 10, color: colors.textSecondary }}>Szukam pyszności...</Text>
+      </View>
+    );
+  }
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: 40 }}>
+    <ScrollView contentContainerStyle={styles.container}>
       
-      {/* 1. SEKCJA HERO */}
       <View style={styles.heroSection}>
-        <Text style={styles.heroTitle}>Głodny?</Text>
-        <Text style={styles.heroSubtitle}>Włoska jakość, polska gościnność.</Text>
+        <Text style={styles.heroTitle}>Witaj w naszej restauracji!</Text>
+        <Text style={styles.heroSubtitle}>Najlepsze smaki w mieście, specjalnie dla Ciebie.</Text>
+        
         <TouchableOpacity 
-          style={styles.mainCtaButton}
+          style={styles.menuButton}
           onPress={() => router.push('/menu')}
         >
-          <Text style={styles.ctaText}>Zobacz pełne Menu</Text>
-          <Ionicons name="arrow-forward" size={20} color="#fff" />
+          <Text style={styles.menuButtonText}>Przeglądaj Pełne Menu</Text>
         </TouchableOpacity>
       </View>
 
-      {/* 2. AKTYWNE PROMOCJE (Horyzontalny Scroll) */}
-      <View style={styles.sectionContainer}>
-        <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>Gorące Promocje 🔥</Text>
-          <Text style={styles.seeAllText}>Zobacz wszystkie</Text>
-        </View>
-
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.promoScroll}>
-          <PromoCard 
-            title="-20% na start" 
-            desc="Dla nowych klientów" 
-            code="START20" 
-            color="#FF9800" 
-          />
-          <PromoCard 
-            title="2 w cenie 1" 
-            desc="W każdy wtorek" 
-            code="WTORKI" 
-            color="#E91E63" 
-          />
-          <PromoCard 
-            title="Darmowa Cola" 
-            desc="Do zamówień > 50zł" 
-            code="COLAFREE" 
-            color="#2196F3" 
-          />
-        </ScrollView>
+      <View style={styles.sectionHeader}>
+        <Text style={styles.sectionTitle}>Gorące Promocje 🔥</Text>
+        <Text style={styles.sectionSubtitle}>Wybrane specjalnie dla Ciebie zestawy w niższej cenie.</Text>
       </View>
-
-      {/* 3. DLACZEGO WARTO */}
-      <View style={styles.sectionContainer}>
-        <Text style={styles.sectionTitle}>Szybko i smacznie</Text>
-        <View style={styles.featuresGrid}>
-           {/* Tutaj możesz wstawić karty z poprzedniego przykładu */}
-           <FeatureItem icon="bicycle" text="Dostawa w 30 min" />
-           <FeatureItem icon="flame" text="Piec opalany drewnem" />
-           <FeatureItem icon="leaf" text="Świeże składniki" />
-        </View>
+      
+      <View style={styles.listContainer}>
+        {data.length > 0 ? (
+          data.map((promo) => (
+          <PromotionCard
+            key={promo.id}
+            promotionName={promo.promotionName}
+            items={promo.items}
+            onPress={() => handleAddPromotionToCart(promo)}
+          />
+          ))
+        ) : (
+          <View style={styles.emptyState}>
+            <Text style={styles.emptyText}>Aktualnie brak promocji.</Text>
+            <Text style={styles.emptySubText}>Ale w menu na pewno znajdziesz coś pysznego!</Text>
+          </View>
+        )}
       </View>
-
+      
     </ScrollView>
   );
 }
 
-// --- Komponent Karty Promocji ---
-function PromoCard({ title, desc, code, color }: { title: string, desc: string, code: string, color: string }) {
-  return (
-    <TouchableOpacity style={[styles.promoCard, { backgroundColor: color }]}>
-      <View>
-        <Text style={styles.promoTitle}>{title}</Text>
-        <Text style={styles.promoDesc}>{desc}</Text>
-      </View>
-      <View style={styles.codeBadge}>
-        <Text style={styles.codeText}>{code}</Text>
-      </View>
-    </TouchableOpacity>
-  );
-}
-
-// --- Komponent Cechy ---
-function FeatureItem({ icon, text }: { icon: any, text: string }) {
-    return (
-        <View style={styles.featureItem}>
-            <Ionicons name={icon} size={24} color={colors.primary} />
-            <Text style={styles.featureText}>{text}</Text>
-        </View>
-    )
-}
-
 const styles = StyleSheet.create({
   container: {
+    backgroundColor: colors.background,
+    flexGrow: 1,
+    paddingBottom: 40,
+  },
+  center: {
     flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
     backgroundColor: colors.background,
   },
-  // HERO
+  
   heroSection: {
-    padding: 24,
     backgroundColor: colors.surface,
+    padding: 24,
+    marginBottom: 20,
     alignItems: 'center',
-    paddingVertical: 40,
+    borderBottomWidth: 1,
+    borderBottomColor: '#eee',
   },
   heroTitle: {
-    fontSize: 40,
-    fontWeight: '900',
-    color: colors.textPrimary,
+    fontSize: 26,
+    fontWeight: '800',
+    color: colors.primary,
+    marginBottom: 8,
+    textAlign: 'center',
   },
   heroSubtitle: {
     fontSize: 16,
     color: colors.textSecondary,
-    marginBottom: 24,
-    marginTop: 8,
+    marginBottom: 20,
+    textAlign: 'center',
+    lineHeight: 22,
   },
-  mainCtaButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
+  menuButton: {
     backgroundColor: colors.primary,
-    paddingVertical: 14,
-    paddingHorizontal: 24,
-    borderRadius: 50,
+    paddingVertical: 12,
+    paddingHorizontal: 30,
+    borderRadius: 25,
+    elevation: 2,
     shadowColor: colors.primary,
+    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 4,
+    shadowRadius: 4,
   },
-  ctaText: {
-    color: '#fff',
+  menuButtonText: {
+    color: colors.surface,
     fontWeight: 'bold',
     fontSize: 16,
   },
-  // PROMOCJE
-  sectionContainer: {
-    marginTop: 24,
-    paddingLeft: 20, // Padding tylko z lewej dla scrolla
-  },
+
   sectionHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingRight: 20, // Padding z prawej dla nagłówka
-    marginBottom: 12,
+    paddingHorizontal: 20,
+    marginBottom: 16,
   },
   sectionTitle: {
-    fontSize: 20,
+    fontSize: 22,
     fontWeight: '700',
     color: colors.textPrimary,
+    marginBottom: 4,
   },
-  seeAllText: {
-    color: colors.primary,
-    fontWeight: '600',
+  sectionSubtitle: {
+    fontSize: 14,
+    color: colors.textSecondary,
   },
-  promoScroll: {
-    paddingRight: 20,
-    paddingBottom: 10,
+
+  listContainer: {
+    width: '100%',
+    paddingHorizontal: 16,
+    alignItems: 'center',
   },
-  promoCard: {
-    width: 260,
-    height: 140,
-    borderRadius: 16,
-    padding: 20,
-    marginRight: 16,
-    justifyContent: 'space-between',
-    shadowColor: "#000",
-    shadowOpacity: 0.15,
-    shadowRadius: 5,
-    elevation: 3,
+  emptyState: {
+    marginTop: 40,
+    alignItems: 'center',
   },
-  promoTitle: {
-    fontSize: 22,
-    fontWeight: '800',
-    color: '#fff',
-  },
-  promoDesc: {
-    color: 'rgba(255,255,255,0.9)',
-    marginTop: 4,
-  },
-  codeBadge: {
-    alignSelf: 'flex-start',
-    backgroundColor: 'rgba(0,0,0,0.2)',
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 8,
-  },
-  codeText: {
-    color: '#fff',
+  emptyText: {
+    fontSize: 18,
+    color: colors.textPrimary,
     fontWeight: 'bold',
-    letterSpacing: 1,
-    fontSize: 12,
   },
-  // FEATURES
-  featuresGrid: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      paddingRight: 20,
-      marginTop: 10,
-  },
-  featureItem: {
-      alignItems: 'center',
-      gap: 8,
-      flex: 1,
-  },
-  featureText: {
-      textAlign: 'center',
-      fontSize: 12,
-      color: colors.textSecondary,
-      fontWeight: '500',
+  emptySubText: {
+    color: colors.textSecondary,
+    marginTop: 5,
   }
 });

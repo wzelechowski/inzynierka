@@ -10,6 +10,8 @@ import java.util.UUID;
 public interface MenuItemService {
     List<MenuItemResponse> getAllMenuItems();
 
+    List<MenuItemResponse> getAvailableMenuItems();
+
     MenuItemResponse getMenuItemById(UUID id);
 
     MenuItemResponse save(MenuItemRequest request);

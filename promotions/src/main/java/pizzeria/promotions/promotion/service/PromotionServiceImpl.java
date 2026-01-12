@@ -43,6 +43,14 @@ public class PromotionServiceImpl implements PromotionService {
     }
 
     @Override
+    public List<PromotionResponse> getActivePromotions() {
+        return promotionRepository.findByActive(true)
+                .stream()
+                .map(promotionMapper::toResponse)
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public PromotionResponse getPromotionById(UUID id) {
         Promotion promotion = promotionRepository.findById(id).orElseThrow(NotFoundException::new);
         return promotionMapper.toResponse(promotion);

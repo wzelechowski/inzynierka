@@ -1,8 +1,19 @@
 import { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, ActivityIndicator, Alert, ScrollView } from 'react-native';
+import { 
+  View, 
+  Text, 
+  TextInput, 
+  TouchableOpacity, 
+  StyleSheet, 
+  ActivityIndicator, 
+  Alert, 
+  ScrollView, 
+  Platform
+} from 'react-native';
 import { useRouter } from 'expo-router';
-import { colors } from '@/src/theme/colors';
+import { colors } from '@/src/constants/colors';
 import { Ionicons } from '@expo/vector-icons';
+import { AuthService } from '@/src/service/authService';
 
 export default function RegisterScreen() {
   const router = useRouter();
@@ -10,49 +21,60 @@ export default function RegisterScreen() {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
 
   const handleRegister = async () => {
-    // 1. Prosta walidacja po stronie aplikacji
-    if (!email || !password || !firstName) {
-      Alert.alert('Błąd', 'Wypełnij wszystkie wymagane pola.');
+    if (!email || !password || !firstName || !lastName || !phoneNumber) {
+      const errorMsg = 'Wypełnij wszystkie wymagane pola.';
+      if (Platform.OS === 'web') {
+        window.alert(errorMsg);
+      } else {
+        Alert.alert('Błąd', errorMsg);
+      }
       return;
     }
 
     setLoading(true);
 
     try {
-      // 2. Wysyłamy dane do TWOJEGO backendu (nie bezpośrednio do Keycloak!)
-      // Twój backend użyje Admin API Keycloaka, aby stworzyć usera.
-      const response = await fetch('https://twoj-wlasny-backend.com/api/register', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          firstName,
-          lastName,
-          email,
-          password,
-          username: email // Zazwyczaj email jest loginem
-        }),
+      await AuthService.register({
+        firstName,
+        lastName,
+        email,
+        phoneNumber,
+        password
       });
 
-      if (response.ok) {
-        Alert.alert(
-          'Sukces', 
-          'Konto utworzone! Sprawdź email w celu aktywacji lub zaloguj się.',
-          [{ text: 'OK', onPress: () => router.back() }] // Wróć do logowania
-        );
+      const successTitle = 'Sukces';
+      const successMsg = 'Konto zostało utworzone! Sprawdź email w celu aktywacji, a następnie się zaloguj.';
+
+      if (Platform.OS === 'web') {
+        window.alert(`${successTitle}\n\n${successMsg}`);
+        router.replace('/login');
       } else {
-        const errorData = await response.json();
-        Alert.alert('Błąd rejestracji', errorData.message || 'Coś poszło nie tak.');
+        Alert.alert(
+          successTitle, 
+          successMsg,
+          [
+            { 
+              text: 'OK', 
+              onPress: () => router.replace('/login') 
+            }
+          ]
+        );
       }
 
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
-      Alert.alert('Błąd sieci', 'Brak połączenia z serwerem.');
+      const errorMsg = error.message || 'Wystąpił nieoczekiwany błąd.';
+      
+      if (Platform.OS === 'web') {
+        window.alert(`Błąd rejestracji: ${errorMsg}`);
+      } else {
+        Alert.alert('Błąd rejestracji', errorMsg);
+      }
     } finally {
       setLoading(false);
     }
@@ -98,6 +120,14 @@ export default function RegisterScreen() {
           autoCapitalize="none"
         />
 
+        <Text style={styles.label}>Numer telefonu</Text>
+        <TextInput 
+          style={styles.input} 
+          value={phoneNumber} onChangeText={setPhoneNumber} 
+          placeholder="123456789"
+          keyboardType="phone-pad"
+        />
+
         <Text style={styles.label}>Hasło</Text>
         <TextInput 
           style={styles.input} 
@@ -105,6 +135,13 @@ export default function RegisterScreen() {
           placeholder="Min. 8 znaków"
           secureTextEntry
         />
+
+        <View style={styles.loginRow}>
+          <Text style={styles.loginText}>Masz już konto? </Text>
+          <TouchableOpacity onPress={() => router.push('/login')}>
+            <Text style={styles.loginLink}>Zaloguj się</Text>
+          </TouchableOpacity>
+        </View>
 
         <TouchableOpacity 
           style={styles.button} 
@@ -124,13 +161,13 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#f5f5f5',
+    backgroundColor: colors.background,
     padding: 20,
   },
   formCard: {
     width: '100%',
     maxWidth: 400,
-    backgroundColor: '#fff',
+    backgroundColor: colors.surface,
     padding: 24,
     borderRadius: 16,
     shadowColor: '#000',
@@ -149,10 +186,10 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#333',
+    color: colors.textPrimary,
   },
   subTitle: {
-      color: '#666',
+      color: colors.textSecondary,
       marginBottom: 24,
   },
   row: {
@@ -172,6 +209,23 @@ const styles = StyleSheet.create({
     fontSize: 16,
     backgroundColor: '#fafafa',
   },
+  
+  loginRow: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginBottom: 20,
+    marginTop: 5,
+  },
+  loginText: {
+    color: colors.textSecondary,
+    fontSize: 14,
+  },
+  loginLink: {
+    color: colors.primary,
+    fontWeight: 'bold',
+    fontSize: 14,
+  },
+
   button: {
     backgroundColor: colors.primary,
     padding: 16,

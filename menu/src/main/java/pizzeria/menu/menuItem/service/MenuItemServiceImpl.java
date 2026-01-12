@@ -39,6 +39,14 @@ public class MenuItemServiceImpl implements MenuItemService {
     }
 
     @Override
+    public List<MenuItemResponse> getAvailableMenuItems() {
+        return menuItemRepository.findByIsAvailable(true)
+                .stream()
+                .map(menuItemMapper::toResponse)
+                .toList();
+    }
+
+    @Override
     @Cacheable(value = "menuItem", key = "#id")
     public MenuItemResponse getMenuItemById(UUID id) {
         MenuItem menuItem = menuItemRepository.findById(id).orElseThrow(() -> new RuntimeException(String.valueOf(HttpStatus.NOT_FOUND)));

@@ -1,153 +1,180 @@
-import { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, ActivityIndicator, Alert } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, ActivityIndicator, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
 import { useRouter } from 'expo-router';
-import { colors } from '@/src/theme/colors';
-
-const KEYCLOAK_URL = 'http://keycloak:8443'; 
-const REALM = 'pizzeria';
-const CLIENT_ID = 'pizzeria-app';
+import { useAuth } from '../src/context/AuthContext';
+import { colors } from '../src/constants/colors';
 
 export default function LoginScreen() {
   const router = useRouter();
+  const { login } = useAuth();
   
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleLogin = async () => {
-    if (!username || !password) {
-      Alert.alert('Błąd', 'Wpisz login i hasło');
+    if (!email || !password) {
+      Alert.alert('Błąd', 'Wprowadź email i hasło');
       return;
     }
 
-    setLoading(true);
-
+    setIsSubmitting(true);
     try {
-      // Budujemy dane formularza (x-www-form-urlencoded)
-      const params = new URLSearchParams();
-      params.append('client_id', CLIENT_ID);
-      params.append('grant_type', 'password'); // To jest kluczowe dla tego flow
-      params.append('username', username);
-      params.append('password', password);
-      // params.append('scope', 'openid profile'); // Opcjonalnie
-
-      const response = await fetch(`${KEYCLOAK_URL}/realms/${REALM}/protocol/openid-connect/token`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: params.toString(),
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        console.log('Access Token:', data.access_token);
-        console.log('Refresh Token:', data.refresh_token);
-        
-        // TODO: Zapisz token w SecureStore (Mobile) lub localStorage (Web)
-        // await SecureStore.setItemAsync('user_token', data.access_token);
-
-        Alert.alert('Sukces', 'Zalogowano pomyślnie!');
-        router.replace('/tabs/dashboard');
-      } else {
-        // Obsługa błędu z Keycloak (np. złe hasło)
-        Alert.alert('Błąd logowania', data.error_description || 'Nieprawidłowe dane');
-      }
-
+      await login({ email, password });
+      router.replace('/');
     } catch (error) {
-      console.error(error);
-      Alert.alert('Błąd sieci', 'Nie udało się połączyć z serwerem logowania.');
+      Alert.alert('Błąd logowania', 'Sprawdź dane i spróbuj ponownie.');
     } finally {
-      setLoading(false);
+      setIsSubmitting(false);
     }
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.formCard}>
-        <Text style={styles.title}>Witaj w Pizzerii! 🍕</Text>
+    <KeyboardAvoidingView 
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      style={styles.container}
+    >
+      <ScrollView contentContainerStyle={styles.scrollContent}>
         
-        <Text style={styles.label}>Login / Email</Text>
-        <TextInput 
-          style={styles.input} 
-          placeholder="np. jan@kowalski.pl"
-          value={username}
-          onChangeText={setUsername}
-          autoCapitalize="none"
-        />
+        <View style={styles.card}>
+          <Text style={styles.title}>Witaj!</Text>
+          <Text style={styles.subtitle}>Zaloguj się, aby zamawiać pyszne jedzenie.</Text>
+          
+          <View style={styles.inputContainer}>
+            <Text style={styles.label}>Email</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="np. jan@kowalski.pl"
+              value={email}
+              onChangeText={setEmail}
+              autoCapitalize="none"
+              keyboardType="email-address"
+              placeholderTextColor="#999"
+            />
+          </View>
+          
+          <View style={styles.inputContainer}>
+            <Text style={styles.label}>Hasło</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="******"
+              value={password}
+              onChangeText={setPassword}
+              secureTextEntry
+              placeholderTextColor="#999"
+            />
+          </View>
 
-        <Text style={styles.label}>Hasło</Text>
-        <TextInput 
-          style={styles.input} 
-          placeholder="********"
-          value={password}
-          onChangeText={setPassword}
-          secureTextEntry
-        />
+          <View style={styles.registerRow}>
+            <Text style={styles.registerText}>Nie masz konta? </Text>
+            <TouchableOpacity onPress={() => router.push('/register')}>
+              <Text style={styles.registerLink}>Zarejestruj się</Text>
+            </TouchableOpacity>
+          </View>
 
-        <TouchableOpacity 
-          style={styles.button} 
-          onPress={handleLogin}
-          disabled={loading}
-        >
-          {loading ? (
-            <ActivityIndicator color="#fff" />
-          ) : (
-            <Text style={styles.buttonText}>Zaloguj się</Text>
-          )}
-        </TouchableOpacity>
-      </View>
-    </View>
+          <TouchableOpacity 
+            style={styles.button} 
+            onPress={handleLogin}
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? (
+              <ActivityIndicator color="#fff" />
+            ) : (
+              <Text style={styles.buttonText}>Zaloguj się</Text>
+            )}
+          </TouchableOpacity>
+        </View>
+
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: colors.background,
+  },
+  scrollContent: {
+    flexGrow: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#f5f5f5',
     padding: 20,
   },
-  formCard: {
+  
+  card: {
+    backgroundColor: colors.surface,
     width: '100%',
     maxWidth: 400,
-    backgroundColor: '#fff',
-    padding: 24,
-    borderRadius: 16,
-    shadowColor: '#000',
+    borderRadius: 20,
+    padding: 24,    
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.1,
     shadowRadius: 10,
     elevation: 5,
   },
+
   title: {
-    fontSize: 24,
+    fontSize: 26,
     fontWeight: 'bold',
-    marginBottom: 24,
+    color: colors.primary,
+    marginBottom: 5,
     textAlign: 'center',
-    color: '#333',
+  },
+  subtitle: {
+    fontSize: 14,
+    color: colors.textSecondary,
+    textAlign: 'center',
+    marginBottom: 30,
+  },
+
+  inputContainer: {
+    marginBottom: 15,
   },
   label: {
-    marginBottom: 8,
+    fontSize: 14,
+    color: colors.textPrimary,
+    marginBottom: 6,
     fontWeight: '600',
-    color: '#555',
   },
   input: {
+    backgroundColor: '#f5f5f5',
     borderWidth: 1,
-    borderColor: '#ddd',
-    borderRadius: 8,
-    padding: 12,
-    marginBottom: 16,
+    borderColor: '#e0e0e0',
+    paddingHorizontal: 15,
+    paddingVertical: 12,
+    borderRadius: 10,
     fontSize: 16,
-    backgroundColor: '#fafafa',
+    color: '#333',
   },
+
+  registerRow: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginBottom: 25,
+    marginTop: 5,
+  },
+  registerText: {
+    color: colors.textSecondary,
+    fontSize: 14,
+  },
+  registerLink: {
+    color: colors.primary,
+    fontWeight: 'bold',
+    fontSize: 14,
+  },
+
   button: {
-    backgroundColor: colors.primary, // Używam twojego koloru
-    padding: 16,
-    borderRadius: 8,
+    backgroundColor: colors.primary,
+    paddingVertical: 14,
+    borderRadius: 10,
     alignItems: 'center',
-    marginTop: 8,
+    shadowColor: colors.primary,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 3,
   },
   buttonText: {
     color: '#fff',

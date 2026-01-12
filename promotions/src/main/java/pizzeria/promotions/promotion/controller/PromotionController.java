@@ -16,7 +16,6 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@CrossOrigin(origins = "*", maxAge =  3600)
 @RequestMapping("/")
 @RequiredArgsConstructor
 public class PromotionController {
@@ -25,6 +24,12 @@ public class PromotionController {
     @GetMapping("")
     public ResponseEntity<List<PromotionResponse>> getAllPromotions() {
         List<PromotionResponse> response = promotionService.getAllPromotions();
+        return  ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/active")
+    public ResponseEntity<List<PromotionResponse>> getActivePromotions() {
+        List<PromotionResponse> response = promotionService.getActivePromotions();
         return  ResponseEntity.ok(response);
     }
 

@@ -5,11 +5,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pizzeria.user.keycloak.KeycloakService;
-import pizzeria.user.userProfile.mapper.UserProfileMapper;
-import pizzeria.user.userProfile.model.UserProfile;
 import pizzeria.user.userProfile.dto.request.UserProfilePatchRequest;
 import pizzeria.user.userProfile.dto.request.UserProfileRequest;
 import pizzeria.user.userProfile.dto.response.UserProfileResponse;
+import pizzeria.user.userProfile.mapper.UserProfileMapper;
+import pizzeria.user.userProfile.model.UserProfile;
 import pizzeria.user.userProfile.repository.UserProfileRepository;
 
 import java.util.List;
@@ -50,7 +50,6 @@ public class UserProfileServiceImpl implements UserProfileService {
             keycloakService.deleteUser(userId);
             throw e;
         }
-
     }
 
     @Override

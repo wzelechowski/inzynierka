@@ -5,8 +5,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import pizzeria.user.keycloak.KeycloakService;
+import pizzeria.user.userProfile.dto.request.AuthRequest;
 import pizzeria.user.userProfile.dto.request.UserProfilePatchRequest;
 import pizzeria.user.userProfile.dto.request.UserProfileRequest;
+import pizzeria.user.userProfile.dto.response.AuthResponse;
 import pizzeria.user.userProfile.dto.response.UserProfileResponse;
 import pizzeria.user.userProfile.service.UserProfileService;
 
@@ -14,12 +17,12 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@CrossOrigin(origins = "*", maxAge = 3600)
 @RequestMapping("")
 @RequiredArgsConstructor
 public class UserProfileController {
 
     private final UserProfileService userProfileService;
+    private final KeycloakService keycloakService;
 
     @GetMapping("")
     public ResponseEntity<List<UserProfileResponse>> getAllUserProfiles() {
@@ -37,6 +40,12 @@ public class UserProfileController {
     public ResponseEntity<UserProfileResponse> createUserProfile(@Valid @RequestBody UserProfileRequest request) {
         UserProfileResponse response = userProfileService.save(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<AuthResponse> login(@Valid @RequestBody AuthRequest request) {
+        AuthResponse response = keycloakService.login(request);
+        return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("/{id}")

@@ -1,10 +1,7 @@
 package pizzeria.deliveries.delivery.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import pizzeria.deliveries.supplier.model.Supplier;
 
 import java.time.LocalDateTime;
@@ -14,7 +11,8 @@ import java.util.UUID;
 @Table(name = "deliveries")
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
+@Getter
+@Setter
 @Builder
 public class Delivery {
     @Id

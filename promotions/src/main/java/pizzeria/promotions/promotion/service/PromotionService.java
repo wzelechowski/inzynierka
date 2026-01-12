@@ -12,6 +12,8 @@ import java.util.UUID;
 public interface PromotionService {
     List<PromotionResponse> getAllPromotions();
 
+    List<PromotionResponse> getActivePromotions();
+
     PromotionResponse getPromotionById(UUID id);
 
     PromotionResponse save(PromotionRequest request);

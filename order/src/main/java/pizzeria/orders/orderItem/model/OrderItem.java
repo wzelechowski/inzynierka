@@ -1,10 +1,7 @@
 package pizzeria.orders.orderItem.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import pizzeria.orders.order.model.Order;
 
 import java.math.BigDecimal;
@@ -14,7 +11,8 @@ import java.util.UUID;
 @Table(name = "order_items")
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
+@Getter
+@Setter
 @Builder
 public class OrderItem {
     @Id

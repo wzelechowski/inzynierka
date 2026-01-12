@@ -4,16 +4,12 @@ spring:
   jpa:
     generate-ddl: true
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: update
     show-sql: true
-  datasource:
-    username: postgres
-    password: password
-    url: jdbc:postgresql://127.0.0.1:15432/user_db
 server:
-  port: 8086
   servlet:
     context-path: /api/v1/user
+  port: 8086
 
 keycloak:
   server-url: http://keycloak:8443

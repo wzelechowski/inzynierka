@@ -1,137 +1,115 @@
-import { View, Text, TouchableOpacity, StyleSheet, Platform, SafeAreaView } from 'react-native';
-import { Slot, Link } from 'expo-router';
+import { Stack, useRouter } from 'expo-router';
+import { TouchableOpacity, Text, ActivityIndicator, View, StyleSheet } from 'react-native';
+import { AuthProvider, useAuth } from '@/src/context/AuthContext';
+import { CartProvider, useCart } from '@/src/context/CartContext';
+import { colors } from '@/src/constants/colors';
 import { Ionicons } from '@expo/vector-icons';
-import { colors } from '@/src/theme/colors';
+
+const HeaderCartButton = () => {
+  const router = useRouter();
+  const { totalItems } = useCart();
+
+  return (
+    <TouchableOpacity onPress={() => router.push('/cart')} style={{ marginRight: 15 }}>
+      <Ionicons name="cart" size={24} color="#fff" />
+      
+      {totalItems > 0 && (
+        <View style={styles.badge}>
+          <Text style={styles.badgeText}>{totalItems}</Text>
+        </View>
+      )}
+    </TouchableOpacity>
+  );
+};
+
+const HeaderAuthButton = () => {
+  const { isLoggedIn, logout } = useAuth();
+  const router = useRouter();
+  const textStyle = { color: '#fff', fontWeight: 'bold' as const, fontSize: 14 };
+
+  if (isLoggedIn) {
+    return (
+      <TouchableOpacity onPress={logout}>
+        <Text style={textStyle}>Wyloguj</Text>
+      </TouchableOpacity>
+    );
+  }
+  return (
+    <TouchableOpacity onPress={() => router.push('/login')}>
+      <Text style={textStyle}>Zaloguj</Text>
+    </TouchableOpacity>
+  );
+};
 
 export default function RootLayout() {
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <View style={styles.container}>
-        {/* --- NAVBAR --- */}
-        <View style={styles.navbar}>
-          <Link href="/" asChild>
-            <TouchableOpacity style={styles.logoContainer}>
-              <Ionicons name="pizza" size={28} color={colors.primary} />
-              <Text style={styles.logoText}>PizzaApp</Text>
-            </TouchableOpacity>
-          </Link>
+    <CartProvider>
+      <AuthProvider>
+        <MainStack />
+      </AuthProvider>
+    </CartProvider>
+  );
+}
 
-          <View style={styles.navLinks}>
-            {/* 1. MENU */}
-            <Link href="/menu" asChild>
-              <TouchableOpacity style={styles.navButton}>
-                <Text style={styles.navText}>Menu</Text>
-              </TouchableOpacity>
-            </Link>
+function MainStack() {
+  const { isLoading } = useAuth();
 
-            {/* 2. ZAMÓWIENIE / KOSZYK (Nowy element) */}
-            <Link href="/order" asChild>
-              <TouchableOpacity style={styles.iconButton}>
-                <Ionicons name="basket" size={26} color={colors.textPrimary} />
-                {/* Opcjonalnie: Licznik produktów (badge) */}
-                {/* <View style={styles.badge}><Text style={styles.badgeText}>1</Text></View> */}
-              </TouchableOpacity>
-            </Link>
-            
-            {/* 3. LOGOWANIE */}
-            <Link href="/login" asChild>
-              <TouchableOpacity 
-                style={StyleSheet.flatten([styles.navButton, styles.loginButton])}
-              >
-                <Text style={StyleSheet.flatten([styles.navText, styles.loginText])}>
-                  Zaloguj
-                </Text>
-              </TouchableOpacity>
-            </Link>
-          </View>
-        </View>
-
-        <View style={styles.content}>
-          <Slot />
-        </View>
+  if (isLoading) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size="large" color={colors.primary} />
       </View>
-    </SafeAreaView>
+    );
+  }
+
+const renderHeaderRight = () => (
+    <View style={{ 
+      flexDirection: 'row', 
+      alignItems: 'center', 
+      marginRight: 15
+    }}>
+      <HeaderCartButton />
+      <HeaderAuthButton />
+    </View>
+  );
+
+  return (
+    <Stack
+      screenOptions={{
+        headerStyle: { backgroundColor: colors.primary },
+        headerTintColor: '#fff',
+        headerTitleStyle: { fontWeight: 'bold' },
+        headerShadowVisible: false,
+        headerRight: renderHeaderRight,
+      }}
+    >
+      <Stack.Screen name="index" options={{ title: "Pizzeria" }} />
+      <Stack.Screen name="menu" options={{ title: "Nasze Menu" }} />
+      <Stack.Screen name="cart" options={{ title: "Twój Koszyk" }} />
+      
+      <Stack.Screen name="login" options={{ title: "Logowanie", headerRight: undefined }} />
+      <Stack.Screen name="register" options={{ title: "Rejestracja", headerRight: undefined }} />
+    </Stack>
   );
 }
 
 const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: '#fff',
-    paddingTop: Platform.OS === 'android' ? 25 : 0, 
-  },
-  container: {
-    flex: 1,
-  },
-  navbar: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 20,
-    paddingVertical: 15,
-    borderBottomWidth: 1,
-    borderBottomColor: '#eee',
-    backgroundColor: '#fff',
-    elevation: 2,
-    zIndex: 10,
-  },
-  logoContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  logoText: {
-    fontSize: 20,
-    fontWeight: '800',
-    color: '#333',
-  },
-  navLinks: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 15, // Odstęp między elementami nawigacji
-  },
-  navButton: {
-    paddingVertical: 8,
-    paddingHorizontal: 8,
-  },
-  iconButton: {
-    padding: 8,
-    position: 'relative', // Potrzebne, jeśli kiedyś dodasz badge z liczbą
-  },
-  loginButton: {
-    backgroundColor: colors.primary,
-    borderRadius: 20,
-    paddingHorizontal: 16,
-    marginLeft: 5, // Dodatkowy odstęp od koszyka
-  },
-  navText: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#333',
-  },
-  loginText: {
-    color: '#fff',
-  },
-  content: {
-    flex: 1,
-  },
-  // Opcjonalne style dla badge'a (licznika w koszyku)
-  /*
   badge: {
     position: 'absolute',
-    top: 4,
-    right: 4,
-    backgroundColor: 'red',
+    right: -6,
+    top: -4,
+    backgroundColor: colors.warning,
     borderRadius: 10,
-    width: 16,
-    height: 16,
+    width: 18,
+    height: 18,
     justifyContent: 'center',
     alignItems: 'center',
+    borderWidth: 1,
+    borderColor: colors.primary
   },
   badgeText: {
-    color: 'white',
+    color: '#fff',
     fontSize: 10,
     fontWeight: 'bold',
   }
-  */
 });

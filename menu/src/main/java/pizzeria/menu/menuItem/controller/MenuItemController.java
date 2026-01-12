@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@CrossOrigin(origins = "*",  maxAge = 3600)
 @RequestMapping("/menuItems")
 public class MenuItemController {
     private final MenuItemService menuItemService;
@@ -25,6 +24,12 @@ public class MenuItemController {
     @GetMapping("")
     public ResponseEntity<List<MenuItemResponse>> getAllMenuItems() {
         List<MenuItemResponse> response = menuItemService.getAllMenuItems();
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/available")
+    public ResponseEntity<List<MenuItemResponse>> getAvailableMenuItems() {
+        List<MenuItemResponse> response = menuItemService.getAvailableMenuItems();
         return ResponseEntity.ok(response);
     }
 
