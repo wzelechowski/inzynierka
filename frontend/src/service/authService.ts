@@ -1,90 +1,58 @@
 import { AuthRequest, AuthResponse, RegisterRequest } from "../types/auth";
 import { TokenStorage } from "../storage/tokenStorage";
-import { Platform } from "react-native";
-import { RefreshTokenRequest } from "expo-auth-session";
-
-const BASE_URL = Platform.OS === 'android' 
-    ? 'http://10.0.2.2:8080' 
-    : 'http://localhost:8080';
-
-const API_URL = `${BASE_URL}/api/v1/user`;
+import { api, API_URL } from "../api/api";
 
 export const AuthService = {
     login: async (credentials: AuthRequest): Promise<void> => {
         try {
-            const response = await fetch(`${API_URL}/login`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(credentials),
-            });
-
-            if (!response.ok) {
-                let errorMessage = "Błąd logowania";
-                try {
-                    const errorData = await response.json();
-                    errorMessage = errorData.message || errorMessage;
-                } catch (e) {}
-                throw new Error(errorMessage);
-            }
-
-            const data: AuthResponse = await response.json();
-            await TokenStorage.saveTokens(data.access_token, data.refresh_token);
+            const response = await api.post<AuthResponse>('/user/auth/login', credentials);
             
-        } catch (error) {
-            console.error('AuthService login error', error);
-            throw error;
+            const data = response.data; 
+            await TokenStorage.saveTokens(data.access_token, data.refresh_token);
+        } catch (error: any) {
+            const message = error.response?.data?.message || "Błąd logowania";
+            console.error('AuthService login error', message);
+            throw new Error(message);
         }
     },
 
-    refreshAccessToken: async (request: RefreshTokenRequest): Promise<AuthResponse> => {
+    refreshAccessToken: async (): Promise<AuthResponse> => {
         try {
             const refreshToken = await TokenStorage.getRefreshToken();
-            if (!refreshToken) throw new Error("No refresh token available");
+            if (!refreshToken) throw new Error("No refresh token");
 
-            const response = await fetch(`${API_URL}/refresh`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(request),
+            const response = await api.post<AuthResponse>('user/auth/refresh', { 
+                refreshToken 
             });
-
-            if (!response.ok) {
-                await TokenStorage.clearTokens();
-                throw new Error("Session expired");
-            }
-
-            const data: AuthResponse = await response.json();
-            await TokenStorage.saveTokens(data.access_token, data.refresh_token);
             
+            const data = response.data;
+            await TokenStorage.saveTokens(data.access_token, data.refresh_token);
             return data;
         } catch (error) {
-            console.error('AuthService refresh error', error);
+            await TokenStorage.clearTokens();
             throw error;
         }
     },
 
     register: async(credentials: RegisterRequest): Promise<void> => {
         try {
-            const response = await fetch(`${API_URL}/register`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(credentials),
-            });
-
-            if (!response.ok) {
-                let errorMessage = "Błąd przy rejestracji";
-                try {
-                    const errorData = await response.json();
-                    errorMessage = errorData.message || errorMessage;
-                } catch (e) {}
-                throw new Error(errorMessage);
-            }
-        } catch (error) {
-            console.error('AuthService register error', error);
-            throw error;
+            await api.post('/user/register', credentials);
+        } catch (error: any) {
+            const message = error.response?.data?.message || "Błąd przy rejestracji";
+            throw new Error(message);
         }
     },
 
-    logout: async () => {
-        await TokenStorage.clearTokens();
+    logout: async (): Promise<void> => {
+        try {
+            const refreshToken = await TokenStorage.getRefreshToken();
+            if (refreshToken) {
+                await api.post('/user/auth/logout', { refreshToken });
+            }
+        } catch (e) {
+            console.warn("Backend logout failed", e);
+        } finally {
+            await TokenStorage.clearTokens();
+        }
     }
 }

@@ -2,13 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ActivityIndicator, SectionList, Platform } from 'react-native';
 import { useRouter } from 'expo-router';
 
-import { MenuItemService } from '../src/service/menuItemService';
-import MenuItemCard from '../src/components/MenuItemCard';
-import CategoryFilter, { CategoryOption } from '../src/components/CategoryFilter';
-import { colors } from '../src/constants/colors';
+import { MenuItemService } from '../../src/service/menuItemService';
+import MenuItemCard from '../../src/components/MenuItemCard';
+import CategoryFilter, { CategoryOption } from '../../src/components/CategoryFilter';
+import { colors } from '../../src/constants/colors';
 import { CartItem } from '@/src/types/cart'
 
-import { useCart } from '../src/context/CartContext';
+import { useCart } from '../../src/context/CartContext';
 
 export type ItemType = 'PIZZA' | 'DRINK' | 'EXTRA';
 

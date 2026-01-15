@@ -39,6 +39,12 @@ public class SupplierServiceImpl implements SupplierService {
     }
 
     @Override
+    public SupplierResponse getSupplierByKeycloakId(UUID id) {
+        Supplier supplier = supplierRepository.findByKeycloakId(id).orElseThrow(NotFoundException::new);
+        return supplierMapper.toResponse(supplier);
+    }
+
+    @Override
     @Transactional
     public SupplierResponse save(SupplierRequest request) {
         Supplier supplier = supplierMapper.toEntity(request);

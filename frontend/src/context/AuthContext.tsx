@@ -21,9 +21,22 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   const checkLoginStatus = async () => {
-    const token = await TokenStorage.getAccessToken();
-    setIsLoggedIn(!!token);
-    setIsLoading(false);
+    try {
+      const token = await TokenStorage.getAccessToken();
+      
+      if (token) {
+        await AuthService.refreshAccessToken();
+        setIsLoggedIn(true);
+      } else {
+        setIsLoggedIn(false);
+      }
+    } catch (error) {
+      console.log("Sesja wygasła przy starcie aplikacji");
+      setIsLoggedIn(false);
+      await TokenStorage.clearTokens();
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const login = async (credentials: AuthRequest) => {

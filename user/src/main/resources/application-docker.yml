@@ -10,7 +10,11 @@ spring:
         initial-interval: 2000
         multiplier: 1.5
         max-interval: 10000
-
+  rabbitmq:
+    host: rabbitmq
+    port: 5672
+    username: guest
+    password: guest
   datasource:
     username: postgres
     password: password

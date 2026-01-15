@@ -9,6 +9,7 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.security.oauth2.server.resource.authentication.ReactiveJwtAuthenticationConverterAdapter;
 
 import java.util.*;
+import java.util.stream.Stream;
 
 @Configuration
 public class AuthoritiesConfig {
@@ -19,9 +20,25 @@ public class AuthoritiesConfig {
     AuthoritiesConverter realmRolesAuthoritiesConverter() {
         return claims -> {
             var realmAccess = Optional.ofNullable((Map<String, Object>) claims.get("realm_access"));
-            var roles = realmAccess.flatMap(map -> Optional.ofNullable((List<String>) map.get("roles")));
-            return roles.stream()
-                    .flatMap(Collection::stream)
+            var realmRoles = realmAccess.map(map -> (List<String>) map.get("roles"))
+                    .orElse(Collections.emptyList());
+
+            List<String> clientRoles = new  ArrayList<>();
+            var resourceAccess = Optional.ofNullable((Map<String, Object>) claims.get("resource_access"));
+
+            resourceAccess.ifPresent(stringObjectMap -> stringObjectMap.values().forEach(client -> {
+                if (client instanceof Map) {
+                    Map<String, Object> map = (Map<String, Object>) client;
+                    List<String> roles = (List<String>) map.get("roles");
+                    if (roles != null) {
+                        clientRoles.addAll(roles);
+                    }
+                }
+            }));
+
+            return Stream.concat(realmRoles.stream(), clientRoles.stream())
+                    .distinct()
+                    .map(role -> "ROLE_" + role)
                     .map(SimpleGrantedAuthority::new)
                     .map(GrantedAuthority.class::cast)
                     .toList();

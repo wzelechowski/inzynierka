@@ -10,18 +10,17 @@ import {
   Alert,
   ActivityIndicator 
 } from 'react-native';
-import { useCart } from '../src/context/CartContext';
-import { colors } from '../src/constants/colors';
+import { useCart } from '../../src/context/CartContext';
+import { colors } from '../../src/constants/colors';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import { OrderService } from '../src/service/orderService';
+import { OrderService } from '../../src/service/orderService';
 
 type LocalOrderType = 'DELIVERY' | 'TAKE_AWAY' | 'ON_SITE';
 
 export default function CheckoutScreen() {
   const router = useRouter();
-  const { totalPrice, items, isLoading: isCartLoading } = useCart();
-  
+const { totalPrice, items, isLoading: isCartLoading, clearCart } = useCart();  
   const [address, setAddress] = useState('');
   const [city, setCity] = useState('');
   const [zip, setZip] = useState('');
@@ -52,6 +51,7 @@ export default function CheckoutScreen() {
       console.log("Wysyłam zamówienie:", orderData);
 
       await OrderService.createOrder(orderData);
+      clearCart();
       
 
    if (Platform.OS === 'web') {

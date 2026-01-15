@@ -2,11 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, ScrollView, Text, ActivityIndicator, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router'; // <--- Import routera
 
-import { PromotionService } from '../src/service/promotionService';
-import { MenuItemService } from '../src/service/menuItemService';
-import PromotionCard, { PromotionItem } from '../src/components/PromotionCard';
+import { PromotionService } from '../../src/service/promotionService';
+import { MenuItemService } from '../../src/service/menuItemService';
+import PromotionCard, { PromotionItem } from '../../src/components/PromotionCard';
 import { useCart } from '@/src/context/CartContext';
-import { colors } from '../src/constants/colors';
+import { colors } from '../../src/constants/colors';
 import { CartItem } from '@/src/types/cart'
 
 interface MergedPromotionData {

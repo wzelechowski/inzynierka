@@ -19,6 +19,8 @@ public class Supplier {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
+    @Column(unique = true, nullable = false)
+    private UUID keycloakId;
     private String firstName;
     private String lastName;
     private String phoneNumber;

@@ -2,13 +2,16 @@ package pizzeria.user.userProfile.service;
 
 import jakarta.ws.rs.NotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import pizzeria.user.keycloak.KeycloakService;
+import pizzeria.user.userProfile.dto.event.CreateSupplierDomainEvent;
+import pizzeria.user.userProfile.dto.event.DeleteSupplierDomainEvent;
 import pizzeria.user.userProfile.dto.request.UserProfilePatchRequest;
 import pizzeria.user.userProfile.dto.request.UserProfileRequest;
 import pizzeria.user.userProfile.dto.response.UserProfileResponse;
 import pizzeria.user.userProfile.mapper.UserProfileMapper;
+import pizzeria.user.userProfile.model.Role;
 import pizzeria.user.userProfile.model.UserProfile;
 import pizzeria.user.userProfile.repository.UserProfileRepository;
 
@@ -21,7 +24,8 @@ public class UserProfileServiceImpl implements UserProfileService {
 
     private final UserProfileRepository userProfileRepository;
     private final UserProfileMapper userProfileMapper;
-    private final KeycloakService keycloakService;
+    private final KeycloakServiceImpl keycloakService;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Override
     public List<UserProfileResponse> getAllUserProfiles() {
@@ -38,24 +42,47 @@ public class UserProfileServiceImpl implements UserProfileService {
     }
 
     @Override
+    public UserProfileResponse getUserProfileByKeycloakId(UUID id) {
+        UserProfile userProfile = userProfileRepository.findByKeycloakId(id).orElseThrow(NotFoundException::new);
+        return userProfileMapper.toResponse(userProfile);
+    }
+
+    @Override
     @Transactional
-    public UserProfileResponse save(UserProfileRequest request) {
-        String userId = keycloakService.createUser(request);
+    public UserProfileResponse save(UserProfileRequest request, Role role) {
+        UUID keycloakId = keycloakService.createUser(request, role);
         try {
             UserProfile userProfile = userProfileMapper.toEntity(request);
-            userProfile.setKeycloakId(UUID.fromString(userId));
+            userProfile.setKeycloakId(keycloakId);
+            userProfile.getRoles().add(role);
+            if (role == Role.ROLE_SUPPLIER) {
+                eventPublisher.publishEvent(
+                        new CreateSupplierDomainEvent(
+                                keycloakId,
+                                request.firstName(),
+                                request.firstName(),
+                                request.phoneNumber()
+                        )
+                );
+            }
+
             userProfileRepository.save(userProfile);
             return userProfileMapper.toResponse(userProfile);
         } catch (Exception e) {
-            keycloakService.deleteUser(userId);
+            keycloakService.deleteUser(keycloakId);
             throw e;
         }
     }
 
     @Override
     @Transactional
-    public void delete(UUID id) {
+    public void delete(UUID id, Role role) {
         UserProfile userProfile = userProfileRepository.findById(id).orElseThrow(NotFoundException::new);
+        keycloakService.deleteUser(userProfile.getKeycloakId());
+        if (role ==  Role.ROLE_SUPPLIER) {
+            eventPublisher.publishEvent(new DeleteSupplierDomainEvent(userProfile.getKeycloakId()));
+        }
+
         userProfileRepository.delete(userProfile);
     }
 

@@ -39,6 +39,9 @@ public class UserProfile {
     @CreatedDate
     private LocalDateTime createdAt;
 
+    @Builder.Default
+    private List<Role> roles = new ArrayList<>();
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private List<Address> addresses = new ArrayList<>();

@@ -15,10 +15,11 @@ public class RabbitConfig {
     public static final String EXCHANGE = "pizzeria.exchange";
 
     public static final String DELIVERY_QUEUE = "delivery.queue";
+    public static final String SUPPLIER_QUEUE = "supplier.queue";
     public static final String DELIVERY_ROUTING_KEY = "order.delivery.requested";
-
     public static final String ORDER_ROUTING_KEY = "delivery.status.changed";
-
+    public static final String SUPPLIER_CREATED_ROUTING_KEY = "supplier.created";
+    public static final String SUPPLIER_DELETED_ROUTING_KEY = "supplier.deleted";
 
     @Bean
     TopicExchange exchange() {
@@ -31,8 +32,23 @@ public class RabbitConfig {
     }
 
     @Bean
+    Queue supplierQueue() {
+        return new Queue(SUPPLIER_QUEUE, true);
+    }
+
+    @Bean
     Binding orderBinding(Queue orderQueue, TopicExchange exchange) {
         return BindingBuilder.bind(orderQueue).to(exchange).with(DELIVERY_ROUTING_KEY);
+    }
+
+    @Bean
+    Binding supplierCreatedBinding(Queue supplierQueue, TopicExchange exchange) {
+        return BindingBuilder.bind(supplierQueue).to(exchange).with(SUPPLIER_CREATED_ROUTING_KEY);
+    }
+
+    @Bean
+    Binding supplierDeletedBinding(Queue supplierQueue, TopicExchange exchange) {
+        return BindingBuilder.bind(supplierQueue).to(exchange).with(SUPPLIER_DELETED_ROUTING_KEY);
     }
 
     @Bean

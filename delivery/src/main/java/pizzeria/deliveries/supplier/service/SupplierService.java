@@ -12,6 +12,8 @@ public interface SupplierService {
 
     SupplierResponse getSupplierById(UUID id);
 
+    SupplierResponse getSupplierByKeycloakId(UUID id);
+
     SupplierResponse save(SupplierRequest request);
 
     void delete(UUID id);

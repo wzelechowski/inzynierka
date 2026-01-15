@@ -1,13 +1,15 @@
 import React from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, Platform, Alert, ActivityIndicator } from 'react-native';
-import { useCart } from '../src/context/CartContext';
-import { colors } from '../src/constants/colors';
+import { useCart } from '../../src/context/CartContext';
+import { useAuth } from '../../src/context/AuthContext';
+import { colors } from '../../src/constants/colors';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 
 export default function CartScreen() {
   const router = useRouter();
   const { items, backendItems, removeItem, totalPrice, clearCart, isLoading, updateQuantity } = useCart();
+  const { isLoggedIn } = useAuth();
 
   const displayItems = backendItems.map((bItem, index) => {
     const localInfo = items.find(i => i.id === bItem.itemId);
@@ -28,6 +30,29 @@ export default function CartScreen() {
         { text: "Usuń", style: "destructive", onPress: clearCart }
       ]);
     }
+  };
+
+  const handleCheckout = () => {
+    if (!isLoggedIn) {
+      if (Platform.OS === 'web') {
+        if (window.confirm("Musisz się zalogować, aby złożyć zamówienie. Przejść do logowania?")) {
+          router.push('/login');
+        }
+      } else {
+        Alert.alert(
+          "Wymagane logowanie",
+          "Musisz się zalogować, aby złożyć zamówienie.",
+          [
+            { text: "Anuluj", style: "cancel" },
+            { text: "Zaloguj", onPress: () => router.push('/login') }
+          ]
+        );
+      }
+      return;
+    }
+
+    console.log("Przekierowanie do podsumowania...");
+    router.push('/checkout');
   };
 
   if (items.length === 0) {
@@ -136,19 +161,18 @@ export default function CartScreen() {
              return null;
           })()}
           
-            <TouchableOpacity 
+          <TouchableOpacity 
             style={[styles.checkoutButton, isLoading && { backgroundColor: '#ccc' }]} 
             disabled={isLoading}
-            onPress={() => {
-                console.log("Przekierowanie do podsumowania...");
-                router.push('/checkout');
-            }}
-            >
+            // 4. Podmieniamy funkcję tutaj
+            onPress={handleCheckout}
+          >
             <Text style={styles.checkoutText}>
-                {isLoading ? 'Przeliczanie...' : 'Złóż zamówienie'}
+              {/* Opcjonalnie: Zmień tekst jeśli niezalogowany, ale zazwyczaj Alert wystarczy */}
+              {isLoading ? 'Przeliczanie...' : 'Złóż zamówienie'}
             </Text>
             {!isLoading && <Ionicons name="arrow-forward" size={20} color="#fff" style={{marginLeft: 8}} />}
-            </TouchableOpacity>
+          </TouchableOpacity>
           
           <TouchableOpacity style={styles.clearButton} onPress={handleClearCart}>
             <Text style={styles.clearText}>Wyczyść koszyk</Text>

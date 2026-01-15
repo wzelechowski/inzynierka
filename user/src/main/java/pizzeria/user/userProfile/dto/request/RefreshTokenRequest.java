@@ -1,4 +1,6 @@
 package pizzeria.user.userProfile.dto.request;
 
-public record RefreshTokenRequest() {
+public record RefreshTokenRequest(
+        String refreshToken
+) {
 }

@@ -5,7 +5,12 @@ import jakarta.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.Length;
 import pizzeria.deliveries.supplier.model.SupplierStatus;
 
+import java.util.UUID;
+
 public record SupplierRequest(
+        @NotNull
+        UUID keycloakId,
+
         @NotBlank
         @Length(min=2, max=50)
         String firstName,

@@ -1,41 +1,37 @@
-import { Platform } from "react-native";
-import { OrderDeliveryRequest, OrderRequest, OrderResponse } from "../types/order";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
-const BASE_URL = Platform.OS === 'android' 
-    ? 'http://10.0.2.2:8080' 
-    : 'http://localhost:8080';
-
-const API_URL = `${BASE_URL}/api/v1/order/orders`; 
+import { api } from '../api/api';
+import { OrderDeliveryRequest, OrderRequest, OrderResponse } from "../types/order";
 
 export const OrderService = {
     createOrder: async (request: OrderRequest | OrderDeliveryRequest): Promise<OrderResponse> => {
-       const token = await AsyncStorage.getItem('auth_access_token');
         try {
             const isDelivery = 'deliveryAddress' in request;
+            const endpointSuffix = isDelivery ? '/delivery' : '';
             
-            const endpoint = isDelivery ? '/delivery' : ''; 
+            const url = `/order/orders${endpointSuffix}`;
             
-            const response = await fetch(`${API_URL}${endpoint}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': token ? `Bearer ${token}` : '',
-                },
-                body: JSON.stringify(request),
-            });
+            const response = await api.post<OrderResponse>(url, request);
 
-            if (!response.ok) {
-                const errorText = await response.text();
-                throw new Error(`Błąd ${response.status}: ${errorText}`);
-            }
+            await AsyncStorage.removeItem('@pizzeria_cart_v1');
 
-            AsyncStorage.removeItem('@pizzeria_cart_v1');
-            return await response.json();
+            return response.data;
 
-        } catch (error) {
+        } catch (error: any) {
             console.error('Order-Service Error:', error);
-            throw error;
+            const message = error.response?.data || error.message;
+            throw new Error(`Nie udało się złożyć zamówienia: ${message}`);
+        }
+    },
+
+    getOrders: async (): Promise<OrderResponse[]> => {
+        try {
+            const response = await api.get<OrderResponse[]>('/order/orders');
+            
+            return response.data;
+        } catch (error: any) {
+            console.error('Order-Service Error:', error);
+            const message = error.response?.data || error.message;
+            throw new Error(`Nie udało się pobrać zamówień: ${message}`);
         }
     },
 };

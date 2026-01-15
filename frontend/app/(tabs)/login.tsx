@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, ActivityIndicator, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
 import { useRouter } from 'expo-router';
-import { useAuth } from '../src/context/AuthContext';
-import { colors } from '../src/constants/colors';
+import { useAuth } from '../../src/context/AuthContext';
+import { colors } from '../../src/constants/colors';
 
 export default function LoginScreen() {
   const router = useRouter();
@@ -21,7 +21,13 @@ export default function LoginScreen() {
     setIsSubmitting(true);
     try {
       await login({ email, password });
-      router.replace('/');
+
+      if (router.canGoBack()) {
+        router.back();
+      } else {
+        router.replace('/');
+      }
+
     } catch (error) {
       Alert.alert('Błąd logowania', 'Sprawdź dane i spróbuj ponownie.');
     } finally {
