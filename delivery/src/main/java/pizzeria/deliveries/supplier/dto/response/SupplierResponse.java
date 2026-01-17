@@ -6,6 +6,7 @@ import java.util.UUID;
 
 public record SupplierResponse(
         UUID id,
+        UUID userProfileId,
         String firstName,
         String lastName,
         String phoneNumber,

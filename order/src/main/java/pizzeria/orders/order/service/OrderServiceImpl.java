@@ -1,5 +1,6 @@
 package pizzeria.orders.order.service;
 
+import jakarta.ws.rs.ForbiddenException;
 import jakarta.ws.rs.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
@@ -18,6 +19,7 @@ import pizzeria.orders.order.model.OrderStatus;
 import pizzeria.orders.order.repository.OrderRepository;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -41,8 +43,16 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
 //    @Cacheable(value = "order", key = "#orderId")
-    public OrderResponse getOrderById(UUID orderId, UUID userId) {
-        Order order = orderRepository.findByIdAndUserId(orderId, userId).orElseThrow(NotFoundException::new);
+    public OrderResponse getOrderById(UUID orderId, UUID userId, String roles) {
+        Order order = orderRepository.findById(orderId).orElseThrow(NotFoundException::new);
+        List<String> userRoles = Arrays.asList(roles.split(","));
+        boolean isOwner = order.getUserId().equals(userId);
+        boolean isStaff = userRoles.contains("ROLE_SUPPLIER");
+
+        if (!isOwner && !isStaff) {
+            throw new ForbiddenException("Not authorized to order");
+        }
+
         return orderMapper.toResponse(order);
     }
 

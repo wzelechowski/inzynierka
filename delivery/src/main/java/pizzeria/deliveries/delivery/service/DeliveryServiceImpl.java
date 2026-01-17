@@ -6,12 +6,13 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pizzeria.deliveries.delivery.dto.event.DeliveryStatusDomainEvent;
-import pizzeria.deliveries.delivery.dto.request.DeliveryChangeStatus;
+import pizzeria.deliveries.delivery.dto.request.DeliveryChangeStatusRequest;
 import pizzeria.deliveries.delivery.dto.request.DeliveryRequest;
 import pizzeria.deliveries.delivery.dto.request.DeliverySupplierAssignRequest;
 import pizzeria.deliveries.delivery.dto.response.DeliveryResponse;
 import pizzeria.deliveries.delivery.mapper.DeliveryMapper;
 import pizzeria.deliveries.delivery.model.Delivery;
+import pizzeria.deliveries.delivery.model.DeliveryStatus;
 import pizzeria.deliveries.delivery.repository.DeliveryRepository;
 import pizzeria.deliveries.delivery.validator.DeliverySupplierAssignValidator;
 import pizzeria.deliveries.supplier.model.Supplier;
@@ -32,8 +33,22 @@ public class DeliveryServiceImpl implements DeliveryService {
     private final ApplicationEventPublisher eventPublisher;
 
     @Override
-    public List<DeliveryResponse> getAllDeliveries() {
-        return deliveryRepository.findAll()
+    public List<DeliveryResponse> getAllDeliveries(UUID supplierId) {
+        List<Delivery>  deliveries;
+        if (supplierId != null) {
+            deliveries = deliveryRepository.findAllBySupplierId(supplierId);
+        } else {
+            deliveries = deliveryRepository.findAll();
+        }
+
+        return deliveries.stream()
+                .map(deliveryMapper::toResponse)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<DeliveryResponse> getPendingDeliveries() {
+        return deliveryRepository.findDeliveriesByStatus(DeliveryStatus.PENDING)
                 .stream()
                 .map(deliveryMapper::toResponse)
                 .collect(Collectors.toList());
@@ -70,12 +85,14 @@ public class DeliveryServiceImpl implements DeliveryService {
 
     @Override
     @Transactional
-    public DeliveryResponse changeStatus(UUID id, DeliveryChangeStatus request) {
+    public DeliveryResponse changeStatus(UUID id, DeliveryChangeStatusRequest request) {
         Delivery delivery = deliveryRepository.findById(id).orElseThrow(NotFoundException::new);
         delivery.changeStatus(request.status());
-        eventPublisher.publishEvent(new DeliveryStatusDomainEvent(delivery.getOrderId(), request.status()));
+        if (request.status() != DeliveryStatus.PENDING) {
+            eventPublisher.publishEvent(new DeliveryStatusDomainEvent(delivery.getOrderId(), request.status()));
+        }
 
-        deliveryRepository.save(delivery);
+        deliveryRepository.saveAndFlush(delivery);
         return deliveryMapper.toResponse(delivery);
     }
 

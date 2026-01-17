@@ -4,7 +4,7 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import pizzeria.deliveries.delivery.dto.request.DeliveryChangeStatus;
+import pizzeria.deliveries.delivery.dto.request.DeliveryChangeStatusRequest;
 import pizzeria.deliveries.delivery.dto.request.DeliveryRequest;
 import pizzeria.deliveries.delivery.dto.request.DeliverySupplierAssignRequest;
 import pizzeria.deliveries.delivery.dto.response.DeliveryResponse;
@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/delivery")
+@RequestMapping("/")
 public class DeliveryController {
     private final DeliveryService deliveryService;
 
@@ -23,8 +23,14 @@ public class DeliveryController {
     }
 
     @GetMapping("")
-    public ResponseEntity<List<DeliveryResponse>> getAllDeliveries() {
-        List<DeliveryResponse> response = deliveryService.getAllDeliveries();
+    public ResponseEntity<List<DeliveryResponse>> getAllDeliveries(@RequestParam(required = false) UUID supplierId) {
+        List<DeliveryResponse> response = deliveryService.getAllDeliveries(supplierId);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/pending")
+    public ResponseEntity<List<DeliveryResponse>> getAllPendingDeliveries() {
+        List<DeliveryResponse> response = deliveryService.getPendingDeliveries();
         return ResponseEntity.ok(response);
     }
 
@@ -53,7 +59,7 @@ public class DeliveryController {
     }
 
     @PutMapping("/{id}/status")
-    public ResponseEntity<DeliveryResponse> patchDelivery(@PathVariable UUID id, @Valid @RequestBody DeliveryChangeStatus request) {
+    public ResponseEntity<DeliveryResponse> patchDelivery(@PathVariable UUID id, @Valid @RequestBody DeliveryChangeStatusRequest request) {
         DeliveryResponse response = deliveryService.changeStatus(id, request);
         return ResponseEntity.ok(response);
     }

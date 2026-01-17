@@ -31,6 +31,8 @@ public class SecurityConfig {
                         .pathMatchers(HttpMethod.GET, "/api/v1/menu/menuItems/**").permitAll()
                         .pathMatchers(HttpMethod.GET, "/api/v1/order/orders/**").permitAll()
                         .pathMatchers(HttpMethod.GET, "/api/v1/order/**").permitAll()
+                        .pathMatchers(HttpMethod.GET, "/api/v1/delivery/**").hasAnyRole("ROLE_SUPPLIER", "manage-account")
+                        .pathMatchers(HttpMethod.PUT, "/api/v1/delivery/**").hasAnyRole("ROLE_SUPPLIER", "manage-account")
                         .pathMatchers(HttpMethod.POST, "/api/v1/order/**").permitAll()
                         .pathMatchers(HttpMethod.POST, "/api/v1/user/register").permitAll()
                         .pathMatchers(HttpMethod.POST, "/api/v1/user/register/supplier").hasRole("manage-account")

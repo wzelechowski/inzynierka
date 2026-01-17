@@ -3,6 +3,7 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, ActivityInd
 import { useRouter } from 'expo-router';
 import { useAuth } from '../../src/context/AuthContext';
 import { colors } from '../../src/constants/colors';
+import { Role } from '../../src/types/enums';
 
 export default function LoginScreen() {
   const router = useRouter();
@@ -20,10 +21,16 @@ export default function LoginScreen() {
 
     setIsSubmitting(true);
     try {
-      await login({ email, password });
+      const userProfile = await login({ email, password });
 
-      if (router.canGoBack()) {
-        router.back();
+      if (userProfile) {
+        const roles = userProfile.roles || [];
+        
+        if (roles.includes(Role.SUPPLIER)) {
+          router.replace('/');
+        } else {
+          router.replace('/'); 
+        }
       } else {
         router.replace('/');
       }
@@ -44,7 +51,7 @@ export default function LoginScreen() {
         
         <View style={styles.card}>
           <Text style={styles.title}>Witaj!</Text>
-          <Text style={styles.subtitle}>Zaloguj się, aby zamawiać pyszne jedzenie.</Text>
+          <Text style={styles.subtitle}>Zaloguj się, aby kontynuować.</Text>
           
           <View style={styles.inputContainer}>
             <Text style={styles.label}>Email</Text>
@@ -107,7 +114,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 20,
   },
-  
   card: {
     backgroundColor: colors.surface,
     width: '100%',
@@ -120,7 +126,6 @@ const styles = StyleSheet.create({
     shadowRadius: 10,
     elevation: 5,
   },
-
   title: {
     fontSize: 26,
     fontWeight: 'bold',
@@ -134,7 +139,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: 30,
   },
-
   inputContainer: {
     marginBottom: 15,
   },
@@ -154,7 +158,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#333',
   },
-
   registerRow: {
     flexDirection: 'row',
     justifyContent: 'center',
@@ -170,7 +173,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 14,
   },
-
   button: {
     backgroundColor: colors.primary,
     paddingVertical: 14,

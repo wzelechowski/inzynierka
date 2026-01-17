@@ -9,14 +9,19 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Configuration
 public class AuthConfig {
+
+    private final RoleExtractor roleExtractor;
+
+    public AuthConfig(RoleExtractor roleExtractor) {
+        this.roleExtractor = roleExtractor;
+    }
+
     @Bean
     GlobalFilter authFilter() {
         return (exchange, chain) -> exchange.getPrincipal()
@@ -32,15 +37,20 @@ public class AuthConfig {
                                 headers.remove("X-User-Roles");
                                 if (jwt != null) {
                                     headers.add("X-User-Id", jwt.getSubject());
-                                    List<String> roles = Optional.ofNullable(jwt.getClaim("realm_access"))
+                                    List<String> realmRoles = Optional.ofNullable(jwt.getClaim("realm_access"))
                                                     .filter(Map.class::isInstance)
                                                             .map(Map.class::cast)
                                                                     .map(m -> (List<String>) m.get("roles"))
                                                                             .orElse(List.of());
 
-                                    String rolesHeader = roles.stream()
-                                                    .filter(Objects::nonNull)
-                                                            .collect(Collectors.joining(","));
+                                    List<String> clientRoles = new ArrayList<>();
+                                    var resourceAccess = Optional.ofNullable((Map<String, Object>) jwt.getClaim("resource_access"));
+                                    roleExtractor.extractClientRoles(clientRoles, resourceAccess);
+
+                                    String rolesHeader = Stream.concat(realmRoles.stream(), clientRoles.stream())
+                                        .distinct()
+                                        .filter(Objects::nonNull)
+                                        .collect(Collectors.joining(","));
                                     headers.add("X-User-Roles", rolesHeader);
                                 }
                             })

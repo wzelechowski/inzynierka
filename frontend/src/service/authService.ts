@@ -3,12 +3,14 @@ import { TokenStorage } from "../storage/tokenStorage";
 import { api, API_URL } from "../api/api";
 
 export const AuthService = {
-    login: async (credentials: AuthRequest): Promise<void> => {
+    login: async (credentials: AuthRequest): Promise<AuthResponse> => {
         try {
             const response = await api.post<AuthResponse>('/user/auth/login', credentials);
             
             const data = response.data; 
             await TokenStorage.saveTokens(data.access_token, data.refresh_token);
+
+            return data;
         } catch (error: any) {
             const message = error.response?.data?.message || "Błąd logowania";
             console.error('AuthService login error', message);

@@ -13,8 +13,13 @@ import java.util.stream.Stream;
 
 @Configuration
 public class AuthoritiesConfig {
-
     interface AuthoritiesConverter extends Converter<Map<String, Object>, Collection<GrantedAuthority>> {}
+
+    private final RoleExtractor roleExtractor;
+
+    public AuthoritiesConfig(RoleExtractor roleExtractor) {
+        this.roleExtractor = roleExtractor;
+    }
 
     @Bean
     AuthoritiesConverter realmRolesAuthoritiesConverter() {
@@ -26,15 +31,7 @@ public class AuthoritiesConfig {
             List<String> clientRoles = new  ArrayList<>();
             var resourceAccess = Optional.ofNullable((Map<String, Object>) claims.get("resource_access"));
 
-            resourceAccess.ifPresent(stringObjectMap -> stringObjectMap.values().forEach(client -> {
-                if (client instanceof Map) {
-                    Map<String, Object> map = (Map<String, Object>) client;
-                    List<String> roles = (List<String>) map.get("roles");
-                    if (roles != null) {
-                        clientRoles.addAll(roles);
-                    }
-                }
-            }));
+            roleExtractor.extractClientRoles(clientRoles, resourceAccess);
 
             return Stream.concat(realmRoles.stream(), clientRoles.stream())
                     .distinct()

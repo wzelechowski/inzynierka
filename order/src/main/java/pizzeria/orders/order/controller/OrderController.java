@@ -30,8 +30,10 @@ public class OrderController {
     }
 
     @GetMapping("/{orderId}")
-    public ResponseEntity<OrderResponse> getOrderById(@PathVariable UUID orderId,  @RequestHeader("X-User-Id") UUID userId) {
-        OrderResponse response = orderService.getOrderById(orderId, userId);
+    public ResponseEntity<OrderResponse> getOrderById(@PathVariable UUID orderId,
+                                                      @RequestHeader("X-User-Id") UUID userId,
+                                                      @RequestHeader("X-User-Roles") String roles) {
+        OrderResponse response = orderService.getOrderById(orderId, userId, roles);
         return ResponseEntity.ok(response);
     }
 

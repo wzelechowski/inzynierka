@@ -7,7 +7,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.keycloak.admin.client.CreatedResponseUtil;
 import org.keycloak.admin.client.Keycloak;
-import org.keycloak.admin.client.resource.ClientsResource;
 import org.keycloak.admin.client.resource.UsersResource;
 import org.keycloak.representations.idm.ClientRepresentation;
 import org.keycloak.representations.idm.CredentialRepresentation;
@@ -34,6 +33,7 @@ import java.util.UUID;
 @Slf4j
 @RequiredArgsConstructor
 public class KeycloakServiceImpl implements KeycloakService {
+
     private final Keycloak keycloakClient;
 
     @Value("${keycloak.realm}")
@@ -47,6 +47,14 @@ public class KeycloakServiceImpl implements KeycloakService {
 
     @Value("${keycloak.credentials.secret}")
     private String clientSecret;
+
+    @Override
+    public UserRepresentation getUser(UUID keycloakId) {
+        return keycloakClient.realm(realm)
+                .users()
+                .get(keycloakId.toString())
+                .toRepresentation();
+    }
 
     @Override
     public UUID createUser(UserProfileRequest request, Role role) {
@@ -136,6 +144,7 @@ public class KeycloakServiceImpl implements KeycloakService {
         user.setFirstName(request.firstName());
         user.setLastName(request.lastName());
         user.setEmailVerified(role == Role.ROLE_SUPPLIER);
+        user.singleAttribute("phoneNumber", request.phoneNumber());
 
         CredentialRepresentation credential = new CredentialRepresentation();
         credential.setType(CredentialRepresentation.PASSWORD);

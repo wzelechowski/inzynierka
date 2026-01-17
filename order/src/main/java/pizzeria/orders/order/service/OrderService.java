@@ -11,7 +11,7 @@ import java.util.UUID;
 public interface OrderService {
     List<OrderResponse> getAllUsersOrders(UUID userId);
 
-    OrderResponse getOrderById(UUID orderId, UUID userId);
+    OrderResponse getOrderById(UUID orderId, UUID userId, String roles);
 
     UUID getOrderUserId(UUID orderId);
 

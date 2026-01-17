@@ -1,8 +1,10 @@
 package pizzeria.deliveries.supplier.service;
 
+import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.NotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import pizzeria.deliveries.supplier.dto.request.SupplierChangeStatusRequest;
 import pizzeria.deliveries.supplier.dto.request.SupplierPatchRequest;
 import pizzeria.deliveries.supplier.dto.request.SupplierRequest;
 import pizzeria.deliveries.supplier.dto.response.SupplierResponse;
@@ -39,8 +41,8 @@ public class SupplierServiceImpl implements SupplierService {
     }
 
     @Override
-    public SupplierResponse getSupplierByKeycloakId(UUID id) {
-        Supplier supplier = supplierRepository.findByKeycloakId(id).orElseThrow(NotFoundException::new);
+    public SupplierResponse getSupplierByUserProfileId(UUID id) {
+        Supplier supplier = supplierRepository.findByUserProfileId(id).orElseThrow(NotFoundException::new);
         return supplierMapper.toResponse(supplier);
     }
 
@@ -72,6 +74,14 @@ public class SupplierServiceImpl implements SupplierService {
     public SupplierResponse patch(UUID id, SupplierPatchRequest request) {
         Supplier supplier = supplierRepository.findById(id).orElseThrow(NotFoundException::new);
         supplierMapper.patchEntity(supplier, request);
+        return supplierMapper.toResponse(supplier);
+    }
+
+    @Override
+    @Transactional
+    public SupplierResponse changeSupplierStatus(UUID id, SupplierChangeStatusRequest request) {
+        Supplier supplier = supplierRepository.findById(id).orElseThrow(NotFoundException::new);
+        supplier.setStatus(request.status());
         return supplierMapper.toResponse(supplier);
     }
 }

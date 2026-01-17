@@ -20,11 +20,12 @@ public class Supplier {
     private UUID id;
 
     @Column(unique = true, nullable = false)
-    private UUID keycloakId;
+    private UUID userProfileId;
     private String firstName;
     private String lastName;
     private String phoneNumber;
 
     @Enumerated(EnumType.STRING)
-    private SupplierStatus status;
+    @Builder.Default
+    private SupplierStatus status = SupplierStatus.OFFLINE;
 }

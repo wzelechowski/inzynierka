@@ -9,5 +9,5 @@ import java.util.UUID;
 
 @Repository
 public interface SupplierRepository extends JpaRepository<Supplier, UUID> {
-    Optional<Supplier> findByKeycloakId(UUID keycloakId);
+    Optional<Supplier> findByUserProfileId(UUID userProfileId);
 }

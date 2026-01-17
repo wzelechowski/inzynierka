@@ -18,7 +18,7 @@ public class DomainListener {
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void onSupplierCreated(CreateSupplierDomainEvent domainEvent) {
         var event = new SupplierCreatedEvent(
-                domainEvent.keycloakId(),
+                domainEvent.userProfileId(),
                 domainEvent.firstName(),
                 domainEvent.firstName(),
                 domainEvent.phoneNumber()
@@ -29,7 +29,7 @@ public class DomainListener {
 
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void onSupplierDeleted(DeleteSupplierDomainEvent domainEvent) {
-        var event = new SupplierDeletedEvent(domainEvent.keycloakId());
+        var event = new SupplierDeletedEvent(domainEvent.userProfileId());
         userProfileEventPublisher.publishSupplierDeleted(event);
     }
 }

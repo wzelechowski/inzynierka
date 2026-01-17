@@ -6,19 +6,36 @@ import {
   StyleSheet, 
   SafeAreaView, 
   Platform, 
-  StatusBar 
+  StatusBar,
+  ActivityIndicator
 } from 'react-native';
-import { Slot, useRouter, usePathname } from 'expo-router';
+import { Slot, useRouter, usePathname, Redirect } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { colors } from '@/src/constants/colors';
 import { useCart } from '@/src/context/CartContext';
 import { useAuth } from '@/src/context/AuthContext';
+import { Role } from '@/src/types/enums';
 
 export default function TabLayout() {
   const router = useRouter();
   const pathname = usePathname();
   const { totalItems } = useCart();
-  const { isLoggedIn, logout } = useAuth();
+  const { isLoggedIn, logout, user, isLoading } = useAuth();
+
+  // --- ZABEZPIECZENIE (GUARD) ---
+  if (isLoading) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size="large" color={colors.primary} />
+      </View>
+    );
+  }
+
+  // Jeśli użytkownik jest dostawcą, nie powinien widzieć widoku klienta
+  if (isLoggedIn && user && user.roles.includes(Role.SUPPLIER)) {
+    return <Redirect href="/supplier" />;
+  }
+  // ------------------------------
 
   const navigateTo = (path: string) => {
     router.push(path);
@@ -127,7 +144,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     backgroundColor: colors.primary,
   },
-  
   logoContainer: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -137,12 +153,10 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
   },
-
   rightContainer: {
     flexDirection: 'row',
     alignItems: 'center',
   },
-
   navGroup: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -156,14 +170,12 @@ const styles = StyleSheet.create({
   iconButtonActive: {
     backgroundColor: '#fff', 
   },
-
   separator: {
     width: 1, 
     height: 24, 
     backgroundColor: 'rgba(255,255,255,0.4)', 
     marginHorizontal: 10 
   },
-
   authContainer: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -182,7 +194,6 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: 'bold',
   },
-
   badge: {
     position: 'absolute',
     right: 0,

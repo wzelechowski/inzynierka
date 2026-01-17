@@ -26,7 +26,7 @@ public class SupplierCreatedListener {
 
     @RabbitListener(queues = RabbitConfig.SUPPLIER_QUEUE)
     public void supplierDeleted(SupplierDeletedEvent event) {
-        SupplierResponse response = supplierService.getSupplierByKeycloakId(event.keycloakId());
+        SupplierResponse response = supplierService.getSupplierByUserProfileId(event.userProfileId());
         supplierService.delete(response.id());
     }
 }

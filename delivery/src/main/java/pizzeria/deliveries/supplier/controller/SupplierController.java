@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import pizzeria.deliveries.supplier.dto.request.SupplierChangeStatusRequest;
 import pizzeria.deliveries.supplier.dto.request.SupplierPatchRequest;
 import pizzeria.deliveries.supplier.dto.request.SupplierRequest;
 import pizzeria.deliveries.supplier.dto.response.SupplierResponse;
@@ -13,7 +14,6 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@CrossOrigin(origins = "*",  maxAge = 3600)
 @RequestMapping("/suppliers")
 public class SupplierController {
     private final SupplierService supplierService;
@@ -31,6 +31,12 @@ public class SupplierController {
     @GetMapping("/{id}")
     public ResponseEntity<SupplierResponse> getSupplierById(@PathVariable UUID id) {
         SupplierResponse response = supplierService.getSupplierById(id);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/{userId}/user")
+    public ResponseEntity<SupplierResponse> getSupplierByUserId(@PathVariable UUID userId) {
+        SupplierResponse response = supplierService.getSupplierByUserProfileId(userId);
         return ResponseEntity.ok(response);
     }
 
@@ -55,6 +61,12 @@ public class SupplierController {
     @PatchMapping("/{id}")
     public ResponseEntity<SupplierResponse> patchSupplierById(@PathVariable UUID id, @Valid @RequestBody SupplierPatchRequest request) {
         SupplierResponse response = supplierService.patch(id, request);
+        return ResponseEntity.ok(response);
+    }
+
+    @PutMapping("/{id}/status")
+    public ResponseEntity<SupplierResponse> changeSupplierStatus(@PathVariable UUID id, @Valid @RequestBody SupplierChangeStatusRequest request) {
+        SupplierResponse response = supplierService.changeSupplierStatus(id, request);
         return ResponseEntity.ok(response);
     }
 }

@@ -34,4 +34,13 @@ export const OrderService = {
             throw new Error(`Nie udało się pobrać zamówień: ${message}`);
         }
     },
+    getOrderById: async (id: string): Promise<OrderResponse> => {
+        try {
+            const response = await api.get<OrderResponse>(`/order/orders/${id}`);
+            return response.data;
+        } catch (error: any) {
+            console.error('Order-Service Error:', error);
+            throw new Error(`Nie udało się pobrać szczegółów zamówienia.`);
+        }
+    }
 };

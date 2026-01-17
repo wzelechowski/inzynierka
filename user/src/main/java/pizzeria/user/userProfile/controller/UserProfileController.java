@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.*;
 import pizzeria.user.userProfile.dto.request.UserProfilePatchRequest;
 import pizzeria.user.userProfile.dto.request.UserProfileRequest;
 import pizzeria.user.userProfile.dto.response.UserProfileResponse;
-import pizzeria.user.userProfile.model.Role;
 import pizzeria.user.userProfile.service.UserProfileService;
 
 import java.util.List;
@@ -41,29 +40,25 @@ public class UserProfileController {
 
     @PostMapping("/register")
     public ResponseEntity<UserProfileResponse> createUserProfile(@Valid @RequestBody UserProfileRequest request) {
-        Role role = Role.ROLE_CLIENT;
-        UserProfileResponse response = userProfileService.save(request, role);
+        UserProfileResponse response = userProfileService.registerClient(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @PostMapping("/register/supplier")
     public ResponseEntity<UserProfileResponse> createSupplier(@Valid @RequestBody UserProfileRequest request) {
-        Role role = Role.ROLE_SUPPLIER;
-        UserProfileResponse response = userProfileService.save(request, role);
+        UserProfileResponse response = userProfileService.registerSupplier(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUserProfile(@PathVariable UUID id) {
-        Role role = Role.ROLE_CLIENT;
-        userProfileService.delete(id, role);
+        userProfileService.deleteClient(id);
         return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/{id}/supplier")
     public ResponseEntity<Void> deleteSupplier(@PathVariable UUID id) {
-        Role role = Role.ROLE_SUPPLIER;
-        userProfileService.delete(id, role);
+        userProfileService.deleteSupplier(id);
         return ResponseEntity.noContent().build();
     }
 

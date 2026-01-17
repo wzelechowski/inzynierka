@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Entity
-@Table(name = "user_profile")
+@Table(name = "user_profiles")
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -27,18 +27,11 @@ public class UserProfile {
     @Column(unique = true, nullable = false)
     private UUID keycloakId;
 
-    @Column(nullable = false, unique = true)
-    private String email;
-
-    private String firstName;
-    private String lastName;
-
-    private String phoneNumber;
-
     @Column(updatable = false)
     @CreatedDate
     private LocalDateTime createdAt;
 
+    @Enumerated(EnumType.STRING)
     @Builder.Default
     private List<Role> roles = new ArrayList<>();
 

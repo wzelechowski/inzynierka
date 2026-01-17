@@ -6,7 +6,7 @@ public enum DeliveryStatus {
     public boolean canTransitionTo(DeliveryStatus target) {
         return switch (this) {
             case PENDING -> target == ASSIGNED;
-            case ASSIGNED -> target == PICKED_UP || target == CANCELLED;
+            case ASSIGNED -> target == PICKED_UP || target == PENDING || target == CANCELLED;
             case PICKED_UP -> target == DELIVERED;
             default -> false;
         };

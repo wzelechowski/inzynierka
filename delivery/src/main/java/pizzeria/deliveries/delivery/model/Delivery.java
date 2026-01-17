@@ -62,6 +62,10 @@ public class Delivery {
 
     private void setTimestamps(DeliveryStatus status) {
         switch (status) {
+            case PENDING -> {
+                this.assignedAt = null;
+                this.setSupplier(null);
+            }
             case PICKED_UP -> this.pickedUpAt = LocalDateTime.now();
             case DELIVERED -> this.deliveredAt = LocalDateTime.now();
         }

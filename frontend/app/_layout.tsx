@@ -25,7 +25,7 @@ function MainStack() {
         headerBackTitle: '',
       }}
     >
-      <Stack.Screen 
+       <Stack.Screen 
         name="(tabs)" 
         options={{ 
           headerShown: false,
@@ -33,24 +33,12 @@ function MainStack() {
         }} 
       />
 
-      <Stack.Screen 
-        name="cart" 
-        options={{ title: "Twój Koszyk" }} 
-      />
-      
-      <Stack.Screen 
-        name="checkout" 
-        options={{ title: "Podsumowanie zamówienia" }} 
-      />
-      
-      <Stack.Screen 
-        name="login" 
-        options={{ title: "Logowanie" }} 
-      />
-      
-      <Stack.Screen 
-        name="register" 
-        options={{ title: "Rejestracja" }} 
+     <Stack.Screen 
+        name="supplier" 
+        options={{ 
+          headerShown: false,
+          title: 'Supplier' 
+        }} 
       />
 
       <Stack.Screen name="+not-found" options={{ title: "Oops!" }} />
