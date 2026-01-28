@@ -5,8 +5,10 @@ import pizzeria.promotions.promotionProposalProduct.dto.response.PromotionPropos
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.UUID;
 
 public record PromotionProposalResponse(
+        UUID id,
         EffectType effectType,
         BigDecimal support,
         BigDecimal confidence,

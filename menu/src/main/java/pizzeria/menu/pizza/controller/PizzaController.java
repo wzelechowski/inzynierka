@@ -15,7 +15,6 @@ import pizzeria.menu.pizza.service.PizzaService;
 import java.util.*;
 
 @RestController
-@CrossOrigin(origins = "*", maxAge = 3600)
 @RequestMapping("/pizzas")
 public class PizzaController {
     private final PizzaService pizzaService;

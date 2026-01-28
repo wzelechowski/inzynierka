@@ -24,8 +24,9 @@ public class OrderController {
     }
 
     @GetMapping("")
-    public ResponseEntity<List<OrderResponse>> getAllUserOrders(@RequestHeader("X-User-Id") UUID userId) {
-        List<OrderResponse> response = orderService.getAllUsersOrders(userId);
+    public ResponseEntity<List<OrderResponse>> getAllOrders(@RequestHeader("X-User-Id") UUID userId,
+                                                            @RequestHeader("X-User-Roles") String roles) {
+        List<OrderResponse> response = orderService.getAllOrders(userId, roles);
         return ResponseEntity.ok(response);
     }
 

@@ -35,7 +35,7 @@ public class AuthoritiesConfig {
 
             return Stream.concat(realmRoles.stream(), clientRoles.stream())
                     .distinct()
-                    .map(role -> "ROLE_" + role)
+                    .map(role -> role.startsWith("ROLE_") ? role : "ROLE_" + role)
                     .map(SimpleGrantedAuthority::new)
                     .map(GrantedAuthority.class::cast)
                     .toList();

@@ -34,7 +34,16 @@ public class OrderServiceImpl implements OrderService {
     private final PricingService pricingService;
 
     @Override
-    public List<OrderResponse> getAllUsersOrders(UUID userId) {
+    public List<OrderResponse> getAllOrders(UUID userId, String roles) {
+        List<String> userRoles = Arrays.asList(roles.split(","));
+        boolean isStaff = userRoles.contains("ROLE_ADMIN");
+        if (isStaff) {
+            return orderRepository.findAll()
+                    .stream()
+                    .map(orderMapper::toResponse)
+                    .collect(Collectors.toList());
+        }
+
         return orderRepository.findAllByUserId(userId)
                 .stream()
                 .map(orderMapper::toResponse)
@@ -47,7 +56,7 @@ public class OrderServiceImpl implements OrderService {
         Order order = orderRepository.findById(orderId).orElseThrow(NotFoundException::new);
         List<String> userRoles = Arrays.asList(roles.split(","));
         boolean isOwner = order.getUserId().equals(userId);
-        boolean isStaff = userRoles.contains("ROLE_SUPPLIER");
+        boolean isStaff = userRoles.contains("ROLE_ADMIN") || userRoles.contains("ROLE_SUPPLIER");
 
         if (!isOwner && !isStaff) {
             throw new ForbiddenException("Not authorized to order");
