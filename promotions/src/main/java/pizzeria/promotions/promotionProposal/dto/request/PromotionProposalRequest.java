@@ -10,28 +10,17 @@ import java.util.List;
 import java.util.UUID;
 
 public record PromotionProposalRequest(
-        @NotEmpty
+        @NotNull
         List<UUID> antecedents,
 
-        @NotEmpty
+        @NotNull
         List<UUID> consequents,
 
-        @NotNull
         EffectType effectType,
-
-        @NotNull
         BigDecimal support,
-
-        @NotNull
         BigDecimal confidence,
-
-        @NotNull
         BigDecimal lift,
-
-        @NotNull
         BigDecimal score,
-
-        @NotBlank
         String reason,
 
         @NotNull

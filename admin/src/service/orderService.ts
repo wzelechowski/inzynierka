@@ -1,5 +1,5 @@
 import { api as axiosInstance } from '../api/api';
-import type { OrderResponse } from '../types/order';
+import type { OrderRequest, OrderResponse } from '../types/order';
 
 export const OrderService = {
     
@@ -13,14 +13,19 @@ export const OrderService = {
         return response.data;
     },
     
-    update: async (id: string, data: any) => {
+    update: async (id: string, data: OrderRequest) => {
         const response = await axiosInstance.put(`/order/orders/${id}`, data);
         return response.data;
     },
     
-    create: async (data: any) => {
-        const response = await axiosInstance.post(`/order/orders`, data);
-        return response.data;
+    create: async (data: OrderRequest) => {
+        if (data.type === 'DELIVERY') {
+            const response = await axiosInstance.post(`/order/orders/delivery`, data);
+            return response.data;
+        } else {
+            const response = await axiosInstance.post(`/order/orders`, data);
+            return response.data;
+        }
     },
 
     delete: async(id: string): Promise<void> => {

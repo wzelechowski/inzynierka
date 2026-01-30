@@ -41,7 +41,15 @@ export const dataProvider: DataProvider = {
         return { data: params.previousData } as any;
     },
 
-    getMany: async () => ({ data: [] } as any),
+    getMany: async (resource, params) => {
+        const service = getService(resource);
+        const ids = params.ids.map(id => id.toString());
+        const allData = await service.getAll();
+        const filteredData = allData.filter((item: any) => ids.includes(item.id));
+        
+        return { data: filteredData } as any;
+    },
+    
     getManyReference: async () => ({ data: [], total: 0 } as any),
     updateMany: async () => ({ data: [] } as any),
     deleteMany: async (resource, params) => {

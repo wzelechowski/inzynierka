@@ -1,5 +1,5 @@
 import { api as axiosInstance } from '../api/api';
-import type { PizzaResponse } from '../types/menu';
+import type { PizzaRequest, PizzaResponse } from '../types/menu';
 
 export const PizzaService = {
     
@@ -13,12 +13,12 @@ export const PizzaService = {
         return response.data;
     },
     
-    update: async (id: string, data: any) => {
+    update: async (id: string, data: PizzaRequest) => {
         const response = await axiosInstance.put(`/menu/pizzas/${id}`, data);
         return response.data;
     },
     
-    create: async (data: any) => {
+    create: async (data: PizzaRequest) => {
         const response = await axiosInstance.post(`/menu/pizzas`, data);
         return response.data;
     },

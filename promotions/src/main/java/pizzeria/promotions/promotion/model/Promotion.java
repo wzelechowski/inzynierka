@@ -5,8 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.JdbcTypeCode;
-import org.hibernate.type.SqlTypes;
+import pizzeria.promotions.promotionProposal.model.EffectType;
 import pizzeria.promotions.promotionProposal.model.PromotionProposal;
 
 import java.math.BigDecimal;
@@ -32,6 +31,9 @@ public class Promotion {
     private LocalDateTime startDate;
     private LocalDateTime endDate;
     private BigDecimal discount;
+    
+    @Enumerated(EnumType.STRING)
+    private EffectType effectType;
 
     @OneToOne(
             optional = false,

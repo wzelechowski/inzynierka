@@ -121,7 +121,7 @@ public class PromotionServiceImpl implements PromotionService {
                                                         new AppliedPromotion(
                                                                 promotion.getId(),
                                                                 productId,
-                                                                promotion.getProposal().getEffectType(),
+                                                                promotion.getEffectType(),
                                                                 promotion.getDiscount()
                                                         )
                                                 ));

@@ -1,8 +1,7 @@
-import { List, Datagrid, TextField, NumberField, BooleanField, DateField, EmailField, ChipField, FunctionField, ReferenceField, Link } from 'react-admin';
+import { List, Datagrid, TextField, NumberField, BooleanField, DateField, EmailField, ChipField, FunctionField, Link } from 'react-admin';
 import { Chip, Box, Typography, Stack } from '@mui/material';
-import { OrderItemsPanel } from './components/OrderItemsPanel';
-import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
-import { PromotionProposalPanel } from './components/PromotionProposalPanel';
+import { OrderItemsPanel } from './components/panel/OrderItemsPanel';
+import { PromotionProposalPanel } from './components/panel/PromotionProposalPanel';
 
 const getStatusColor = (status: string) => {
     switch (status) {
@@ -70,10 +69,9 @@ export const ExtraList = () => (
 export const IngredientList = () => (
     <List title="Składniki">
         <Datagrid rowClick="show">
+            <TextField source="id" label="ID" />
             <TextField source="name" label="Nazwa" />
-            <NumberField source="price" label="Cena" options={{ style: 'currency', currency: 'PLN' }} />
-            <BooleanField source="isVegan" label="Wegański" />
-            <BooleanField source="isSpicy" label="Ostry" />
+            <NumberField source="weight" label="Waga (kg)"/>
         </Datagrid>
     </List>
 );
@@ -297,29 +295,77 @@ export const PromotionList = () => (
                     />
                 )}
             />
+            <FunctionField 
+                label="Typ"
+                render={(record: any) => (
+                    <Chip 
+                        label={record.effectType} 
+                        size="small" 
+                        variant="outlined" 
+                        sx={{ borderColor: '#ddd', color: '#555' }}
+                    />
+                )}
+            />
 
-            <NumberField 
-                source="discount" 
-                label="Rabat" 
-                options={{ style: 'percent', maximumFractionDigits: 0 }} 
-                sx={{ fontWeight: 'bold', color: '#d32f2f' }}
+            <FunctionField 
+                label="Rabat"
+                render={(record: any) => {
+                    const style = { color: '#d32f2f', fontWeight: 'bold', fontSize: '1.1em' };
+                    if (record.proposal.effectType === 'FIXED') {
+                        return (
+                            <span style={style}>
+                                {record.discount.toFixed(2)} zł
+                            </span>
+                        );
+                    }
+                        if (record.proposal.effectType === 'PERCENT') {
+                            return (
+                            <span style={style}>
+                                {(record.discount * 100).toFixed(0)}%
+                            </span>
+                            );
+                        }
+                    
+                    return (
+                        <span style={style}>
+                            {"GRATIS"}
+                        </span>
+                    );
+                }}
             />
 
             <DateField source="startDate" label="Od" />
             <DateField source="endDate" label="Do" />
-
-            <FunctionField 
-                label="Typ"
-                render={(record: any) => record.proposal ? "🤖 AI" : "Ręczna"}
-            />
         </Datagrid>
     </List>
 );
 
 export const SupplierList = () => (
-    <List title="Dostawcy / Kurierzy">
+    <List title="Dostawcy">
         <Datagrid rowClick="show">
-            <TextField source="id" label="ID" />
+            <TextField source="id" label="ID Dostawcy" />
+            <FunctionField
+                label="ID Użytkownika"
+                render={(record: any) => {
+                    if (!record || !record.userProfileId) return "-";
+
+                    return (
+                        <Link 
+                            to={`/users/${record.userProfileId}/show`}
+                            style={{ 
+                                textDecoration: 'none', 
+                                color: '#1976d2',
+                                fontWeight: 'bold',
+                                fontFamily: 'monospace',
+                                cursor: 'pointer'
+                            }}
+                            onClick={(e) => e.stopPropagation()} 
+                        >
+                            {record.userProfileId}
+                        </Link>
+                    );
+                }}
+            />
             <TextField source="firstName" label="Imię" />
             <TextField source="lastName" label="Nazwisko" />
             <TextField source="phoneNumber" label="Telefon" />
@@ -348,10 +394,9 @@ export const PromotionProposalList = () => (
             />
 
             <FunctionField 
-                label="Uzasadnienie AI"
+                label="Uzasadnienie"
                 render={(record: any) => (
                     <Box display="flex" alignItems="center" gap={1}>
-                        <AutoAwesomeIcon sx={{ color: '#fbc02d', fontSize: 18 }} />
                         <Typography variant="body2" fontWeight="500">
                             {record.reason}
                         </Typography>
@@ -371,11 +416,32 @@ export const PromotionProposalList = () => (
                 )}
             />
 
-            <NumberField 
-                source="discount" 
-                label="Rabat" 
-                options={{ style: 'percent' }} 
-                sx={{ color: '#d32f2f', fontWeight: 'bold', fontSize: '1.1em' }}
+            <FunctionField 
+                label="Rabat"
+                render={(record: any) => {
+                    const style = { color: '#d32f2f', fontWeight: 'bold', fontSize: '1.1em' };
+                    if (record.effectType === 'FIXED') {
+                        return (
+                            <span style={style}>
+                                {record.discount.toFixed(2)} zł
+                            </span>
+                        );
+                    }
+
+                        if (record.effectType === 'PERCENT') {
+                            return (
+                            <span style={style}>
+                                {(record.discount * 100).toFixed(0)}%
+                            </span>
+                            );
+                        }
+                    
+                    return (
+                        <span style={style}>
+                            {"GRATIS"}
+                        </span>
+                    );
+                }}
             />
 
             <NumberField 

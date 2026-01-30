@@ -9,23 +9,20 @@ import { DeliveryService } from './deliveryService';
 import { UserService } from './userService';
 import { OrderService } from './orderService';
 import { PromotionProposalService } from './promotinProposalService';
+import { IngredientService } from './ingredientService';
 
 export const services: Record<string, ResourceService> = {
-    pizzas:       PizzaService,
-    drinks:       DrinkService,
-    extras:       ExtraService,
-    
-    menuItems:    MenuItemService, 
-
-    ingredients:  createService('/menu/ingredients'),
-
-    orders:       OrderService,
-    users:        UserService,
-
-    deliveries:     DeliveryService,
-    promotions:    PromotionService,
-    promotionProposals:    PromotionProposalService,
-    suppliers:     SupplierService,
+    pizzas: PizzaService,
+    drinks: DrinkService,
+    extras: ExtraService,
+    menuItems: MenuItemService, 
+    ingredients: IngredientService,
+    orders: OrderService,
+    users: UserService,
+    deliveries: DeliveryService,
+    promotions: PromotionService,
+    promotionProposals: PromotionProposalService,
+    suppliers: SupplierService,
 };
 
 export const getService = (resource: string): ResourceService => {

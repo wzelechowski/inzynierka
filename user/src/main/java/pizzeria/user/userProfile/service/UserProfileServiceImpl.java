@@ -32,14 +32,18 @@ public class UserProfileServiceImpl implements UserProfileService {
     public List<UserProfileResponse> getAllUserProfiles() {
         return userProfileRepository.findAll()
                 .stream()
-                .map(userProfileMapper::toResponse)
+                .map(u -> {
+                    UserRepresentation ur = keycloakService.getUser(u.getKeycloakId());
+                    return userProfileMapper.toResponse(u, ur);
+                })
                 .toList();
     }
 
     @Override
     public UserProfileResponse getUserProfileById(UUID id) {
         UserProfile userProfile = userProfileRepository.findById(id).orElseThrow(NotFoundException::new);
-        return userProfileMapper.toResponse(userProfile);
+        UserRepresentation userRepresentation = keycloakService.getUser(userProfile.getKeycloakId());
+        return userProfileMapper.toResponse(userProfile, userRepresentation);
     }
 
     @Override

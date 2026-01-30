@@ -1,10 +1,9 @@
-// src/promotions/ProposalPanel.tsx
 import { useEffect, useState } from 'react';
 import { useRecordContext, LoadingIndicator } from 'react-admin';
-import { Box, Typography, Paper, Chip, Divider, Stack } from '@mui/material'; // Usunięto Grid
+import { Box, Typography, Paper, Chip, Divider, Stack } from '@mui/material';
 import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 import AnalyticsIcon from '@mui/icons-material/Analytics';
-import { MenuItemService } from '../service/menuItemService';
+import { MenuItemService } from '../../service/menuItemService';
 
 export const ProposalPanel = () => {
     const record = useRecordContext();
@@ -43,13 +42,9 @@ export const ProposalPanel = () => {
             <Typography variant="h6" sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2, color: '#0288d1' }}>
                 <AnalyticsIcon /> Analiza AI (Market Basket Analysis)
             </Typography>
-
-            {/* 1. KAFELKI STATYSTYK (ZAMIAST GRID -> CSS GRID W BOX) */}
-            {/* To rozwiązanie jest pancerne i działa w każdej wersji MUI */}
             <Box 
                 sx={{ 
                     display: 'grid', 
-                    // Na mobilce (xs) 2 kolumny, na desktopie (md) 4 kolumny
                     gridTemplateColumns: { xs: '1fr 1fr', md: '1fr 1fr 1fr 1fr' }, 
                     gap: 2, 
                     mb: 3 
@@ -83,12 +78,8 @@ export const ProposalPanel = () => {
                     </Typography>
                 </Paper>
             </Box>
-
             <Divider sx={{ mb: 2 }} />
-
-            {/* 2. PRODUKTY */}
             <Typography variant="subtitle2" gutterBottom>Powiązane produkty:</Typography>
-            
             {loading ? <LoadingIndicator /> : (
                 <Stack spacing={1}>
                     {proposal.products.map((prod: any, idx: number) => {
@@ -114,7 +105,6 @@ export const ProposalPanel = () => {
                 </Stack>
             )}
 
-            {/* 3. POWÓD */}
             {proposal.reason && (
                 <Box sx={{ mt: 2, p: 2, bgcolor: '#fff', borderRadius: 1 }}>
                     <Typography variant="caption" fontWeight="bold">Uzasadnienie:</Typography>

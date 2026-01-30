@@ -1,8 +1,7 @@
-// src/promotions/PromotionShow.tsx
 import { Show, SimpleShowLayout, TextField, DateField, NumberField, FunctionField } from 'react-admin';
 import { Box, Typography, Divider, Chip } from '@mui/material';
 import LocalOfferIcon from '@mui/icons-material/LocalOffer';
-import { ProposalPanel } from './ProposalPanel'; // <--- Import panelu z kroku A
+import { ProposalPanel } from '../panel/ProposalPanel';
 
 export const PromotionShow = () => (
     <Show title="Szczegóły Promocji">
@@ -52,7 +51,6 @@ export const PromotionShow = () => (
                 </Box>
             </Box>
 
-            {/* --- PANEL ANALITYCZNY (Wyświetli się tylko jeśli jest proposal) --- */}
             <ProposalPanel />
 
         </SimpleShowLayout>

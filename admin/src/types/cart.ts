@@ -1,4 +1,4 @@
-import { OrderItemRequest, OrderItemResponse } from "./order";
+import type { OrderItemRequest, OrderItemResponse } from "./order";
 
 export interface CartCalculateRequest {
     orderItems: OrderItemRequest[];

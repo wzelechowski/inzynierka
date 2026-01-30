@@ -7,7 +7,17 @@ export interface PromotionResponse {
     startDate: string;
     endDate: string;
     discount: number;
+    effectType: EffectType;
     proposal?: PromotionProposalResponse;
+}
+
+export interface PromotionRequest {
+    name: string;
+    startDate: string;
+    endDate: string;
+    discount: number;
+    effectType: EffectType;
+    proposalId: string;
 }
 
 export interface PromotionProposalResponse {
@@ -20,6 +30,14 @@ export interface PromotionProposalResponse {
     reason: string;
     discount: number;
     products: PromotionProposalProductResponse[];
+}
+
+export interface PromotionProposalRequest {
+    antecedents: string[];
+    consequents: string[];
+    effectType: EffectType;
+    reason?: string;
+    discount: number;
 }
 
 export interface PromotionProposalProductResponse {

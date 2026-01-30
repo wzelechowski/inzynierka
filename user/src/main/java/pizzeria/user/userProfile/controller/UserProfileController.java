@@ -68,7 +68,7 @@ public class UserProfileController {
         return ResponseEntity.ok(response);
     }
 
-    @PatchMapping("{id}")
+    @PatchMapping("/{id}")
     public ResponseEntity<UserProfileResponse> patchUserProfile(@PathVariable UUID id, @Valid @RequestBody UserProfilePatchRequest request) {
         UserProfileResponse response = userProfileService.patch(id, request);
         return ResponseEntity.ok(response);

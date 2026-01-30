@@ -9,3 +9,12 @@ export interface MenuItemResponse {
     basePrice: number;
     isAvailable: boolean;
 }
+
+export interface MenuItemRequest {
+    itemId: string;
+    type: ItemType;
+    name: string;
+    description: string;
+    basePrice: number;
+    isAvailable: boolean;
+}

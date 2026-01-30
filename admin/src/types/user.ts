@@ -8,3 +8,10 @@ export interface UserProfileResponse {
     phoneNumber?: string;
     roles: Role[];
 }
+
+export interface UserProfilePatchRequest {
+    firstName: string;
+    lastName: string;
+    email: string;
+    phoneNumber?: string;
+}

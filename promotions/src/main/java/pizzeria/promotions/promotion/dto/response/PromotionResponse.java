@@ -1,6 +1,7 @@
 package pizzeria.promotions.promotion.dto.response;
 
 import pizzeria.promotions.promotionProposal.dto.response.PromotionProposalResponse;
+import pizzeria.promotions.promotionProposal.model.EffectType;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -13,6 +14,7 @@ public record PromotionResponse(
         LocalDateTime startDate,
         LocalDateTime endDate,
         BigDecimal discount,
+        EffectType effectType,
         PromotionProposalResponse proposal
 ) {
 }

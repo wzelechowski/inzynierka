@@ -1,5 +1,6 @@
 import { api as axiosInstance } from "../api/api";
-import type { UserProfileResponse } from "../types/user";
+import type { RegisterRequest } from "../types/auth";
+import type { UserProfilePatchRequest, UserProfileResponse } from "../types/user";
 
 export const UserService = {
     getDetails: async (): Promise<UserProfileResponse> => {
@@ -22,14 +23,22 @@ export const UserService = {
             return response.data;
         },
         
-        update: async (id: string, data: any) => {
-            const response = await axiosInstance.put(`/user/${id}`, data);
+        update: async (id: string, data: UserProfilePatchRequest) => {
+            console.log(data);
+            const response = await axiosInstance.patch(`/user/${id}`, data);
             return response.data;
         },
         
         create: async (data: any) => {
-            const response = await axiosInstance.post(`/user`, data);
-            return response.data;
+            const isSupplier = data.roles && data.roles.includes('SUPPLIER');
+            if (isSupplier) {
+                const { roles, ...supplierData } = data;
+                const response = await axiosInstance.post(`/user/register/supplier`, supplierData);
+                return response.data;
+            } else {
+                const response = await axiosInstance.post(`/user/register`, data);
+                return response.data;
+            }
         },
     
         delete: async(id: string): Promise<void> => {

@@ -1,5 +1,5 @@
 import { api as axiosInstance } from '../api/api';
-import type { PromotionProposalResponse } from '../types/promotion';
+import type { PromotionProposalRequest, PromotionProposalResponse } from '../types/promotion';
 
 export const PromotionProposalService = {
     
@@ -13,12 +13,12 @@ export const PromotionProposalService = {
         return response.data;
     },
     
-    update: async (id: string, data: any) => {
+    update: async (id: string, data: PromotionProposalRequest) => {
         const response = await axiosInstance.put(`/promotion/promotionProposal/${id}`, data);
         return response.data;
     },
     
-    create: async (data: any) => {
+    create: async (data: PromotionProposalRequest) => {
         const response = await axiosInstance.post(`/promotion/promotionProposal`, data);
         return response.data;
     },

@@ -1,5 +1,5 @@
 import { api as axiosInstance } from '../api/api';
-import type { ExtraResponse } from '../types/menu';
+import type { ExtraResponse, ExtraRequest } from '../types/menu';
 
 export const ExtraService = {
     
@@ -13,12 +13,12 @@ export const ExtraService = {
         return response.data;
     },
     
-    update: async (id: string, data: any) => {
+    update: async (id: string, data: ExtraRequest) => {
         const response = await axiosInstance.put(`/menu/extras/${id}`, data);
         return response.data;
     },
     
-    create: async (data: any) => {
+    create: async (data: ExtraRequest) => {
         const response = await axiosInstance.post(`/menu/extras`, data);
         return response.data;
     },

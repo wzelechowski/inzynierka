@@ -8,15 +8,12 @@ import { Box, Typography, Divider, Paper, Stack, Chip } from '@mui/material';
 import AnalyticsIcon from '@mui/icons-material/Analytics';
 import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 import LightbulbIcon from '@mui/icons-material/Lightbulb';
-import { MenuItemService } from '../service/menuItemService'; // Twój serwis
+import { MenuItemService } from '../../service/menuItemService';
 
-// Wewnętrzny komponent do wyświetlania treści (żeby móc użyć hooków i contextu)
 const ProposalShowContent = () => {
     const record = useRecordContext();
     const [productNames, setProductNames] = useState<Record<string, string>>({});
     const [loading, setLoading] = useState(false);
-
-    // --- Logika pobierania nazw produktów ---
     useEffect(() => {
         const fetchProducts = async () => {
             if (!record || !record.products || record.products.length === 0) return;
@@ -60,10 +57,7 @@ const ProposalShowContent = () => {
                     sx={{ ml: 'auto', fontSize: '1.2rem', padding: 2 }} 
                 />
             </Box>
-
             <Divider sx={{ mb: 3 }} />
-
-            {/* 2. DASHBOARD ANALITYCZNY (Box Grid zamiast MUI Grid) */}
             <Box sx={{ 
                 display: 'grid', 
                 gridTemplateColumns: { xs: '1fr 1fr', md: '1fr 1fr 1fr 1fr' }, 
@@ -75,17 +69,13 @@ const ProposalShowContent = () => {
                 <StatCard label="Support" value={(record.support * 100).toFixed(1) + '%'} color="text.primary" />
                 <StatCard label="AI Score" value={record.score.toFixed(2)} color="text.primary" bold />
             </Box>
-
-            {/* 3. LISTA PRODUKTÓW */}
             <Typography variant="h6" gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                 <AnalyticsIcon color="action" /> Produkty w regule:
             </Typography>
-
             {loading ? <LoadingIndicator /> : (
                 <Stack spacing={1}>
                     {record.products?.map((prod: any, idx: number) => {
                         const name = productNames[prod.productId] || prod.productId;
-                        // Sprawdzamy rolę: czy produkt jest warunkiem (kup to...) czy skutkiem (...dostaniesz to)
                         const isCondition = prod.role === 'ANTECEDENT' || prod.role === 'CONDITION';
 
                         return (

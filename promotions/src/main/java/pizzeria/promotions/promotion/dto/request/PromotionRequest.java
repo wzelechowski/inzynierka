@@ -2,6 +2,7 @@ package pizzeria.promotions.promotion.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import pizzeria.promotions.promotionProposal.model.EffectType;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -19,6 +20,9 @@ public record PromotionRequest(
 
         @NotNull
         BigDecimal discount,
+
+        @NotNull
+        EffectType effectType,
 
         @NotNull
         UUID proposalId

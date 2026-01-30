@@ -1,4 +1,3 @@
-// src/App.tsx
 import { Admin, Resource } from 'react-admin';
 import { authProvider } from './authProvider';
 import { dataProvider } from './dataProvider';
@@ -10,12 +9,30 @@ import {
     MenuItemList, ExtraList,
     PromotionProposalList
 } from './Lists';
-import { OrderShow } from './components/OrdersShow';
-import { PizzaShow } from './components/PizzaShow';
-import { DrinkShow } from './components/DrinkShow';
-import { ExtraShow } from './components/ExtraShow';
-import { PromotionShow } from './components/PromotionShow';
-import { PromotionProposalShow } from './components/PromotionProposalShow';
+import { OrderShow } from './components/show/OrdersShow';
+import { PizzaShow } from './components/show/PizzaShow';
+import { DrinkShow } from './components/show/DrinkShow';
+import { ExtraShow } from './components/show/ExtraShow';
+import { PromotionShow } from './components/show/PromotionShow';
+import { PromotionProposalShow } from './components/panel/PromotionProposalShow';
+import { PizzaCreate } from './components/create/PizzaCreate';
+import { PromotionCreate } from './components/create/PromotionCreate';
+import { DrinkCreate } from './components/create/DrinkCreate';
+import { IngredientCreate } from './components/create/IngredientCreate';
+import { ExtraCreate } from './components/create/ExtraCreate';
+import { MenuItemCreate } from './components/create/MenuItemCreate';
+import { PromotionProposalCreate } from './components/create/PromotionProposalCreate';
+import { OrderCreate } from './components/create/OrderCreate';
+import { UserProfileShow } from './components/show/UserProfileShow';
+import { UserProfileCreate } from './components/create/UserProfileCreate';
+import { UserProfileEdit } from './components/edit/UserProfileEdit';
+import { PizzaEdit } from './components/edit/PizzaEdit';
+import { DrinkEdit } from './components/edit/DrinkEdit';
+import { ExtraEdit } from './components/edit/ExtraEdit';
+import { IngredientShow } from './components/show/IngredientShow';
+import { IngredientEdit } from './components/edit/IngredientEdit';
+import { MenuItemShow } from './components/show/MenuItemShow';
+import { MenuItemEdit } from './components/edit/MenuItemEdit';
 
 export const App = () => (
     <Admin 
@@ -23,24 +40,16 @@ export const App = () => (
         dataProvider={dataProvider}
         loginPage={LoginPage}
     >
-        <Resource name="pizzas" list={PizzaList} options={{ label: 'Pizza' }} show={PizzaShow} />
-        <Resource name="drinks" list={DrinkList} options={{ label: 'Napoje' }} show={DrinkShow} />
-        <Resource name="extras" list={ExtraList} options={{ label: 'Dodatki' }} show={ExtraShow} />
-        <Resource name="ingredients" list={IngredientList} options={{ label: 'Składniki' }} />
-        <Resource name="menuItems" list={MenuItemList} options={{ label: 'Menu Items'}} />
-
-        {/* SEKCJA ZAMÓWIENIA */}
-        <Resource name="orders" list={OrderList} options={{ label: 'Zamówienia' }} show={OrderShow} />
-        
-        {/* SEKCJA DOSTAWA */}
+        <Resource name="pizzas" list={PizzaList} options={{ label: 'Pizza' }} show={PizzaShow} create={PizzaCreate} edit={PizzaEdit}/>
+        <Resource name="drinks" list={DrinkList} options={{ label: 'Napoje' }} show={DrinkShow} create={DrinkCreate} edit={DrinkEdit}/>
+        <Resource name="extras" list={ExtraList} options={{ label: 'Dodatki' }} show={ExtraShow} create={ExtraCreate} edit={ExtraEdit}/>
+        <Resource name="ingredients" list={IngredientList} options={{ label: 'Składniki' }} show={IngredientShow} create={IngredientCreate} edit={IngredientEdit}/>
+        <Resource name="menuItems" list={MenuItemList} options={{ label: 'Menu Items'}} show={MenuItemShow} create={MenuItemCreate} edit={MenuItemEdit} />
+        <Resource name="orders" list={OrderList} options={{ label: 'Zamówienia' }} show={OrderShow} create={OrderCreate} />
         <Resource name="deliveries" list={DeliveryList} options={{ label: 'Dostawy' }} />
         <Resource name="suppliers" list={SupplierList} options={{ label: 'Kierowcy' }} />
-
-        {/* SEKCJA UŻYTKOWNICY */}
-        <Resource name="users" list={UserList} options={{ label: 'Klienci' }} />
-
-        {/* SEKCJA PROMOCJE */}
-        <Resource name="promotions" list={PromotionList} options={{ label: 'Promocje' }} show={PromotionShow} />
-        <Resource name="promotionProposals" list={PromotionProposalList} options={{ label: 'Propozycje pormocji' }} show={PromotionProposalShow} />
+        <Resource name="users" list={UserList} options={{ label: 'Klienci' }} show={UserProfileShow} create={UserProfileCreate} edit={UserProfileEdit}/>
+        <Resource name="promotions" list={PromotionList} options={{ label: 'Promocje' }} show={PromotionShow} create={PromotionCreate} />
+        <Resource name="promotionProposals" list={PromotionProposalList} options={{ label: 'Propozycje pormocji' }} show={PromotionProposalShow} create={PromotionProposalCreate} />
     </Admin>
 );

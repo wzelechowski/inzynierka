@@ -1,9 +1,7 @@
-// src/orders/OrderShow.tsx
 import { Show, SimpleShowLayout, TextField, DateField, NumberField, FunctionField } from 'react-admin';
 import { Chip, Box, Typography, Divider } from '@mui/material';
-import { OrderItemsPanel } from './OrderItemsPanel'; // Twój panel z produktami
+import { OrderItemsPanel } from '../panel/OrderItemsPanel';
 
-// Helper kolorów (skopiowany lub zaimportowany z Lists.tsx)
 const getStatusColor = (status: string) => {
     switch (status) {
         case 'NEW': return 'info';
@@ -18,7 +16,6 @@ const getStatusColor = (status: string) => {
 export const OrderShow = () => (
     <Show title="Szczegóły Zamówienia">
         <SimpleShowLayout>
-            {/* --- NAGŁÓWEK --- */}
             <Box display="flex" gap={2} alignItems="center">
                 <Typography variant="h6">Zamówienie #</Typography>
                 <TextField source="id" sx={{ fontSize: '1.2rem', fontFamily: 'monospace' }} />
@@ -36,7 +33,6 @@ export const OrderShow = () => (
 
             <Divider sx={{ my: 2 }} />
 
-            {/* --- DANE FINANSOWE I DATY --- */}
             <Box display="flex" gap={4}>
                 <Box>
                     <Typography variant="caption" color="textSecondary">Kwota całkowita</Typography>
@@ -57,9 +53,6 @@ export const OrderShow = () => (
             </Box>
 
             <Divider sx={{ my: 2 }} />
-
-            {/* --- LISTA PRODUKTÓW (Twój gotowy panel) --- */}
-            {/* React-Admin automatycznie przekaże tutaj record context */}
             <OrderItemsPanel />
 
         </SimpleShowLayout>
