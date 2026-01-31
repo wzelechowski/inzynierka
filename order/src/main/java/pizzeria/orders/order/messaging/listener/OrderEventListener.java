@@ -9,8 +9,6 @@ import pizzeria.orders.order.dto.request.OrderPatchRequest;
 import pizzeria.orders.order.messaging.mapper.OrderEventMapper;
 import pizzeria.orders.order.service.OrderService;
 
-import java.util.UUID;
-
 @Service
 @RequiredArgsConstructor
 public class OrderEventListener {
@@ -21,7 +19,6 @@ public class OrderEventListener {
     @RabbitListener(queues = RabbitConfig.ORDER_QUEUE)
     public void orderStatusChanged(OrderStatusEvent event) {
         OrderPatchRequest request = orderEventMapper.toPatchRequest(event);
-        UUID userId = orderService.getOrderUserId(event.orderId());
-        orderService.patch(event.orderId(), userId, request);
+        orderService.patch(event.orderId(), request);
     }
 }

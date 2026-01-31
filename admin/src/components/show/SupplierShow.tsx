@@ -1,6 +1,6 @@
 import { 
     Show, SimpleShowLayout, TextField, 
-    ChipField, ReferenceField, EmailField 
+    ChipField, ReferenceField 
 } from 'react-admin';
 
 export const SupplierShow = () => (
@@ -9,11 +9,11 @@ export const SupplierShow = () => (
             <TextField source="id" label="ID Dostawcy" />
             <ReferenceField 
                 source="userProfileId" 
-                reference="userProfiles" 
+                reference="users" 
                 label="Powiązane Konto Użytkownika"
                 link="show"
             >
-                <EmailField source="email" />
+            <TextField source="id" />
             </ReferenceField>
             <TextField source="firstName" label="Imię" />
             <TextField source="lastName" label="Nazwisko" />

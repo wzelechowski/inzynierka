@@ -1,7 +1,6 @@
-// src/promotions/PromotionProposalShow.tsx
 import { useState, useEffect } from 'react';
 import { 
-    Show, SimpleShowLayout, TextField, NumberField, 
+    Show, SimpleShowLayout, 
     useRecordContext, LoadingIndicator 
 } from 'react-admin';
 import { Box, Typography, Divider, Paper, Stack, Chip } from '@mui/material';

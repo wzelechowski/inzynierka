@@ -1,4 +1,4 @@
-import { createService, type ResourceService } from './base';
+import { type ResourceService } from './base';
 import { MenuItemService } from '../service/menuItemService';
 import { PromotionService } from '../service/promotionService'
 import { SupplierService } from '../service/supplierService';

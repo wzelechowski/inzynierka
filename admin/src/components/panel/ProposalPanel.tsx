@@ -40,46 +40,9 @@ export const ProposalPanel = () => {
     return (
         <Box sx={{ mt: 3, p: 2, border: '1px solid #e0e0e0', borderRadius: 2, backgroundColor: '#f8fbff' }}>
             <Typography variant="h6" sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2, color: '#0288d1' }}>
-                <AnalyticsIcon /> Analiza AI (Market Basket Analysis)
+                Powiązane produkty
             </Typography>
-            <Box 
-                sx={{ 
-                    display: 'grid', 
-                    gridTemplateColumns: { xs: '1fr 1fr', md: '1fr 1fr 1fr 1fr' }, 
-                    gap: 2, 
-                    mb: 3 
-                }}
-            >
-                <Paper elevation={0} sx={{ p: 2, textAlign: 'center', bgcolor: '#fff', border: '1px solid #ddd' }}>
-                    <Typography variant="caption" color="textSecondary">Confidence (Pewność)</Typography>
-                    <Typography variant="h5" color="primary" fontWeight="bold">
-                        {(proposal.confidence * 100).toFixed(1)}%
-                    </Typography>
-                </Paper>
-
-                <Paper elevation={0} sx={{ p: 2, textAlign: 'center', bgcolor: '#fff', border: '1px solid #ddd' }}>
-                    <Typography variant="caption" color="textSecondary">Lift (Unikalność)</Typography>
-                    <Typography variant="h5" color="secondary" fontWeight="bold">
-                        {proposal.lift.toFixed(2)}
-                    </Typography>
-                </Paper>
-
-                <Paper elevation={0} sx={{ p: 2, textAlign: 'center', bgcolor: '#fff', border: '1px solid #ddd' }}>
-                    <Typography variant="caption" color="textSecondary">Support (Wsparcie)</Typography>
-                    <Typography variant="h5" fontWeight="bold">
-                        {(proposal.support * 100).toFixed(1)}%
-                    </Typography>
-                </Paper>
-
-                <Paper elevation={0} sx={{ p: 2, textAlign: 'center', bgcolor: '#fff', border: '1px solid #ddd' }}>
-                    <Typography variant="caption" color="textSecondary">AI Score</Typography>
-                    <Typography variant="h5" fontWeight="bold" color="textSecondary">
-                        {proposal.score.toFixed(2)}
-                    </Typography>
-                </Paper>
-            </Box>
-            <Divider sx={{ mb: 2 }} />
-            <Typography variant="subtitle2" gutterBottom>Powiązane produkty:</Typography>
+            <Typography variant="subtitle2"/>
             {loading ? <LoadingIndicator /> : (
                 <Stack spacing={1}>
                     {proposal.products.map((prod: any, idx: number) => {
@@ -103,15 +66,6 @@ export const ProposalPanel = () => {
                         );
                     })}
                 </Stack>
-            )}
-
-            {proposal.reason && (
-                <Box sx={{ mt: 2, p: 2, bgcolor: '#fff', borderRadius: 1 }}>
-                    <Typography variant="caption" fontWeight="bold">Uzasadnienie:</Typography>
-                    <Typography variant="body2" sx={{ fontStyle: 'italic' }}>
-                        "{proposal.reason}"
-                    </Typography>
-                </Box>
             )}
         </Box>
     );

@@ -86,12 +86,14 @@ public class PromotionServiceImpl implements PromotionService {
     @Transactional
     public PromotionResponse patch(UUID id, PromotionPatchRequest request) {
         Promotion promotion = promotionRepository.findById(id).orElseThrow(NotFoundException::new);
-        if (request.endDate().isBefore(promotion.getStartDate())) {
-            throw new BadRequestException("End date can't be after start date");
-        }
+        if (request.endDate() != null) {
+            if (request.endDate().isBefore(promotion.getStartDate())) {
+                throw new BadRequestException("End date can't be after start date");
+            }
 
-        if (request.endDate().isBefore(promotion.getEndDate())) {
-            promotion.setActive(false);
+            if (request.endDate().isBefore(LocalDateTime.now())) {
+                promotion.setActive(false);
+            }
         }
 
         promotionMapper.patchEntity(promotion, request);

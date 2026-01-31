@@ -66,12 +66,6 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public UUID getOrderUserId(UUID orderId) {
-        Order order = orderRepository.findById(orderId).orElseThrow(NotFoundException::new);
-        return order.getUserId();
-    }
-
-    @Override
     @Transactional
     public OrderResponse save(OrderRequest request, UUID userId) {
         Order order = orderMapper.toEntity(request);
@@ -102,16 +96,17 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional
-    public OrderResponse update(UUID orderId, UUID userId, OrderRequest request) {
-        Order order = orderRepository.findByIdAndUserId(orderId, userId).orElseThrow(NotFoundException::new);
+    public OrderResponse update(UUID orderId, OrderRequest request) {
+        Order order = orderRepository.findById(orderId).orElseThrow(NotFoundException::new);
         orderMapper.updateEntity(order, request);
+        pricingService.processOrderPricing(order);
         return orderMapper.toResponse(order);
     }
 
     @Override
     @Transactional
-    public OrderResponse patch(UUID orderId, UUID userId, OrderPatchRequest request) {
-        Order order = orderRepository.findByIdAndUserId(orderId, userId).orElseThrow(NotFoundException::new);
+    public OrderResponse patch(UUID orderId, OrderPatchRequest request) {
+        Order order = orderRepository.findById(orderId).orElseThrow(NotFoundException::new);
         OrderStatus previousStatus = order.getStatus();
         if (previousStatus != OrderStatus.COMPLETED && request.status() == OrderStatus.COMPLETED) {
             order.setCompletedAt(LocalDateTime.now());

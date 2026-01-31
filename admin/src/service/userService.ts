@@ -1,5 +1,4 @@
 import { api as axiosInstance } from "../api/api";
-import type { RegisterRequest } from "../types/auth";
 import type { UserProfilePatchRequest, UserProfileResponse } from "../types/user";
 
 export const UserService = {

@@ -1,5 +1,5 @@
-import { Create, SimpleForm, TextInput, NumberInput, BooleanInput, required } from 'react-admin';
-import { Box, Typography } from '@mui/material';
+import { Create, SimpleForm, TextInput, NumberInput, required } from 'react-admin';
+import { Typography } from '@mui/material';
 
 export const IngredientCreate = () => (
     <Create title="Dodaj nowy składnik" redirect="list">

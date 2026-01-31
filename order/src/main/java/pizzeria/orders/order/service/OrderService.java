@@ -13,15 +13,13 @@ public interface OrderService {
 
     OrderResponse getOrderById(UUID orderId, UUID userId, String roles);
 
-    UUID getOrderUserId(UUID orderId);
-
     OrderResponse save(OrderRequest request, UUID userId);
 
     OrderResponse save(OrderDeliveryRequest request, UUID userId);
 
     void delete(UUID orderId, UUID userId);
 
-    OrderResponse update(UUID orderId, UUID userId, OrderRequest request);
+    OrderResponse update(UUID orderId, OrderRequest request);
 
-    OrderResponse patch(UUID orderId, UUID userId, OrderPatchRequest request);
+    OrderResponse patch(UUID orderId, OrderPatchRequest request);
 }

@@ -66,17 +66,15 @@ public class OrderController {
 
     @PutMapping("/{orderId}")
     public ResponseEntity<OrderResponse> updateOrder(@PathVariable UUID orderId,
-                                                     @Valid @RequestBody OrderRequest request,
-                                                     @RequestHeader("X-User-Id") UUID userId) {
-        OrderResponse response = orderService.update(orderId, userId, request);
+                                                     @Valid @RequestBody OrderRequest request) {
+        OrderResponse response = orderService.update(orderId, request);
         return ResponseEntity.ok(response);
     }
 
     @PatchMapping("/{orderId}")
     public ResponseEntity<OrderResponse> patchOrder(@PathVariable UUID orderId,
-                                                    @Valid @RequestBody OrderPatchRequest request,
-                                                    @RequestHeader("X-User-Id") UUID userId) {
-        OrderResponse response = orderService.patch(orderId, userId, request);
+                                                    @Valid @RequestBody OrderPatchRequest request) {
+        OrderResponse response = orderService.patch(orderId, request);
         return ResponseEntity.ok(response);
     }
 }

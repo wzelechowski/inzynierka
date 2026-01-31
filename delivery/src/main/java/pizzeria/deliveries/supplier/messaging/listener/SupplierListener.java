@@ -13,7 +13,7 @@ import pizzeria.deliveries.supplier.service.SupplierService;
 
 @Service
 @RequiredArgsConstructor
-public class SupplierCreatedListener {
+public class SupplierListener {
 
     private final SupplierService supplierService;
     private final SupplierEventMapper supplierEventMapper;

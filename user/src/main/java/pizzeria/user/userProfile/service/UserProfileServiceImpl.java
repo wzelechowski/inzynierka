@@ -80,14 +80,14 @@ public class UserProfileServiceImpl implements UserProfileService {
             userProfile.setKeycloakId(keycloakId);
             userProfile.getRoles().add(role);
             userProfileRepository.save(userProfile);
-                eventPublisher.publishEvent(
-                        new CreateSupplierDomainEvent(
-                                userProfile.getId(),
-                                request.firstName(),
-                                request.lastName(),
-                                request.phoneNumber()
-                        )
-                );
+            eventPublisher.publishEvent(
+                    new CreateSupplierDomainEvent(
+                            userProfile.getId(),
+                            request.firstName(),
+                            request.lastName(),
+                            request.phoneNumber()
+                    )
+            );
             return userProfileMapper.toResponse(userProfile);
         } catch (Exception e) {
             keycloakService.deleteUser(keycloakId);

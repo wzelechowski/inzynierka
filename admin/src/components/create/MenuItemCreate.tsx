@@ -22,7 +22,7 @@ export const MenuItemCreate = () => (
             />
 
             <FormDataConsumer>
-                {({ formData, ...rest }) => {
+                {({ formData }) => {
                     if (!formData.type) return null;
 
                     let resourceName = '';

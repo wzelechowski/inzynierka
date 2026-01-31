@@ -13,7 +13,7 @@ export const OrderService = {
         return response.data;
     },
     
-    update: async (id: string, data: OrderRequest) => {
+   update: async (id: string, data: any) => {
         const response = await axiosInstance.put(`/order/orders/${id}`, data);
         return response.data;
     },

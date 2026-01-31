@@ -123,7 +123,7 @@ export const MenuItemList = () => (
 export const OrderList = () => (
     <List title="Zamówienia" sort={{ field: 'createdAt', order: 'DESC' }}>
         <Datagrid 
-            rowClick="expand" 
+            rowClick="show" 
             expand={<OrderItemsPanel />} 
             sx={{
                 '& .RaDatagrid-headerCell': { fontWeight: 'bold' },
@@ -444,6 +444,13 @@ export const PromotionProposalList = () => (
                 }}
             />
 
+            <NumberField 
+                source="support" 
+                label="Wsparcie" 
+                options={{ style: 'percent' }} 
+                sx={{ color: '#666' }}
+            />
+            
             <NumberField 
                 source="confidence" 
                 label="Pewność" 
