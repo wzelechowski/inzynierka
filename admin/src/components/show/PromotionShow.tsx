@@ -7,11 +7,8 @@ import LocalOfferIcon from '@mui/icons-material/LocalOffer';
 import AnalyticsIcon from '@mui/icons-material/Analytics';
 import CategoryIcon from '@mui/icons-material/Category';
 import { ProposalPanel } from '../panel/ProposalPanel';
+import { ExtendPromotionButton, ToggleActiveButton } from '../actions/PromotionActions'; 
 
-// IMPORTUJ NOWE AKCJE
-import { ExtendPromotionButton, ToggleActiveButton } from '../PromotionActions'; 
-
-// KPI Card (bez zmian)
 const KpiCard = ({ label, value, color = 'primary.main' }: { label: string, value: string | number | null | undefined, color?: string }) => {
     if (value === null || value === undefined) return null;
     return (
@@ -28,11 +25,10 @@ export const PromotionShow = () => (
     <Show title="Szczegóły Promocji" sx={{ '& .RaShow-card': { backgroundColor: 'transparent', boxShadow: 'none' } }}>
         <SimpleShowLayout sx={{ p: 0 }}>
             
-            {/* --- NAGŁÓWEK --- */}
             <Box 
                 display="flex" 
                 alignItems="center" 
-                justifyContent="space-between" // Zmiana na space-between
+                justifyContent="space-between"
                 gap={2} 
                 mb={3} 
                 p={3} 
@@ -51,7 +47,6 @@ export const PromotionShow = () => (
                     </Box>
                 </Box>
                 
-                {/* --- SEKCJA AKCJI (PRAWA STRONA NAGŁÓWKA) --- */}
                 <Box display="flex" alignItems="center" gap={2}>
                     <ExtendPromotionButton />
                     <ToggleActiveButton />
@@ -60,13 +55,11 @@ export const PromotionShow = () => (
 
             <Grid container spacing={3}>
 
-                {/* --- LEWA KOLUMNA --- */}
                 <Grid>
                     <Card sx={{ mb: 3 }}>
                         <CardContent>
                             <Box display="flex" gap={4} flexWrap="wrap">
                                 
-                                {/* RABAT */}
                                 <Box minWidth="150px">
                                     <Typography variant="caption" color="textSecondary">Wartość Rabatu</Typography>
                                     <FunctionField label="Rabat" render={(record: any) => {
@@ -79,7 +72,6 @@ export const PromotionShow = () => (
                                     />
                                 </Box>
 
-                                {/* RODZAJ */}
                                 <Box>
                                     <Typography variant="caption" color="textSecondary">Rodzaj</Typography>
                                     <Box display="flex" alignItems="center" gap={1} mt={0.5}>
@@ -91,7 +83,6 @@ export const PromotionShow = () => (
                                     </Box>
                                 </Box>
 
-                                {/* START */}
                                 <Box>
                                     <Typography variant="caption" color="textSecondary">Data rozpoczęcia</Typography>
                                     <DateField source="startDate" showTime sx={{ display: 'block', fontSize: '1.1rem', fontWeight: 500, mt: 0.5 }} />
@@ -109,7 +100,6 @@ export const PromotionShow = () => (
                     <ProposalPanel />
                 </Grid>
 
-                {/* --- PRAWA KOLUMNA (AI) --- */}
                 <FunctionField render={(record: any) => {
                     if (!record.proposal || !record.proposal.score) return null;
                     const p = record.proposal;

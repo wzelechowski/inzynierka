@@ -16,11 +16,8 @@ import RoomIcon from '@mui/icons-material/Room';
 import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import PendingActionsIcon from '@mui/icons-material/PendingActions';
+import { DeliveryStatusActions, DeliveryAssignSupplierButton } from '../actions/DeliveryActions';
 
-// Nasze akcje
-import { DeliveryStatusActions, DeliveryAssignSupplierButton } from '../DeliveryActions';
-
-// --- CHIP STATUSU (Tylko wyświetlanie) ---
 const DeliveryStatusChip = () => {
     const record = useRecordContext();
     if (!record) return null;
@@ -28,7 +25,6 @@ const DeliveryStatusChip = () => {
     let color: any = "default";
     let label = record.status;
 
-    // Mapowanie zgodne z Twoim Enumem
     switch (record.status) {
         case 'PENDING':   color = 'default'; label = "Oczekuje"; break;
         case 'ASSIGNED':  color = 'warning'; label = "Przypisane"; break;
@@ -44,7 +40,6 @@ export const DeliveryShow = () => (
     <Show sx={{ '& .RaShow-card': { backgroundColor: 'transparent', boxShadow: 'none' } }}>
         <SimpleShowLayout sx={{ p: 0 }}>
             
-            {/* NAGŁÓWEK */}
             <Box 
                 display="flex" 
                 justifyContent="space-between" 
@@ -79,14 +74,11 @@ export const DeliveryShow = () => (
                 </Box>
 
                 <Box display="flex" alignItems="center" gap={2}>
-                    {/* Tutaj przycisk zmiany statusu */}
                     <DeliveryStatusActions />
                 </Box>
             </Box>
 
             <Grid container spacing={3}>
-                
-                {/* KOLUMNA LEWA: Logistyka */}
                 <Grid>
                     <Card sx={{ height: '100%' }}>
                         <CardContent>
@@ -147,7 +139,6 @@ export const DeliveryShow = () => (
                                     }} />
                                 </Box>
 
-                                {/* Aktualny Status */}
                                 <Box>
                                     <Typography variant="caption" color="textSecondary" display="block" mb={0.5}>Obecny Status</Typography>
                                     <DeliveryStatusChip />
@@ -157,7 +148,6 @@ export const DeliveryShow = () => (
                     </Card>
                 </Grid>
 
-                {/* KOLUMNA PRAWA: Oś Czasu */}
                 <Grid>
                     <Card sx={{ height: '100%' }}>
                         <CardContent>
@@ -167,10 +157,8 @@ export const DeliveryShow = () => (
                             
                             <Timeline position="right" sx={{ p: 0, mt: 2 }}>
                                 
-                                {/* 1. PENDING (Utworzenie) */}
                                 <TimelineItem>
                                     <TimelineOppositeContent color="text.secondary" sx={{ flex: 0.3 }}>
-                                        {/* Tutaj można by dać createdAt jeśli jest w DTO */}
                                         <Typography variant="caption">Start</Typography>
                                     </TimelineOppositeContent>
                                     <TimelineSeparator>
@@ -182,7 +170,6 @@ export const DeliveryShow = () => (
                                     </TimelineContent>
                                 </TimelineItem>
 
-                                {/* 2. ASSIGNED (Przypisanie) */}
                                 <TimelineItem>
                                     <TimelineOppositeContent color="text.secondary" sx={{ flex: 0.3 }}>
                                         <DateField source="assignedAt" showTime options={{ hour: '2-digit', minute: '2-digit' }} />
@@ -197,7 +184,6 @@ export const DeliveryShow = () => (
                                     </TimelineContent>
                                 </TimelineItem>
 
-                                {/* 3. PICKED_UP (W drodze) */}
                                 <TimelineItem>
                                     <TimelineOppositeContent color="text.secondary" sx={{ flex: 0.3 }}>
                                         <DateField source="pickedUpAt" showTime options={{ hour: '2-digit', minute: '2-digit' }} />
@@ -213,7 +199,6 @@ export const DeliveryShow = () => (
                                     </TimelineContent>
                                 </TimelineItem>
 
-                                {/* 4. DELIVERED (Koniec) */}
                                 <TimelineItem>
                                     <TimelineOppositeContent color="text.secondary" sx={{ flex: 0.3 }}>
                                         <DateField source="deliveredAt" showTime options={{ hour: '2-digit', minute: '2-digit' }} />

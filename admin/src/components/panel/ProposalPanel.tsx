@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useRecordContext, LoadingIndicator } from 'react-admin';
-import { Box, Typography, Paper, Chip, Divider, Stack } from '@mui/material';
+import { Box, Typography, Paper, Chip, Stack } from '@mui/material';
 import TrendingUpIcon from '@mui/icons-material/TrendingUp';
-import AnalyticsIcon from '@mui/icons-material/Analytics';
 import { MenuItemService } from '../../service/menuItemService';
 
 export const ProposalPanel = () => {

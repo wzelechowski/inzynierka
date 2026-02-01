@@ -4,10 +4,9 @@ import {
     FunctionField, useRecordContext, useGetList, Loading
 } from 'react-admin';
 import { Grid, Box, Typography, Divider, Card, CardContent, Chip, Avatar } from '@mui/material';
-import { OrderStatusActions } from '../OrderStatusActions';
+import { OrderStatusActions } from '../actions/OrderStatusActions';
 import { OrderReadOnlySummary } from '../OrderReadOnlySummary';
 
-// Ikony
 import RestaurantIcon from '@mui/icons-material/Restaurant';
 import DeliveryDiningIcon from '@mui/icons-material/DeliveryDining';
 import ShoppingBagIcon from '@mui/icons-material/ShoppingBag';
@@ -16,16 +15,11 @@ import RoomIcon from '@mui/icons-material/Room';
 import LocalOfferIcon from '@mui/icons-material/LocalOffer';
 import LocalShippingIcon from '@mui/icons-material/LocalShipping';
 
-// --- KOMPONENTY POMOCNICZE ---
-
-// 1. Komponent pobierający szczegóły dostawy (FETCH PO ID)
 const OrderDeliveryDetails = () => {
     const record = useRecordContext();
     
-    // Sprawdzamy czy to zamówienie z dostawą
     if (!record || record.type !== 'DELIVERY') return null;
 
-    // Pobieramy dostawę, która ma orderId == record.id
     const { data, isLoading, error } = useGetList(
         'deliveries', 
         { 
@@ -49,7 +43,7 @@ const OrderDeliveryDetails = () => {
         );
     }
 
-    const delivery = data[0]; // Pierwszy znaleziony rekord
+    const delivery = data[0];
 
     return (
         <Box 
@@ -93,7 +87,6 @@ const OrderDeliveryDetails = () => {
     );
 };
 
-// 2. Wyświetlanie Nazwy Produktu + Badge Promocji
 const ProductNameCell = (_props: { label?: string }) => {
     const record = useRecordContext();
     if (!record) return null;
@@ -118,7 +111,6 @@ const ProductNameCell = (_props: { label?: string }) => {
     );
 };
 
-// 3. Status Chip
 const StatusChip = () => {
     const record = useRecordContext();
     if (!record) return null;
@@ -147,7 +139,6 @@ const StatusChip = () => {
     return <Chip label={labelMap[record.status] || record.status} color={color} variant="filled" />;
 };
 
-// 4. Type Display
 const TypeDisplay = () => {
     const record = useRecordContext();
     if (!record) return null;
@@ -171,15 +162,12 @@ const TypeDisplay = () => {
     );
 };
 
-// --- GŁÓWNY WIDOK ---
-
 export const OrderShow = () => (
     <Show 
         sx={{ '& .RaShow-card': { backgroundColor: 'transparent', boxShadow: 'none' } }}
     >
         <SimpleShowLayout sx={{ p: 0 }}>
             
-            {/* NAGŁÓWEK */}
             <Box 
                 display="flex" 
                 justifyContent="space-between" 
@@ -210,7 +198,6 @@ export const OrderShow = () => (
                 </Box>
             </Box>
 
-            {/* TREŚĆ */}
             <Grid container spacing={3}>
                 
                 <Grid>
@@ -231,9 +218,7 @@ export const OrderShow = () => (
                                     <StatusChip />
                                 </Box>
 
-                                {/* --- TUTAJ JEST NOWY KOMPONENT DOSTAWY --- */}
                                 <OrderDeliveryDetails />
-                                {/* ----------------------------------------- */}
 
                                 <FunctionField render={(r: any) => r.deliveredAt && (
                                     <Box>

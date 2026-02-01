@@ -14,7 +14,7 @@ import { PizzaShow } from './components/show/PizzaShow';
 import { DrinkShow } from './components/show/DrinkShow';
 import { ExtraShow } from './components/show/ExtraShow';
 import { PromotionShow } from './components/show/PromotionShow';
-import { PromotionProposalShow } from './components/show/PromotionProposalShow';
+import { PromotionProposalShow } from './components/panel/PromotionProposalShow';
 import { PizzaCreate } from './components/create/PizzaCreate';
 import { PromotionCreate } from './components/create/PromotionCreate';
 import { DrinkCreate } from './components/create/DrinkCreate';

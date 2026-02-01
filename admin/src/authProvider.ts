@@ -1,4 +1,3 @@
-// src/authProvider.ts
 import type { AuthProvider } from 'react-admin';
 import { jwtDecode } from 'jwt-decode';
 
@@ -19,7 +18,6 @@ export const authProvider: AuthProvider = {
 
         const data = await response.json();
         
-        // POPRAWKA 1: Keycloak zwraca 'access_token', a nie 'accessToken'
         const token = data.access_token; 
         const refreshToken = data.refresh_token;
 
@@ -27,21 +25,16 @@ export const authProvider: AuthProvider = {
             throw new Error('Nie otrzymano tokena od serwera (sprawdź czy backend zwraca access_token)');
         }
 
-        // Dekodujemy
         const decoded: any = jwtDecode(token);
         
-        // POPRAWKA 2: Szukamy roli 'ROLE_ADMIN' w odpowiednim miejscu dla Twojego Keycloaka
-        // W Twoim JSON rola jest w: resource_access -> pizzeria-app -> roles
         
         const resourceAccess = decoded.resource_access?.['pizzeria-app']?.roles || [];
         const realmAccess = decoded.realm_access?.roles || [];
         
-        // Łączymy wszystkie role w jedną tablicę
         const allRoles = [...resourceAccess, ...realmAccess];
 
         console.log('Znalezione role użytkownika:', allRoles);
 
-        // Sprawdzamy czy ma uprawnienia (ROLE_ADMIN lub ADMIN)
         if (!allRoles.includes('ROLE_ADMIN') && !allRoles.includes('ADMIN')) {
             throw new Error('Zalogowano, ale brak roli ROLE_ADMIN w tokenie!');
         }
@@ -68,7 +61,6 @@ export const authProvider: AuthProvider = {
     },
 
     checkAuth: () => {
-        // Sprawdzamy czy token w ogóle istnieje
         return localStorage.getItem('access_token') ? Promise.resolve() : Promise.reject();
     },
 

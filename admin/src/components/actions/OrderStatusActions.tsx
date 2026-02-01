@@ -4,7 +4,7 @@ import { useNotify, useRefresh, useRecordContext, Button } from 'react-admin';
 import { Menu, MenuItem, Box, Typography } from '@mui/material';
 import ChangeCircleIcon from '@mui/icons-material/ChangeCircle';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import { api } from '../api/api';
+import { api } from '../../api/api';
 
 const ORDER_STATUSES = [
     { id: 'NEW', name: 'Nowe', color: '#e0e0e0' },

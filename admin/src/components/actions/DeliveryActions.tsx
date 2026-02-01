@@ -10,7 +10,7 @@ import {
 import ChangeCircleIcon from '@mui/icons-material/ChangeCircle';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
-import { api } from '../api/api';
+import { api } from '../../api/api';
 
 const DELIVERY_STATUS_META: Record<string, { name: string, color: string }> = {
     'PENDING':    { name: 'Oczekuje',    color: '#e0e0e0' },

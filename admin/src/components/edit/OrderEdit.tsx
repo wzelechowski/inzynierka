@@ -2,7 +2,6 @@ import {
     Edit, SimpleForm, TextInput, NumberInput, 
     SelectInput, ArrayInput, SimpleFormIterator, 
     ReferenceInput, AutocompleteInput, required,
-    FormDataConsumer 
 } from 'react-admin';
 import { Box, Typography, Divider } from '@mui/material';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
