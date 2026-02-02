@@ -62,4 +62,10 @@ public class PromotionProposalController {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("/generate")
+    public ResponseEntity<Void> generatePromotionProposal(@RequestParam(name = "max_proposals", defaultValue = "5") Integer maxProposals,
+                                                          @RequestParam(name = "days_back", defaultValue = "21") Integer daysBack) {
+        promotionProposalService.generate(maxProposals, daysBack);
+        return ResponseEntity.noContent().build();
+    }
 }

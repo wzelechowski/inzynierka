@@ -4,6 +4,7 @@ import pizzeria.promotions.promotionProposal.model.EffectType;
 import pizzeria.promotions.promotionProposalProduct.dto.response.PromotionProposalProductResponse;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -16,6 +17,8 @@ public record PromotionProposalResponse(
         BigDecimal score,
         String reason,
         BigDecimal discount,
-        List<PromotionProposalProductResponse> products
+        List<PromotionProposalProductResponse> products,
+        LocalDateTime createdAt,
+        LocalDateTime updatedAt
 ) {
 }

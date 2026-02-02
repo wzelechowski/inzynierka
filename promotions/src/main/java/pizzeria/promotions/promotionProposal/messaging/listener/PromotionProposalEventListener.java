@@ -11,7 +11,7 @@ import pizzeria.promotions.promotionProposal.service.PromotionProposalService;
 
 @Service
 @RequiredArgsConstructor
-public class PromotionEventListener {
+public class PromotionProposalEventListener {
 
     private final PromotionProposalService promotionProposalService;
     private final PromotionProposedEventMapper promotionProposedEventMapper;

@@ -6,7 +6,6 @@ from services.promotion_effect_detector import detect_effect_type
 from services.apriori.apriori_service import AprioriService
 from services.apriori.rule_filter import RulesFilter
 from services.apriori.rule_mapper import RulesMapper
-
 from services.promotion_effect_detector import EffectType
 
 
@@ -25,8 +24,8 @@ class AprioriRecommendationService:
         self.rules_filter = rules_filter
         self.publisher = publisher
 
-    async def generate(self):
-        features = await self.feature_repository.find_all()
+    async def generate(self, max_proposals: int, days_back: int):
+        features = await self.feature_repository.find_recent(days_back)
 
         if not features:
             return []
@@ -76,4 +75,4 @@ class AprioriRecommendationService:
             for proposal in proposals:
                 self.publisher.publish(payload=proposal)
 
-        return proposals
+        return proposals[:max_proposals]

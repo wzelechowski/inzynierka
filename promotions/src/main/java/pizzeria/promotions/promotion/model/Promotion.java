@@ -1,10 +1,10 @@
 package pizzeria.promotions.promotion.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import pizzeria.promotions.promotionProposal.model.EffectType;
 import pizzeria.promotions.promotionProposal.model.PromotionProposal;
 
@@ -16,8 +16,10 @@ import java.util.UUID;
 @Table(name = "promotions")
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
+@Getter
+@Setter
 @Builder
+@EntityListeners(AuditingEntityListener.class)
 public class Promotion {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -43,4 +45,10 @@ public class Promotion {
     @JoinColumn(name = "proposal_id", nullable = false, unique = true)
     @Builder.Default
     private PromotionProposal proposal = null;
+
+    @CreatedDate
+    private LocalDateTime createdAt;
+
+    @LastModifiedDate
+    private LocalDateTime updatedAt;
 }

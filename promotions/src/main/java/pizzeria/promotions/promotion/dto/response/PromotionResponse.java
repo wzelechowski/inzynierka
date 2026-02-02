@@ -15,6 +15,8 @@ public record PromotionResponse(
         LocalDateTime endDate,
         BigDecimal discount,
         EffectType effectType,
-        PromotionProposalResponse proposal
+        PromotionProposalResponse proposal,
+        LocalDateTime createdAt,
+        LocalDateTime updatedAt
 ) {
 }

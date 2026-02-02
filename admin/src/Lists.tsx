@@ -1,7 +1,8 @@
-import { List, Datagrid, TextField, NumberField, BooleanField, DateField, EmailField, ChipField, FunctionField, Link } from 'react-admin';
+import { List, Datagrid, TextField, NumberField, BooleanField, DateField, EmailField, ChipField, FunctionField, Link, TopToolbar, ExportButton, CreateButton } from 'react-admin';
 import { Chip, Box, Typography, Stack } from '@mui/material';
 import { OrderItemsPanel } from './components/panel/OrderItemsPanel';
 import { PromotionProposalPanel } from './components/panel/PromotionProposalPanel';
+import { GenerateProposalsButton } from './components/actions/GenerateProposalsButton';
 
 const getStatusColor = (status: string) => {
     switch (status) {
@@ -35,6 +36,14 @@ const getScoreColor = (score: number) => {
     if (score > 5)  return '#ed6c02'; 
     return '#d32f2f';                 
 };
+
+const ListActions = () => (
+    <TopToolbar>
+        <GenerateProposalsButton />
+        <CreateButton/>
+        <ExportButton />
+    </TopToolbar>
+);
 
 export const PizzaList = () => (
     <List title="Pizza">
@@ -83,6 +92,7 @@ export const MenuItemList = () => (
             
             <FunctionField 
                 label="Item ID (Link)"
+                sortBy="itemId"
                 render={(record: any) => {
                     if (!record || !record.itemId || !record.type) return "-";
 
@@ -130,6 +140,7 @@ export const OrderList = () => (
             }}
         >
             <TextField source="id" label="ID" />
+            
             <FunctionField 
                 label="Status"
                 render={(record: any) => (
@@ -143,6 +154,7 @@ export const OrderList = () => (
 
             <FunctionField 
                 label="Typ"
+                sortBy="type" // ZMIANA: Dodano sortBy
                 render={(record: any) => (
                     <Chip 
                         label={record.type} 
@@ -167,6 +179,7 @@ export const OrderList = () => (
 );
 
 export const DeliveryList = () => (
+    // ZMIANA: DESC zamiast ASC
     <List title="Dostawy" sort={{ field: 'assignedAt', order: 'DESC' }}>
         <Datagrid rowClick="show">
             <TextField 
@@ -177,6 +190,7 @@ export const DeliveryList = () => (
 
             <FunctionField
                 label="ID Zamówienia"
+                sortBy="orderId"
                 render={(record: any) => {
                     if (!record || !record.orderId) return "-";
 
@@ -199,6 +213,7 @@ export const DeliveryList = () => (
 
             <FunctionField 
                 label="Status"
+                sortBy="status" // ZMIANA: Dodano sortBy
                 render={(record: any) => (
                     <Chip 
                         label={record.status} 
@@ -211,6 +226,7 @@ export const DeliveryList = () => (
 
             <FunctionField 
                 label="Adres dostawy"
+                sortBy="deliveryAddress"
                 render={(record: any) => (
                     <div style={{ lineHeight: '1.2' }}>
                         <span style={{ fontWeight: 'bold' }}>{record.deliveryAddress}</span>
@@ -280,12 +296,15 @@ export const UserList = () => (
 );
 
 export const PromotionList = () => (
-    <List title="Promocje">
+    // ZMIANA: DESC zamiast ASC
+    <List title="Promocje" sort={{ field: 'createdAt', order: 'DESC' }}>
         <Datagrid rowClick="show">
             <TextField source="id" label="ID" sx={{ fontFamily: 'monospace', color: 'gray' }} />
             <TextField source="name" label="Nazwa Promocji" sx={{ fontWeight: 'bold' }} />
+            
             <FunctionField 
                 label="Status"
+                sortBy="active" // ZMIANA: Dodano sortBy
                 render={(record: any) => (
                     <Chip 
                         label={record.active ? "AKTYWNA" : "NIEAKTYWNA"} 
@@ -297,6 +316,7 @@ export const PromotionList = () => (
             />
             <FunctionField 
                 label="Typ"
+                sortBy="effectType" // ZMIANA: Dodano sortBy
                 render={(record: any) => (
                     <Chip 
                         label={record.effectType} 
@@ -309,22 +329,26 @@ export const PromotionList = () => (
 
             <FunctionField 
                 label="Rabat"
+                sortBy="discount" // ZMIANA: Dodano sortBy
                 render={(record: any) => {
                     const style = { color: '#d32f2f', fontWeight: 'bold', fontSize: '1.1em' };
-                    if (record.proposal.effectType === 'FIXED') {
+                    // Pobieramy typ efektu z propozycji lub bezpośrednio z rekordu
+                    const effectType = record.proposal?.effectType || record.effectType;
+
+                    if (effectType === 'FIXED') {
                         return (
                             <span style={style}>
                                 {record.discount.toFixed(2)} zł
                             </span>
                         );
                     }
-                        if (record.proposal.effectType === 'PERCENT') {
-                            return (
+                    if (effectType === 'PERCENT') {
+                        return (
                             <span style={style}>
                                 {(record.discount * 100).toFixed(0)}%
                             </span>
-                            );
-                        }
+                        );
+                    }
                     
                     return (
                         <span style={style}>
@@ -336,6 +360,8 @@ export const PromotionList = () => (
 
             <DateField source="startDate" label="Od" />
             <DateField source="endDate" label="Do" />
+            <DateField source="createdAt" label="Stworzono" showTime />
+            <DateField source="updatedAt" label="Modyfikowano" showTime />
         </Datagrid>
     </List>
 );
@@ -346,6 +372,7 @@ export const SupplierList = () => (
             <TextField source="id" label="ID Dostawcy" />
             <FunctionField
                 label="ID Użytkownika"
+                sortBy="userProfileId"
                 render={(record: any) => {
                     if (!record || !record.userProfileId) return "-";
 
@@ -377,8 +404,9 @@ export const SupplierList = () => (
 export const PromotionProposalList = () => (
     <List 
         title="Propozycje Promocji (AI)" 
-        sort={{ field: 'score', order: 'DESC' }}
+        sort={{ field: 'createdAt', order: 'DESC' }}
         perPage={25}
+        actions={<ListActions />}
     >
         <Datagrid 
             rowClick="expand"
@@ -387,14 +415,10 @@ export const PromotionProposalList = () => (
                 '& .RaDatagrid-headerCell': { fontWeight: 'bold', backgroundColor: '#fafafa' },
             }}
         >
-            <TextField 
-                source="id" 
-                label="ID" 
-                sx={{ fontFamily: 'monospace', color: '#999', fontSize: '0.85em', maxWidth: 80 }} 
-            />
-
+            <TextField source="id" label="ID" sx={{ fontFamily: 'monospace', color: '#999', fontSize: '0.85em', maxWidth: 80 }} />
             <FunctionField 
                 label="Uzasadnienie"
+                sortBy="reason"
                 render={(record: any) => (
                     <Box display="flex" alignItems="center" gap={1}>
                         <Typography variant="body2" fontWeight="500">
@@ -406,6 +430,7 @@ export const PromotionProposalList = () => (
 
             <FunctionField 
                 label="Typ"
+                sortBy="effectType"
                 render={(record: any) => (
                     <Chip 
                         label={record.effectType} 
@@ -418,6 +443,7 @@ export const PromotionProposalList = () => (
 
             <FunctionField 
                 label="Rabat"
+                sortBy="discount"
                 render={(record: any) => {
                     const style = { color: '#d32f2f', fontWeight: 'bold', fontSize: '1.1em' };
                     if (record.effectType === 'FIXED') {
@@ -428,13 +454,13 @@ export const PromotionProposalList = () => (
                         );
                     }
 
-                        if (record.effectType === 'PERCENT') {
-                            return (
+                    if (record.effectType === 'PERCENT') {
+                        return (
                             <span style={style}>
                                 {(record.discount * 100).toFixed(0)}%
                             </span>
-                            );
-                        }
+                        );
+                    }
                     
                     return (
                         <span style={style}>
@@ -468,6 +494,7 @@ export const PromotionProposalList = () => (
             <FunctionField 
                 label="AI Score"
                 source="score"
+                sortBy="score" // ZMIANA: Dodano sortBy
                 render={(record: any) => (
                     <Box 
                         sx={{ 
@@ -485,6 +512,9 @@ export const PromotionProposalList = () => (
                     </Box>
                 )}
             />
+
+            <DateField source="createdAt" label="Stworzono" showTime />
+            <DateField source="updatedAt" label="Modyfikowano" showTime />
         </Datagrid>
     </List>
 );

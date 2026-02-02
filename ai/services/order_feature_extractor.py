@@ -13,7 +13,8 @@ class OrderFeatureExtractor:
             is_holiday=self.is_holiday(),
             total_price=event.total_price,
             product_ids=[str(pid) for pid in event.order_item_ids],
-            cart_size=len(event.order_item_ids)
+            cart_size=len(event.order_item_ids),
+            created_at=dt
         )
 
     def is_holiday(self) -> bool:

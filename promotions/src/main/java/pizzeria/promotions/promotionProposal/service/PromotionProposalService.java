@@ -19,4 +19,6 @@ public interface PromotionProposalService {
     PromotionProposalResponse update(UUID id, PromotionProposalRequest request);
 
     PromotionProposalResponse patch(UUID id, PromotionProposalPatchRequest request);
+
+    void generate(Integer maxProposals, Integer daysBack);
 }

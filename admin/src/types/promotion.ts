@@ -9,6 +9,8 @@ export interface PromotionResponse {
     discount: number;
     effectType: EffectType;
     proposal?: PromotionProposalResponse;
+    createdAt: string;
+    updatedAt: string;
 }
 
 export interface PromotionRequest {
@@ -30,6 +32,8 @@ export interface PromotionProposalResponse {
     reason: string;
     discount: number;
     products: PromotionProposalProductResponse[];
+    createdAt: string;
+    updatedAt: string;
 }
 
 export interface PromotionProposalRequest {

@@ -8,6 +8,8 @@ import pizzeria.promotions.promotionProposal.dto.request.PromotionProposalPatchR
 import pizzeria.promotions.promotionProposal.dto.request.PromotionProposalRequest;
 import pizzeria.promotions.promotionProposal.dto.response.PromotionProposalResponse;
 import pizzeria.promotions.promotionProposal.mapper.PromotionProposalMapper;
+import pizzeria.promotions.promotionProposal.messaging.event.GenerateProposalEvent;
+import pizzeria.promotions.promotionProposal.messaging.publisher.PromotionProposalEventPublisher;
 import pizzeria.promotions.promotionProposal.model.PromotionProposal;
 import pizzeria.promotions.promotionProposal.repository.PromotionProposalRepository;
 import pizzeria.promotions.promotionProposalProduct.model.ProposalProductRole;
@@ -22,6 +24,7 @@ public class PromotionProposalServiceImpl implements PromotionProposalService {
 
     private final PromotionProposalRepository promotionProposalRepository;
     private final PromotionProposalMapper promotionProposalMapper;
+    private final PromotionProposalEventPublisher eventPublisher;
 
     @Override
     public List<PromotionProposalResponse> getAllProposals() {
@@ -68,5 +71,11 @@ public class PromotionProposalServiceImpl implements PromotionProposalService {
         PromotionProposal promotionProposal = promotionProposalRepository.findById(id).orElseThrow(NotFoundException::new);
         promotionProposalMapper.patchEntity(promotionProposal, request);
         return promotionProposalMapper.toResponse(promotionProposal);
+    }
+
+    @Override
+    public void generate(Integer maxProposals, Integer daysBack) {
+        GenerateProposalEvent event = new GenerateProposalEvent(maxProposals, daysBack);
+        eventPublisher.publishProposalGenerateRequest(event);
     }
 }
