@@ -7,6 +7,8 @@ interface MenuItemCardProps {
   description: string;
   price: number;
   type: string;
+  weight?: number;
+  volume?: number;
   onAddToOrder: () => void;
 }
 
@@ -15,6 +17,8 @@ export default function MenuItemCard({
   description, 
   price, 
   type,
+  weight,
+  volume,
   onAddToOrder 
 }: MenuItemCardProps) {
   
@@ -25,9 +29,21 @@ export default function MenuItemCard({
           <Text style={styles.name}>{name}</Text>
         </View>
         
-        <Text style={styles.description} numberOfLines={3}>
-          {description}
-        </Text>
+        {!!description && (
+          <Text style={styles.description} numberOfLines={3}>
+            {description}
+          </Text>
+        )}
+
+        <View style={styles.detailsContainer}>
+          {type === 'DRINK' && volume ? (
+            <Text style={styles.detailText}>Pojemność: {volume}l</Text>
+          ) : null}
+          
+          {type === 'EXTRA' && weight ? (
+            <Text style={styles.detailText}>Waga: {weight}g</Text>
+          ) : null}
+        </View>
         
         <Text style={styles.price}>{price.toFixed(2)} PLN</Text>
       </View>
@@ -83,6 +99,21 @@ const styles = StyleSheet.create({
     color: colors.textSecondary,
     marginBottom: 8,
     lineHeight: 18,
+  },
+  // Nowy styl dla detali
+  detailsContainer: {
+    flexDirection: 'row',
+    marginBottom: 6,
+  },
+  detailText: {
+    fontSize: 12,
+    color: colors.textSecondary,
+    backgroundColor: '#f5f5f5',
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 4,
+    overflow: 'hidden',
+    marginRight: 8,
   },
   price: {
     fontSize: 15,

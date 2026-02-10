@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-import pizzeria.user.address.model.Address;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -34,8 +33,4 @@ public class UserProfile {
     @Enumerated(EnumType.STRING)
     @Builder.Default
     private List<Role> roles = new ArrayList<>();
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    @Builder.Default
-    private List<Address> addresses = new ArrayList<>();
 }

@@ -42,7 +42,7 @@ public class Promotion {
             fetch = FetchType.LAZY,
             cascade = {CascadeType.MERGE, CascadeType.PERSIST}
     )
-    @JoinColumn(name = "proposal_id", nullable = false, unique = true)
+    @JoinColumn(name = "proposal_id", nullable = false)
     @Builder.Default
     private PromotionProposal proposal = null;
 

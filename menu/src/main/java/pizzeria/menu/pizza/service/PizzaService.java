@@ -2,7 +2,6 @@ package pizzeria.menu.pizza.service;
 
 import pizzeria.menu.pizza.dto.response.PizzaResponse;
 import pizzeria.menu.pizza.model.PizzaIngredient;
-import pizzeria.menu.pizza.dto.request.PizzaIngredientRequest;
 import pizzeria.menu.pizza.dto.request.PizzaPatchRequest;
 import pizzeria.menu.pizza.dto.request.PizzaRequest;
 
@@ -21,8 +20,6 @@ public interface PizzaService {
     PizzaResponse update(UUID id, PizzaRequest request);
 
     PizzaResponse patch(UUID id, PizzaPatchRequest request);
-
-    PizzaIngredient addIngredientToPizza(PizzaIngredientRequest request);
 
     List<PizzaIngredient> getAllPizzasIngredients(UUID pizzaId);
 }

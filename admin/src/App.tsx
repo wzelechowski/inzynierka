@@ -1,4 +1,4 @@
-import { Admin, Resource } from 'react-admin';
+import { Admin, Resource, defaultTheme } from 'react-admin';
 import { authProvider } from './authProvider';
 import { dataProvider } from './dataProvider';
 import LoginPage from './LoginPage';
@@ -43,6 +43,8 @@ export const App = () => (
         authProvider={authProvider} 
         dataProvider={dataProvider}
         loginPage={LoginPage}
+        theme={defaultTheme}
+        darkTheme={null}
     >
         <Resource name="pizzas" list={PizzaList} options={{ label: 'Pizza' }} show={PizzaShow} create={PizzaCreate} edit={PizzaEdit}/>
         <Resource name="drinks" list={DrinkList} options={{ label: 'Napoje' }} show={DrinkShow} create={DrinkCreate} edit={DrinkEdit}/>

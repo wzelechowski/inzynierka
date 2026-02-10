@@ -38,6 +38,7 @@ public class PromotionServiceImpl implements PromotionService {
     public List<PromotionResponse> getAllPromotions() {
         return promotionRepository.findAll()
                 .stream()
+                .sorted(Comparator.comparing(Promotion::getCreatedAt).reversed())
                 .map(promotionMapper::toResponse)
                 .collect(Collectors.toList());
     }

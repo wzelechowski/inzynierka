@@ -14,6 +14,7 @@ import pizzeria.menu.ingredient.model.Ingredient;
 @NoArgsConstructor
 @Builder
 public class PizzaIngredient {
+    @Builder.Default
     @EmbeddedId
     private PizzaIngredientId id = new PizzaIngredientId();
 

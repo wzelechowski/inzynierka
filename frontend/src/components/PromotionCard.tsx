@@ -13,23 +13,34 @@ export interface PromotionItem {
 
 interface PromotionCardProps {
   promotionName: string;
+  endDate: string;
   items: PromotionItem[];
   onPress: () => void;
 }
 
 export default function PromotionCard({ 
   promotionName,
+  endDate,
   items,
   onPress 
 }: PromotionCardProps) {
   
   const totalSetPrice = items.reduce((sum, item) => sum + item.finalPrice, 0);
 
+  const formattedDate = new Date(endDate).toLocaleDateString('pl-PL', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric'
+  });
+
   return (
     <TouchableOpacity style={styles.card} onPress={onPress} activeOpacity={0.9}>
       
       <View style={styles.header}>
-        <Text style={styles.promoName}>{promotionName}</Text>
+        <View style={styles.headerTextContainer}>
+          <Text style={styles.promoName}>{promotionName}</Text>
+          <Text style={styles.endDateText}>Ważna do: {formattedDate}</Text>
+        </View>
         <View style={styles.priceBadge}>
           <Text style={styles.totalPrice}>{totalSetPrice.toFixed(2)} PLN</Text>
         </View>
@@ -77,8 +88,8 @@ const styles = StyleSheet.create({
     marginBottom: 24,
     borderWidth: 1,
     borderColor: '#eee',
-    width: '100%',
-    maxWidth: 500,
+    width: 340,
+    maxWidth: '100%',
     alignSelf: 'center',
     shadowColor: colors.primaryDark,
     shadowOffset: { width: 0, height: 4 },
@@ -94,12 +105,21 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
   },
+  headerTextContainer: {
+    flex: 1, 
+    marginRight: 10,
+  },
   promoName: {
     color: colors.surface,
     fontSize: 16,
     fontWeight: 'bold',
     textTransform: 'uppercase',
     letterSpacing: 0.5,
+  },
+  endDateText: {
+    color: 'rgba(255, 255, 255, 0.8)',
+    fontSize: 12,
+    marginTop: 2,
   },
   priceBadge: {
     backgroundColor: colors.surface,

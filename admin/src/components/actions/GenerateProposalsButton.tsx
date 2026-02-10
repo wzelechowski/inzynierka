@@ -73,8 +73,17 @@ export const GenerateProposalsButton = () => {
                         fullWidth
                         variant="outlined"
                         value={maxProposals}
-                        onChange={(e) => setMaxProposals(Number(e.target.value))}
-                        helperText="Ile najlepszych reguł zapisać?"
+                        onChange={(e) => {
+                            let value = Number(e.target.value);
+                            if (value > 5) {
+                                value = 5;
+                            } else if (value < 1) {
+                                value = 1;
+                            }
+
+                            setMaxProposals(value)}
+                    }
+                        helperText="Ile najlepszych reguł zapisać? (max 5)"
                     />
                 </DialogContent>
                 <DialogActions>

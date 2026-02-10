@@ -8,9 +8,6 @@ import java.util.UUID;
 
 public record PizzaIngredientRequest(
         @NotNull
-        UUID pizzaId,
-
-        @NotNull
         UUID ingredientId,
 
         @NotNull

@@ -68,7 +68,6 @@ export default function SupplierLayout() {
                   <Ionicons name="time-outline" size={26} color="#fff" />
                 </TouchableOpacity>
 
-                {/* Przycisk: GIEŁDA (Pending) */}
                 <TouchableOpacity 
                   onPress={() => router.push('/supplier/pendingDeliveries')}
                   activeOpacity={0.7}
@@ -84,7 +83,7 @@ export default function SupplierLayout() {
       <Stack.Screen 
         name="pendingDeliveries"
         options={{
-          title: 'Giełda Zleceń',
+          title: 'Zlecenia',
           headerBackTitle: 'Wróć', 
         }} 
       />

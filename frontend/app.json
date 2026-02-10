@@ -13,8 +13,17 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "ios": {
-      "supportsTablet": true
+"ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.pizzeria",
+      "infoPlist": {
+        "LSApplicationQueriesSchemes": [
+          "googlechromes",
+          "comgooglemaps",
+          "maps",
+          "waze"
+        ]
+      }
     },
     "android": {
       "adaptiveIcon": {

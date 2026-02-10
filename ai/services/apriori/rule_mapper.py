@@ -39,4 +39,4 @@ class RulesMapper:
                 )
             )
 
-        return sorted(mapped, key=lambda r: r.score, reverse=True)[:3]
+        return sorted(mapped, key=lambda r: r.score, reverse=True)[:5]

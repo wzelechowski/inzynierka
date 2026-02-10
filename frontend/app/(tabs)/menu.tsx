@@ -18,6 +18,8 @@ interface MenuItem {
   description: string;
   basePrice: number;
   itemType: ItemType;
+  weight?: number;
+  volume?: number;
 }
 
 interface SectionData {
@@ -30,6 +32,8 @@ const CATEGORIES: CategoryOption[] = [
   { label: 'Napoje', value: 'DRINK' },
   { label: 'Dodatki', value: 'EXTRA' },
 ];
+
+const ORDERED_CATEGORIES: string[] = ['PIZZA', 'DRINK', 'EXTRA'];
 
 export default function MenuScreen() {
   const router = useRouter();
@@ -52,21 +56,36 @@ export default function MenuScreen() {
 
             if (!acc[type]) acc[type] = [];
             
+            const apiItem = item as any; 
+
             acc[type].push({
               id: String(item.id),
               name: String(item.name),
               description: String(item.description),
               basePrice: item.basePrice,
-              itemType: type as ItemType
+              itemType: type as ItemType,
+              weight: apiItem.weight, 
+              volume: apiItem.volume 
             });
             return acc;
           }, {} as Record<string, MenuItem[]>);
   
-          const itemsGrouped = Object.keys(groupedMap).map(key => ({
-            title: key,
-            data: groupedMap[key]
-          }));
+          const itemsGrouped = ORDERED_CATEGORIES.reduce<SectionData[]>((acc, key) => {
+            if (groupedMap[key] && groupedMap[key].length > 0) {
+              acc.push({
+                title: key,
+                data: groupedMap[key]
+              });
+            }
+            return acc;
+          }, []);
           
+          Object.keys(groupedMap).forEach(key => {
+            if (!ORDERED_CATEGORIES.includes(key)) {
+               itemsGrouped.push({ title: key, data: groupedMap[key] });
+            }
+          });
+
           setSections(itemsGrouped);
         } catch (error) {
           console.error(error);
@@ -81,18 +100,17 @@ export default function MenuScreen() {
     ? sections.filter(section => section.title === selectedCategory)
     : sections;
 
-const handleAddToCart = (item: MenuItem) => {
-  const cartItem: CartItem = {
-    id: item.id,
-    name: item.name,
-    price: item.basePrice,
-    quantity: 1,
-  };
+  const handleAddToCart = (item: MenuItem) => {
+    const cartItem: CartItem = {
+      id: item.id,
+      name: item.name,
+      price: item.basePrice,
+      quantity: 1,
+    };
 
-  addItem(cartItem);
-  
-  console.log(`Dodano do koszyka: ${item.name} (${item.basePrice} PLN)`);
-};
+    addItem(cartItem);
+    console.log(`Dodano do koszyka: ${item.name} (${item.basePrice} PLN)`);
+  };
 
   if (isLoading) {
     return (
@@ -130,6 +148,8 @@ const handleAddToCart = (item: MenuItem) => {
             description={item.description}
             price={item.basePrice}
             type={item.itemType}
+            weight={item.weight} 
+            volume={item.volume}
             onAddToOrder={() => handleAddToCart(item)}
           />
         )}

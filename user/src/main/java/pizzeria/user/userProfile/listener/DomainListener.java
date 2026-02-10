@@ -20,7 +20,7 @@ public class DomainListener {
         var event = new SupplierCreatedEvent(
                 domainEvent.userProfileId(),
                 domainEvent.firstName(),
-                domainEvent.firstName(),
+                domainEvent.lastName(),
                 domainEvent.phoneNumber()
         );
 

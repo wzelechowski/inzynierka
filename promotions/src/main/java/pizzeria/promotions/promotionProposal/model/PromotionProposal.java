@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-import pizzeria.promotions.promotion.model.Promotion;
 import pizzeria.promotions.promotionProposalProduct.model.PromotionProposalProduct;
 import pizzeria.promotions.promotionProposalProduct.model.ProposalProductRole;
 
@@ -42,12 +41,6 @@ public class PromotionProposal {
 
     @Builder.Default
     private Boolean approved = false;
-
-    @OneToOne(fetch = FetchType.LAZY,
-            cascade = {CascadeType.MERGE, CascadeType.PERSIST}
-    )
-    @Builder.Default
-    private Promotion promotion = null;
 
     @OneToMany(mappedBy = "proposal", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @Builder.Default

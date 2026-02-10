@@ -145,7 +145,7 @@ export const DeliveryAssignSupplierButton = () => {
                             <ReferenceInput source="supplierId" reference="suppliers">
                                 <AutocompleteInput 
                                     label="Kurier"
-                                    optionText={(r) => `${r.firstName} ${r.lastName} (${r.status})`}
+                                    optionText={(r) => `${r.firstName} ${r.lastName}`}
                                     filterToQuery={q => ({ q })}
                                     fullWidth
                                     validate={(val) => val ? undefined : 'Wymagane'}

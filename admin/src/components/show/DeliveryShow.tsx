@@ -87,7 +87,6 @@ export const DeliveryShow = () => (
                             </Typography>
 
                             <Box display="flex" flexDirection="column" gap={3} mt={2}>
-                                {/* ADRES */}
                                 <Box sx={{ p: 2, bgcolor: '#e3f2fd', borderRadius: 2, border: '1px dashed #90caf9' }}>
                                     <Box display="flex" alignItems="center" gap={1} mb={1}>
                                         <RoomIcon color="primary" />
@@ -101,7 +100,6 @@ export const DeliveryShow = () => (
                                     </Typography>
                                 </Box>
 
-                                {/* KURIER */}
                                 <Box>
                                     <Box display="flex" justifyContent="space-between" alignItems="center" mb={1}>
                                         <Typography variant="caption" color="textSecondary">

@@ -14,6 +14,7 @@ import pizzeria.promotions.promotionProposal.model.PromotionProposal;
 import pizzeria.promotions.promotionProposal.repository.PromotionProposalRepository;
 import pizzeria.promotions.promotionProposalProduct.model.ProposalProductRole;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -30,6 +31,7 @@ public class PromotionProposalServiceImpl implements PromotionProposalService {
     public List<PromotionProposalResponse> getAllProposals() {
         return promotionProposalRepository.findAll()
                 .stream()
+                .sorted(Comparator.comparing(PromotionProposal::getCreatedAt).reversed())
                 .map(promotionProposalMapper::toResponse)
                 .collect(Collectors.toList());
     }

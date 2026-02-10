@@ -5,21 +5,13 @@ import {
 } from 'react-admin';
 import { Box, Typography, Alert } from '@mui/material';
 
-// =====================================================================
-// TRANSFORMACJA (Naprawiona: pobiera typ z previousData)
-// =====================================================================
-// React Admin przekazuje: (data, { previousData })
 const transform = (data: any, { previousData }: any) => {
     return {
-        // 1. Pola edytowalne bierzemy z 'data' (formularza)
         name: data.name,
         description: data.description,
         basePrice: Number(data.basePrice),
         isAvailable: data.isAvailable,
         itemId: data.itemId,
-
-        // 2. NAPRAWA: Jeśli 'type' jest disabled, nie ma go w 'data'.
-        // Bierzemy go więc z 'previousData' (rekordu z bazy).
         type: data.type || previousData.type,
     };
 };
@@ -29,7 +21,6 @@ export const MenuItemEdit = () => (
         <SimpleForm>
             <Typography variant="h6" gutterBottom>1. Konfiguracja produktu</Typography>
 
-            {/* Ten SelectInput tylko wyświetla wartość, nie wysyła jej, bo jest disabled */}
             <SelectInput 
                 source="type" 
                 label="Typ elementu" 
@@ -43,9 +34,6 @@ export const MenuItemEdit = () => (
 
             <FormDataConsumer>
                 {({ formData }) => {
-                    // Tutaj korzystamy z formData.type. 
-                    // React Admin zazwyczaj trzyma wartość w stanie formularza nawet jak jest disabled,
-                    // więc widok powinien się renderować poprawnie.
                     if (!formData.type) return null;
 
                     let resourceName = '';

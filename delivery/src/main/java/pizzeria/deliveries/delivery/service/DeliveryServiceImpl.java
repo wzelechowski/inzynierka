@@ -3,6 +3,7 @@ package pizzeria.deliveries.delivery.service;
 import jakarta.ws.rs.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pizzeria.deliveries.delivery.dto.event.DeliveryStatusDomainEvent;
@@ -18,6 +19,7 @@ import pizzeria.deliveries.delivery.validator.DeliverySupplierAssignValidator;
 import pizzeria.deliveries.supplier.model.Supplier;
 import pizzeria.deliveries.supplier.repository.SupplierRepository;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -42,6 +44,7 @@ public class DeliveryServiceImpl implements DeliveryService {
         }
 
         return deliveries.stream()
+                .sorted(Comparator.comparing(Delivery::getAssignedAt, Comparator.nullsFirst(Comparator.reverseOrder())))
                 .map(deliveryMapper::toResponse)
                 .collect(Collectors.toList());
     }
@@ -57,6 +60,12 @@ public class DeliveryServiceImpl implements DeliveryService {
     @Override
     public DeliveryResponse getDeliveryById(UUID id) {
         Delivery delivery = deliveryRepository.findById(id).orElseThrow(NotFoundException::new);
+        return deliveryMapper.toResponse(delivery);
+    }
+
+    @Override
+    public DeliveryResponse getDeliveryByOrderId(UUID orderId) {
+        Delivery delivery = deliveryRepository.findDeliveryByOrderId(orderId).orElseThrow(NotFoundException::new);
         return deliveryMapper.toResponse(delivery);
     }
 

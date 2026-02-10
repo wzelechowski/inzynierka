@@ -1,4 +1,3 @@
-// src/components/OrderReadOnlySummary.tsx
 import { useRecordContext } from 'react-admin';
 import { Box, Typography, Paper } from '@mui/material';
 

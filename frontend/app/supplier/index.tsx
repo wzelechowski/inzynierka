@@ -127,14 +127,6 @@ const handleLogout = async () => {
                 
                 <View style={{ marginLeft: 12 }}>
                     <Text style={styles.nameText}>{user?.firstName} {user?.lastName}</Text>
-                    <TouchableOpacity 
-                        onPress={toggleStatus} 
-                        style={styles.statusRow}
-                        disabled={!currentSupplierId}
-                    >
-                        <View style={[styles.dot, { backgroundColor: supplierData?.status === 'AVAILABLE' ? '#4CAF50' : '#F44336' }]} />
-                        <Text style={styles.statusText}>{supplierData?.status || 'Ładowanie...'}</Text>
-                    </TouchableOpacity>
                 </View>
             </View>
 

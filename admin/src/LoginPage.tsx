@@ -15,7 +15,6 @@ const LoginPage = () => {
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
-        // Wywołuje authProvider.login z danymi
         login({ username: email, password })
             .catch(() => {
                 setLoading(false);
@@ -31,18 +30,27 @@ const LoginPage = () => {
                 minHeight: '100vh',
                 alignItems: 'center',
                 justifyContent: 'center',
-                // Twój gradient z przykładu:
-                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                background: 'linear-gradient(120deg, #fdfbfb 0%, #ebedee 100%)',
                 backgroundSize: 'cover',
             }}
         >
-            <Card sx={{ minWidth: 350, maxWidth: 400, padding: '20px', borderRadius: '12px', boxShadow: '0 10px 25px rgba(0,0,0,0.2)' }}>
+            <Card sx={{ 
+                minWidth: 350, 
+                maxWidth: 400, 
+                padding: '20px', 
+                borderRadius: '16px',
+                boxShadow: '0 4px 20px rgba(0,0,0,0.08)',
+                backgroundColor: '#ffffff'
+            }}>
                 <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: 2 }}>
-                    <Avatar sx={{ m: 1, bgcolor: '#764ba2' }}>
-                        <LockOutlinedIcon />
+                    <Avatar sx={{ m: 1, bgcolor: '#1976d2', width: 50, height: 50 }}>
+                        <LockOutlinedIcon fontSize="medium" />
                     </Avatar>
-                    <Typography component="h1" variant="h5" sx={{ color: '#333', fontWeight: 600 }}>
+                    <Typography component="h1" variant="h5" sx={{ color: '#2c3e50', fontWeight: 700, marginTop: 1 }}>
                         Panel Admina
+                    </Typography>
+                    <Typography variant="body2" sx={{ color: '#7f8c8d', marginTop: 0.5 }}>
+                        Zaloguj się, aby kontynuować
                     </Typography>
                 </Box>
                 
@@ -59,6 +67,16 @@ const LoginPage = () => {
                             autoFocus
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
+                            sx={{
+                                '& .MuiOutlinedInput-root': {
+                                    '&.Mui-focused fieldset': {
+                                        borderColor: '#1976d2',
+                                    },
+                                },
+                                '& .MuiInputLabel-root.Mui-focused': {
+                                    color: '#1976d2',
+                                },
+                            }}
                         />
                         <TextField
                             margin="normal"
@@ -71,21 +89,35 @@ const LoginPage = () => {
                             autoComplete="current-password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
+                            sx={{
+                                '& .MuiOutlinedInput-root': {
+                                    '&.Mui-focused fieldset': {
+                                        borderColor: '#1976d2',
+                                    },
+                                },
+                                '& .MuiInputLabel-root.Mui-focused': {
+                                    color: '#1976d2',
+                                },
+                            }}
                         />
                     </Box>
-                    <CardActions sx={{ padding: '0 1em 1em 1em' }}>
+                    <CardActions sx={{ padding: '0 1em 2em 1em' }}>
                         <Button
                             variant="contained"
                             type="submit"
                             fullWidth
                             disabled={loading}
                             sx={{
-                                background: '#764ba2',
-                                padding: '10px',
+                                background: '#1976d2',
+                                padding: '12px',
                                 fontSize: '16px',
                                 fontWeight: 'bold',
+                                borderRadius: '8px',
+                                textTransform: 'none',
+                                boxShadow: '0 4px 6px rgba(25, 118, 210, 0.2)',
                                 '&:hover': {
-                                    background: '#5b3a7d',
+                                    background: '#1565c0',
+                                    boxShadow: '0 6px 10px rgba(25, 118, 210, 0.3)',
                                 },
                             }}
                         >
@@ -94,7 +126,6 @@ const LoginPage = () => {
                     </CardActions>
                 </form>
             </Card>
-            {/* Komponent do wyświetlania powiadomień o błędach */}
             <Notification />
         </Box>
     );

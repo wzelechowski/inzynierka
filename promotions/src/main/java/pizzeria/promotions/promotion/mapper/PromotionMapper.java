@@ -21,7 +21,6 @@ public interface PromotionMapper {
     @AfterMapping
     default void linkProposal(@MappingTarget Promotion promotion) {
         if (promotion != null) {
-            promotion.getProposal().setPromotion(promotion);
             promotion.getProposal().setApproved(true);
         }
     }

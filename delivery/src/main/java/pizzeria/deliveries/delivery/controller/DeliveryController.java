@@ -40,6 +40,12 @@ public class DeliveryController {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("/order/{orderId}")
+    public ResponseEntity<DeliveryResponse> getDeliveryByOrderId(@PathVariable UUID orderId) {
+        DeliveryResponse response = deliveryService.getDeliveryByOrderId(orderId);
+        return ResponseEntity.ok(response);
+    }
+
     @PostMapping("")
     public ResponseEntity<DeliveryResponse> addDelivery(@Valid @RequestBody DeliveryRequest request) {
         DeliveryResponse response = deliveryService.save(request);

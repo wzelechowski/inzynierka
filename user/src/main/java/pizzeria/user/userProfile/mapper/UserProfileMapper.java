@@ -2,7 +2,6 @@ package pizzeria.user.userProfile.mapper;
 
 import org.keycloak.representations.idm.UserRepresentation;
 import org.mapstruct.*;
-import pizzeria.user.address.mapper.AddressMapper;
 import pizzeria.user.userProfile.dto.request.UserProfilePatchRequest;
 import pizzeria.user.userProfile.dto.request.UserProfileRequest;
 import pizzeria.user.userProfile.dto.response.UserProfileResponse;
@@ -14,7 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-@Mapper(componentModel = "spring", uses = AddressMapper.class)
+@Mapper(componentModel = "spring")
 public interface UserProfileMapper {
     UserProfileResponse toResponse(UserProfile userProfile);
 
@@ -30,12 +29,6 @@ public interface UserProfileMapper {
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     void patchEntity(@MappingTarget UserProfile userProfile, UserProfilePatchRequest request);
 
-    @AfterMapping
-    default void linkAddresses(@MappingTarget UserProfile userProfile) {
-        if (userProfile.getAddresses() != null) {
-            userProfile.getAddresses().forEach(address -> address.setUser(userProfile));
-        }
-    }
 
     @Named("extractPhoneNumber")
     default String extractPhoneNumber(Map<String, List<String>> attributes) {

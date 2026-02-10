@@ -26,6 +26,17 @@ export const DeliveryService = {
         }
     },
 
+    getDeliveryByOrderId: async(orderId: string): Promise<DeliveryResponse | null> => {
+      try {
+        const response = await api.get<DeliveryResponse>(`/delivery/order/${orderId}`)
+        return response.data;
+      } catch (error: any) {
+            console.error('Delivery-Service Error:', error);
+            const message = error.response?.data || error.message;
+            throw new Error(`Nie udało się pobrać dostaw: ${message}`);
+      }
+    },
+
     updateSupplier: async (id: string, request: DeliverySupplierAssignRequest): Promise<DeliveryResponse | null> => {
         try {
             const response = await api.put<DeliveryResponse>(`/delivery/${id}/supplier`, request);

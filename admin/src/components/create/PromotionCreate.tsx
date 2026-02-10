@@ -9,11 +9,6 @@ import { Box, Typography, Chip, CircularProgress } from '@mui/material';
 import { useFormContext } from 'react-hook-form';
 import LocalOfferIcon from '@mui/icons-material/LocalOffer';
 
-// =====================================================================
-// 1. KOMPONENTY POMOCNICZE (BEZ ZMIAN)
-// =====================================================================
-
-// --- Fetcher Nazw ---
 const ProductNamesFetcher = () => {
     const record = useRecordContext();
     const dataProvider = useDataProvider();
@@ -63,7 +58,6 @@ const ProductNamesFetcher = () => {
     return <span style={{ fontWeight: 600, color: '#555' }}>{names}</span>;
 };
 
-// --- Wygląd Opcji ---
 const ProposalOption = () => {
     const record = useRecordContext();
     if (!record) return null;
@@ -112,7 +106,6 @@ const ProposalOption = () => {
     );
 };
 
-// --- Input Ceny ---
 const DiscountInputWithLogic = () => {
     const { setValue, watch, clearErrors } = useFormContext();
     const discountType = watch('discountType');
@@ -142,7 +135,6 @@ const DiscountInputWithLogic = () => {
     );
 };
 
-// --- Selektor Propozycji ---
 const ProposalSelector = (props: any) => {
     const { setValue, watch, clearErrors } = useFormContext();
     const { allChoices } = useChoicesContext(); 
@@ -188,11 +180,6 @@ const ProposalSelector = (props: any) => {
     );
 };
 
-// =====================================================================
-// 2. KLUCZOWA ZMIANA: STRICT TRANSFORM
-// =====================================================================
-// Tworzymy obiekt dokładnie pasujący do Twojego interfejsu PromotionRequest.
-// Ignorujemy 'discountType' i inne śmieci.
 const transform = (data: any) => {
     const isFree = data.discountType === 'FREE_PRODUCT';
 
@@ -200,9 +187,8 @@ const transform = (data: any) => {
         name: data.name,
         startDate: data.startDate,
         endDate: data.endDate,
-        // Jeśli gratis -> 0, w przeciwnym razie liczba
         discount: isFree ? 0 : Number(data.discount),
-        // Jeśli brak wyboru -> null (ważne dla backendu)
+        effectType: data.effectType,
         proposalId: data.proposalId || null 
     };
 };

@@ -59,13 +59,6 @@ public class PizzaController {
         return ResponseEntity.ok(response);
     }
 
-    @PostMapping("/pizzaIngredients")
-    public ResponseEntity<PizzaIngredientResponse> addIngredientToPizza(@Valid @RequestBody PizzaIngredientRequest request) {
-        PizzaIngredient pizzaIngredient = pizzaService.addIngredientToPizza(request);
-        PizzaIngredientResponse response = new PizzaIngredientResponse(pizzaIngredient.getPizza().getId(),  pizzaIngredient.getIngredient().getId(), pizzaIngredient.getQuantity());
-        return ResponseEntity.ok(response);
-    }
-
     @GetMapping("/pizzaIngredients/{pizzaId}")
     public ResponseEntity<List<PizzaIngredientResponse>> getPizzaIngredientById(@PathVariable UUID pizzaId) {
         List<PizzaIngredient> pizzaIngredients = pizzaService.getAllPizzasIngredients(pizzaId);

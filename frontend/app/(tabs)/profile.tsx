@@ -16,20 +16,35 @@ import { useAuth } from '../../src/context/AuthContext';
 import { colors } from '../../src/constants/colors';
 import { UserService } from '../../src/service/userService';
 import { OrderService } from '../../src/service/orderService';
-import { MenuItemService } from '../../src/service/menuItemService'; 
+import { MenuItemService } from '../../src/service/menuItemService';
+import { DeliveryService } from '../../src/service/deliveryService';
 
 import { UserProfileResponse } from '../../src/types/user';
 import { OrderResponse } from '../../src/types/order';
+import { DeliveryResponse } from '../../src/types/delivery';
 import { OrderCard } from '../../src/components/OrderCard';
 
 const FILTER_OPTIONS = [
   { label: 'Wszystkie', value: 'ALL' },
   { label: 'Nowe', value: 'NEW' },
-  { label: 'W kuchni', value: 'IN_PROGRESS' },
+  { label: 'W przygotowaniu', value: 'IN_PREPARATION' },
   { label: 'Gotowe', value: 'READY' },
-  { label: 'Dostarczone', value: 'DELIVERED' },
+  { label: 'W dostawie', value: 'DELIVERY' },
+  { label: 'Zakończone', value: 'COMPLETED' },
   { label: 'Anulowane', value: 'CANCELLED' },
 ];
+
+const formatPhoneNumber = (phone: string) => {
+  if (!phone) return '';
+  const cleaned = phone.replace(/\D/g, '');
+  if (cleaned.length === 9) {
+    return cleaned.replace(/(\d{3})(\d{3})(\d{3})/, '$1 $2 $3');
+  }
+  if (cleaned.length === 11 && cleaned.startsWith('48')) {
+     return `+48 ${cleaned.substring(2,5)} ${cleaned.substring(5,8)} ${cleaned.substring(8,11)}`;
+  }
+  return phone;
+};
 
 export default function ProfileScreen() {
   const router = useRouter();
@@ -38,6 +53,7 @@ export default function ProfileScreen() {
   const [user, setUser] = useState<UserProfileResponse | null>(null);
   const [orders, setOrders] = useState<OrderResponse[]>([]);
   const [menuMap, setMenuMap] = useState<Record<string, string>>({});
+  const [deliveriesMap, setDeliveriesMap] = useState<Record<string, DeliveryResponse>>({});
   
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -64,7 +80,24 @@ export default function ProfileScreen() {
         new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
       );
       setOrders(sortedOrders);
+
+      const deliveryOrders = sortedOrders.filter(o => o.type === 'DELIVERY');
       
+      const promises = deliveryOrders.map(order => 
+          DeliveryService.getDeliveryByOrderId(order.id)
+            .then(res => ({ orderId: order.id, data: res }))
+      );
+
+      const deliveryResults = await Promise.all(promises);
+      
+      const newDeliveriesMap: Record<string, DeliveryResponse> = {};
+      deliveryResults.forEach(item => {
+          if (item.data) {
+              newDeliveriesMap[item.orderId] = item.data;
+          }
+      });
+      setDeliveriesMap(newDeliveriesMap);
+
     } catch (error) {
       console.log("Błąd pobierania danych profilu:", error);
     } finally {
@@ -141,7 +174,13 @@ export default function ProfileScreen() {
           <View>
             <Text style={styles.userName}>{user?.firstName} {user?.lastName}</Text>
             <Text style={styles.userEmail}>{user?.email}</Text>
-            {user?.phoneNumber && <Text style={styles.userPhone}>{user.phoneNumber}</Text>}
+            
+            {user?.phoneNumber && (
+              <View style={styles.phoneRow}>
+                <Ionicons name="call-outline" size={14} color={colors.textSecondary} style={{ marginRight: 6 }} />
+                <Text style={styles.userPhone}>{formatPhoneNumber(user.phoneNumber)}</Text>
+              </View>
+            )}
           </View>
         </View>
         
@@ -171,7 +210,13 @@ export default function ProfileScreen() {
         <FlatList
           data={filteredOrders}
           keyExtractor={(item) => item.id}
-          renderItem={({ item }) => <OrderCard order={item} menuMap={menuMap} />}
+          renderItem={({ item }) => (
+            <OrderCard 
+                order={item} 
+                menuMap={menuMap} 
+                delivery={deliveriesMap[item.id]}
+            />
+          )}
           ListHeaderComponent={renderHeader}
           contentContainerStyle={styles.listContent}
           refreshControl={
@@ -222,7 +267,9 @@ const styles = StyleSheet.create({
   avatarText: { color: '#fff', fontSize: 26, fontWeight: 'bold' },
   userName: { fontSize: 20, fontWeight: 'bold', color: colors.textPrimary },
   userEmail: { fontSize: 14, color: colors.textSecondary, marginTop: 2 },
-  userPhone: { fontSize: 13, color: colors.textSecondary, marginTop: 2 },
+  
+  phoneRow: { flexDirection: 'row', alignItems: 'center', marginTop: 4 },
+  userPhone: { fontSize: 14, color: colors.textSecondary, fontWeight: '500' },
   
   logoutButton: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', backgroundColor: '#FFEBEE', padding: 12, borderRadius: 10, marginBottom: 20 },
   logoutText: { color: colors.error, fontWeight: 'bold', marginLeft: 8 },

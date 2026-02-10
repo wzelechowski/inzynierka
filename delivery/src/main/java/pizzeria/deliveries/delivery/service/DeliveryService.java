@@ -15,6 +15,8 @@ public interface DeliveryService {
 
     DeliveryResponse getDeliveryById(UUID id);
 
+    DeliveryResponse getDeliveryByOrderId(UUID orderId);
+
     DeliveryResponse save(DeliveryRequest request);
 
     void delete(UUID id);

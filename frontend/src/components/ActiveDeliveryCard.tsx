@@ -114,16 +114,43 @@ export default function ActiveDeliveryCard({ delivery, isProcessing, onStatusCha
                     onPress={() => onStatusChange(delivery.id, DeliveryStatus.DELIVERED)}
                     disabled={isProcessing}
                 >
-                     {isProcessing ? <ActivityIndicator color="#fff" size="small"/> : (
+                      {isProcessing ? <ActivityIndicator color="#fff" size="small"/> : (
                         <>
                             <Ionicons name="checkmark-done-circle" size={18} color="#fff" />
                             <Text style={styles.btnText}>Dostarczone</Text>
                         </>
-                     )}
+                      )}
                 </TouchableOpacity>
             );
         }
         return null;
+    };
+
+const handleOpenNavigation = () => {
+        const fullAddress = `${delivery.deliveryAddress}, ${delivery.deliveryCity}`;
+        const encodedAddress = encodeURIComponent(fullAddress);
+        
+        if (Platform.OS === 'web') {
+            const webUrl = `https://www.google.com/maps/search/?api=1&query=${encodedAddress}`;
+            Linking.openURL(webUrl);
+            return; 
+        }
+
+        const nativeUrl = Platform.select({
+            ios: `maps:0,0?q=${encodedAddress}`,
+            android: `google.navigation:q=${encodedAddress}`
+        });
+
+        const fallbackUrl = `https://www.google.com/maps/search/?api=1&query=${encodedAddress}`;
+
+        if (nativeUrl) {
+            Linking.openURL(nativeUrl).catch((err) => {
+                console.log("Błąd otwierania aplikacji mapy, otwieram przeglądarkę...");
+                Linking.openURL(fallbackUrl);
+            });
+        } else {
+            Linking.openURL(fallbackUrl);
+        }
     };
 
     return (
@@ -147,7 +174,6 @@ export default function ActiveDeliveryCard({ delivery, isProcessing, onStatusCha
                 <Text style={styles.addressText}>{delivery.deliveryAddress}, {delivery.deliveryCity}</Text>
             </View>
 
-            {/* PRZYCISK ROZWIJANIA */}
             <TouchableOpacity onPress={toggleDetails} style={styles.detailsToggle}>
                 <Text style={styles.detailsToggleText}>
                     {expanded ? "Ukryj szczegóły zamówienia" : "Pokaż co jest w zamówieniu"}
@@ -155,7 +181,6 @@ export default function ActiveDeliveryCard({ delivery, isProcessing, onStatusCha
                 <Ionicons name={expanded ? "chevron-up" : "chevron-down"} size={16} color="#666" />
             </TouchableOpacity>
 
-            {/* LISTA PRODUKTÓW */}
             {expanded && (
                 <View style={styles.orderDetailsContainer}>
                     {loadingDetails ? (
@@ -187,7 +212,7 @@ export default function ActiveDeliveryCard({ delivery, isProcessing, onStatusCha
             <View style={styles.actionsContainer}>
                 <TouchableOpacity 
                     style={[styles.actionBtn, styles.btnMap]} 
-                    onPress={() => Linking.openURL(`google.navigation:q=${delivery.deliveryAddress} ${delivery.deliveryCity}`)}
+                    onPress={handleOpenNavigation}
                 >
                     <Ionicons name="map" size={18} color="#fff" />
                 </TouchableOpacity>

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, ScrollView, Text, ActivityIndicator, TouchableOpacity } from 'react-native';
-import { useRouter } from 'expo-router'; // <--- Import routera
+import { useRouter } from 'expo-router';
 
 import { PromotionService } from '../../src/service/promotionService';
 import { MenuItemService } from '../../src/service/menuItemService';
@@ -12,6 +12,7 @@ import { CartItem } from '@/src/types/cart'
 interface MergedPromotionData {
   id: string;
   promotionName: string;
+  endDate: string;
   items: PromotionItem[];
 }
 
@@ -19,18 +20,18 @@ export default function HomeScreen() {
   const router = useRouter();
   const { addItems } = useCart(); 
 
-const handleAddPromotionToCart = (promo: MergedPromotionData) => {
-  const itemsToCart: CartItem[] = promo.items.map(item => ({
-    id: item.id,
-    name: item.productName,
-    price: item.originalPrice,
-    quantity: 1,
-    description: item.description || '', 
-  }));
+  const handleAddPromotionToCart = (promo: MergedPromotionData) => {
+    const itemsToCart: CartItem[] = promo.items.map(item => ({
+      id: item.id,
+      name: item.productName,
+      price: item.originalPrice,
+      quantity: 1,
+      description: item.description || '', 
+    }));
 
-  addItems(itemsToCart);
-  alert(`Dodano zestaw "${promo.promotionName}" do koszyka!`);
-};
+    addItems(itemsToCart);
+    alert(`Dodano zestaw "${promo.promotionName}" do koszyka!`);
+  };
 
   const [data, setData] = useState<MergedPromotionData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -74,6 +75,7 @@ const handleAddPromotionToCart = (promo: MergedPromotionData) => {
             return {
               id: promo.id,
               promotionName: String(promo.name),
+              endDate: promo.endDate,
               items: validProducts,
             } as MergedPromotionData;
           })
@@ -128,6 +130,7 @@ const handleAddPromotionToCart = (promo: MergedPromotionData) => {
             key={promo.id}
             promotionName={promo.promotionName}
             items={promo.items}
+            endDate={promo.endDate}
             onPress={() => handleAddPromotionToCart(promo)}
           />
           ))
@@ -201,19 +204,24 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 22,
-    fontWeight: '700',
+    fontWeight: 'bold',
     color: colors.textPrimary,
     marginBottom: 4,
+    textAlign: 'center',
   },
   sectionSubtitle: {
     fontSize: 14,
     color: colors.textSecondary,
+    marginBottom: 4,
+    textAlign: 'center',
   },
 
   listContainer: {
-    width: '100%',
-    paddingHorizontal: 16,
-    alignItems: 'center',
+    paddingHorizontal: 10,
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'center',
+    gap: 16,
   },
   emptyState: {
     marginTop: 40,

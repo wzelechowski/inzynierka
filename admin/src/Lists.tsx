@@ -4,13 +4,36 @@ import { OrderItemsPanel } from './components/panel/OrderItemsPanel';
 import { PromotionProposalPanel } from './components/panel/PromotionProposalPanel';
 import { GenerateProposalsButton } from './components/actions/GenerateProposalsButton';
 
+const linkStyle = {
+    textDecoration: 'none',
+    color: '#1976d2',
+    fontWeight: 'bold',
+    fontFamily: 'monospace',
+    borderBottom: '1px dashed #1976d2',
+    cursor: 'pointer'
+};
+
+const idStyle = {
+    fontFamily: 'monospace',
+    color: '#7f8c8d',
+    fontSize: '0.85em'
+};
+
+const gridStyle = {
+    '& .RaDatagrid-headerCell': { 
+        fontWeight: 'bold', 
+        backgroundColor: '#fafafa',
+        color: '#2c3e50'
+    },
+};
+
 const getStatusColor = (status: string) => {
     switch (status) {
-        case 'NEW': return 'info';           
+        case 'NEW': return 'info';
         case 'IN_PROGRESS': return 'warning';
-        case 'READY': return 'primary';     
-        case 'COMPLETED': return 'success'; 
-        case 'CANCELLED': return 'error';   
+        case 'READY': return 'primary';
+        case 'COMPLETED': return 'success';
+        case 'CANCELLED': return 'error';
         default: return 'default';
     }
 };
@@ -21,20 +44,20 @@ const getTypeColor = (type: string) => {
 
 const getDeliveryStatusColor = (status: string) => {
     switch (status) {
-        case 'ASSIGNED': return 'warning'; 
+        case 'ASSIGNED': return 'warning';
         case 'PICKED_UP': return 'secondary';
         case 'DELIVERED': return 'success';
-        case 'CANCELLED': return 'error';   
-        case 'NEW': return 'info';          
+        case 'CANCELLED': return 'error';
+        case 'NEW': return 'info';
         default: return 'default';
     }
 };
 
 const getScoreColor = (score: number) => {
-    if (score > 20) return '#1b5e20'; 
-    if (score > 10) return '#2e7d32'; 
-    if (score > 5)  return '#ed6c02'; 
-    return '#d32f2f';                 
+    if (score > 20) return '#1b5e20';
+    if (score > 10) return '#2e7d32';
+    if (score > 5)  return '#ed6c02';
+    return '#d32f2f';
 };
 
 const ListActions = () => (
@@ -45,11 +68,12 @@ const ListActions = () => (
     </TopToolbar>
 );
 
+
 export const PizzaList = () => (
     <List title="Pizza">
-        <Datagrid rowClick="show">
-            <TextField source="id" label="Id" />
-            <TextField source="name" label="Nazwa" />
+        <Datagrid rowClick="show" sx={gridStyle}>
+            <TextField source="id" label="Id" sx={idStyle} />
+            <TextField source="name" label="Nazwa" sx={{ fontWeight: '500' }} />
             <TextField source="pizzaSize" label="Rozmiar" />
         </Datagrid>
     </List>
@@ -57,9 +81,9 @@ export const PizzaList = () => (
 
 export const DrinkList = () => (
     <List title="Napoje">
-        <Datagrid rowClick="show">
-            <TextField source="id" label="Id" />
-            <TextField source="name" label="Nazwa" />
+        <Datagrid rowClick="show" sx={gridStyle}>
+            <TextField source="id" label="Id" sx={idStyle} />
+            <TextField source="name" label="Nazwa" sx={{ fontWeight: '500' }} />
             <NumberField source="volume" label="Pojemność" />
         </Datagrid>
     </List>
@@ -67,9 +91,9 @@ export const DrinkList = () => (
 
 export const ExtraList = () => (
     <List title="Dodatki">
-        <Datagrid rowClick="show">
-            <TextField source="id" label="Id" />
-            <TextField source="name" label="Nazwa" />
+        <Datagrid rowClick="show" sx={gridStyle}>
+            <TextField source="id" label="Id" sx={idStyle} />
+            <TextField source="name" label="Nazwa" sx={{ fontWeight: '500' }} />
             <NumberField source="weight" label="Waga" />
         </Datagrid>
     </List>
@@ -77,21 +101,21 @@ export const ExtraList = () => (
 
 export const IngredientList = () => (
     <List title="Składniki">
-        <Datagrid rowClick="show">
-            <TextField source="id" label="ID" />
-            <TextField source="name" label="Nazwa" />
-            <NumberField source="weight" label="Waga (kg)"/>
+        <Datagrid rowClick="show" sx={gridStyle}>
+            <TextField source="id" label="ID" sx={idStyle} />
+            <TextField source="name" label="Nazwa" sx={{ fontWeight: '500' }} />
+            <NumberField source="weight" label="Waga (kg)" />
         </Datagrid>
     </List>
 );
 
 export const MenuItemList = () => (
-    <List title="Menu item">
-        <Datagrid rowClick="show">
-            <TextField source='id' label='Id'/>
+    <List title="Menu">
+        <Datagrid rowClick="show" sx={gridStyle}>
+            <TextField source='id' label='Id' sx={idStyle}/>
             
             <FunctionField 
-                label="Item ID (Link)"
+                label="Powiązany obiekt (Link)"
                 sortBy="itemId"
                 render={(record: any) => {
                     if (!record || !record.itemId || !record.type) return "-";
@@ -107,13 +131,7 @@ export const MenuItemList = () => (
                     return (
                         <Link 
                             to={`/${resource}/${record.itemId}/show`} 
-                            style={{ 
-                                textDecoration: 'none', 
-                                color: '#1976d2',
-                                fontWeight: 'bold',
-                                fontFamily: 'monospace',
-                                borderBottom: '1px dashed #1976d2'
-                            }}
+                            style={linkStyle}
                             onClick={(e) => e.stopPropagation()} 
                         >
                             {record.itemId}
@@ -122,9 +140,9 @@ export const MenuItemList = () => (
                 }}
             />
             <TextField source='type' label='Typ'/>
-            <TextField source='name' label='Nazwa'/>
-            <TextField source='description' label='Opis'/>
-            <NumberField source='basePrice' label='Cena bazowa' options={{ style: 'currency', currency: 'PLN' }}/>
+            <TextField source='name' label='Nazwa' sx={{ fontWeight: 'bold' }}/>
+            <TextField source='description' label='Opis' sx={{ fontStyle: 'italic', color: '#666' }}/>
+            <NumberField source='basePrice' label='Cena' options={{ style: 'currency', currency: 'PLN' }} sx={{ fontWeight: 'bold' }}/>
             <BooleanField source='isAvailable' label='Dostępny'/>
         </Datagrid>
     </List>
@@ -135,26 +153,26 @@ export const OrderList = () => (
         <Datagrid 
             rowClick="show" 
             expand={<OrderItemsPanel />} 
-            sx={{
-                '& .RaDatagrid-headerCell': { fontWeight: 'bold' },
-            }}
+            sx={gridStyle}
         >
-            <TextField source="id" label="ID" />
+            <TextField source="id" label="ID" sx={idStyle} />
             
             <FunctionField 
                 label="Status"
+                sortBy="status"
                 render={(record: any) => (
                     <Chip 
                         label={record.status} 
                         color={getStatusColor(record.status)} 
                         size="small" 
+                        variant="filled"
                     />
                 )}
             />
 
             <FunctionField 
                 label="Typ"
-                sortBy="type" // ZMIANA: Dodano sortBy
+                sortBy="type"
                 render={(record: any) => (
                     <Chip 
                         label={record.type} 
@@ -169,40 +187,29 @@ export const OrderList = () => (
                 source="totalPrice" 
                 label="Kwota" 
                 options={{ style: 'currency', currency: 'PLN' }} 
-                sx={{ fontWeight: 'bold' }}
+                sx={{ fontWeight: 'bold', fontSize: '1.05em' }}
             />
             
-            <DateField source="createdAt" label="Złożono" showTime />
-            <DateField source="completedAt" label="Zakończono" showTime />
+            <DateField source="createdAt" label="Złożono" showTime options={{ hour: '2-digit', minute: '2-digit' }} />
+            <DateField source="completedAt" label="Zakończono" showTime options={{ hour: '2-digit', minute: '2-digit' }} emptyText="-" />
         </Datagrid>
     </List>
 );
 
 export const DeliveryList = () => (
-    // ZMIANA: DESC zamiast ASC
     <List title="Dostawy" sort={{ field: 'assignedAt', order: 'DESC' }}>
-        <Datagrid rowClick="show">
-            <TextField 
-                source="id" 
-                label="ID" 
-                sx={{ fontFamily: 'monospace', fontSize: '0.8em', color: 'gray' }} 
-            />
+        <Datagrid rowClick="show" sx={gridStyle}>
+            <TextField source="id" label="ID" sx={idStyle} />
 
             <FunctionField
                 label="ID Zamówienia"
                 sortBy="orderId"
                 render={(record: any) => {
                     if (!record || !record.orderId) return "-";
-
                     return (
                         <Link 
                             to={`/orders/${record.orderId}/show`}
-                            style={{ 
-                                textDecoration: 'none', 
-                                color: '#1976d2', 
-                                fontWeight: 'bold',
-                                fontFamily: 'monospace'
-                            }}
+                            style={linkStyle}
                             onClick={(e) => e.stopPropagation()} 
                         >
                             {record.orderId}
@@ -213,7 +220,7 @@ export const DeliveryList = () => (
 
             <FunctionField 
                 label="Status"
-                sortBy="status" // ZMIANA: Dodano sortBy
+                sortBy="status"
                 render={(record: any) => (
                     <Chip 
                         label={record.status} 
@@ -229,9 +236,9 @@ export const DeliveryList = () => (
                 sortBy="deliveryAddress"
                 render={(record: any) => (
                     <div style={{ lineHeight: '1.2' }}>
-                        <span style={{ fontWeight: 'bold' }}>{record.deliveryAddress}</span>
+                        <span style={{ fontWeight: '500' }}>{record.deliveryAddress}</span>
                         <br />
-                        <span style={{ fontSize: '0.85em', color: '#666' }}>
+                        <span style={{ fontSize: '0.8em', color: '#666' }}>
                             {record.postalCode} {record.deliveryCity}
                         </span>
                     </div>
@@ -260,11 +267,12 @@ export const DeliveryList = () => (
 
 export const UserList = () => (
     <List title="Klienci">
-        <Datagrid rowClick="show">
-            <TextField source='id' label='Id'/>
-            <EmailField source="email" label="Email" />
+        <Datagrid rowClick="show" sx={gridStyle}>
+            <TextField source='id' label='Id' sx={idStyle}/>
+            <EmailField source="email" label="Email" sx={{ fontWeight: '500', textDecoration: 'none' }} />
             <TextField source="firstName" label="Imię" />
             <TextField source="lastName" label="Nazwisko" />
+            
             <FunctionField 
                 label="Role" 
                 render={(record: any) => {
@@ -274,7 +282,6 @@ export const UserList = () => (
                             {record.roles.map((role: string, index: number) => {
                                 const color = role.includes('ADMIN') ? 'error' : 'primary';
                                 const label = role.replace('ROLE_', '');
-
                                 return (
                                     <Chip 
                                         key={index} 
@@ -290,21 +297,20 @@ export const UserList = () => (
                 }}
             />
 
-            <TextField source="phoneNumber" label="Telefon" />
+            <TextField source="phoneNumber" label="Telefon" emptyText="-" />
         </Datagrid>
     </List>
 );
 
 export const PromotionList = () => (
-    // ZMIANA: DESC zamiast ASC
     <List title="Promocje" sort={{ field: 'createdAt', order: 'DESC' }}>
-        <Datagrid rowClick="show">
-            <TextField source="id" label="ID" sx={{ fontFamily: 'monospace', color: 'gray' }} />
+        <Datagrid rowClick="show" sx={gridStyle}>
+            <TextField source="id" label="ID" sx={idStyle} />
             <TextField source="name" label="Nazwa Promocji" sx={{ fontWeight: 'bold' }} />
             
             <FunctionField 
                 label="Status"
-                sortBy="active" // ZMIANA: Dodano sortBy
+                sortBy="active"
                 render={(record: any) => (
                     <Chip 
                         label={record.active ? "AKTYWNA" : "NIEAKTYWNA"} 
@@ -314,9 +320,10 @@ export const PromotionList = () => (
                     />
                 )}
             />
+            
             <FunctionField 
-                label="Typ"
-                sortBy="effectType" // ZMIANA: Dodano sortBy
+                label="Typ efektu"
+                sortBy="effectType"
                 render={(record: any) => (
                     <Chip 
                         label={record.effectType} 
@@ -328,64 +335,42 @@ export const PromotionList = () => (
             />
 
             <FunctionField 
-                label="Rabat"
-                sortBy="discount" // ZMIANA: Dodano sortBy
+                label="Wartość rabatu"
+                sortBy="discount"
                 render={(record: any) => {
-                    const style = { color: '#d32f2f', fontWeight: 'bold', fontSize: '1.1em' };
-                    // Pobieramy typ efektu z propozycji lub bezpośrednio z rekordu
+                    const style = { color: '#d32f2f', fontWeight: 'bold', fontSize: '1.05em' };
                     const effectType = record.proposal?.effectType || record.effectType;
 
                     if (effectType === 'FIXED') {
-                        return (
-                            <span style={style}>
-                                {record.discount.toFixed(2)} zł
-                            </span>
-                        );
+                        return <span style={style}>{record.discount.toFixed(2)} zł</span>;
                     }
                     if (effectType === 'PERCENT') {
-                        return (
-                            <span style={style}>
-                                {(record.discount * 100).toFixed(0)}%
-                            </span>
-                        );
+                        return <span style={style}>{(record.discount * 100).toFixed(0)}%</span>;
                     }
-                    
-                    return (
-                        <span style={style}>
-                            {"GRATIS"}
-                        </span>
-                    );
+                    return <span style={{...style, color: 'green'}}>GRATIS</span>;
                 }}
             />
 
             <DateField source="startDate" label="Od" />
             <DateField source="endDate" label="Do" />
-            <DateField source="createdAt" label="Stworzono" showTime />
-            <DateField source="updatedAt" label="Modyfikowano" showTime />
         </Datagrid>
     </List>
 );
 
 export const SupplierList = () => (
     <List title="Dostawcy">
-        <Datagrid rowClick="show">
-            <TextField source="id" label="ID Dostawcy" />
+        <Datagrid rowClick="show" sx={gridStyle}>
+            <TextField source="id" label="ID Dostawcy" sx={idStyle} />
+            
             <FunctionField
                 label="ID Użytkownika"
                 sortBy="userProfileId"
                 render={(record: any) => {
                     if (!record || !record.userProfileId) return "-";
-
                     return (
                         <Link 
                             to={`/users/${record.userProfileId}/show`}
-                            style={{ 
-                                textDecoration: 'none', 
-                                color: '#1976d2',
-                                fontWeight: 'bold',
-                                fontFamily: 'monospace',
-                                cursor: 'pointer'
-                            }}
+                            style={linkStyle}
                             onClick={(e) => e.stopPropagation()} 
                         >
                             {record.userProfileId}
@@ -396,7 +381,7 @@ export const SupplierList = () => (
             <TextField source="firstName" label="Imię" />
             <TextField source="lastName" label="Nazwisko" />
             <TextField source="phoneNumber" label="Telefon" />
-            <ChipField source="status" label="Status" />
+            <ChipField source="status" label="Status" variant="outlined" />
         </Datagrid>
     </List>
 );
@@ -411,20 +396,17 @@ export const PromotionProposalList = () => (
         <Datagrid 
             rowClick="expand"
             expand={<PromotionProposalPanel />}
-            sx={{
-                '& .RaDatagrid-headerCell': { fontWeight: 'bold', backgroundColor: '#fafafa' },
-            }}
+            sx={gridStyle}
         >
-            <TextField source="id" label="ID" sx={{ fontFamily: 'monospace', color: '#999', fontSize: '0.85em', maxWidth: 80 }} />
+            <TextField source="id" label="ID" sx={idStyle} />
+            
             <FunctionField 
-                label="Uzasadnienie"
+                label="Uzasadnienie (Apriori)"
                 sortBy="reason"
                 render={(record: any) => (
-                    <Box display="flex" alignItems="center" gap={1}>
-                        <Typography variant="body2" fontWeight="500">
-                            {record.reason}
-                        </Typography>
-                    </Box>
+                    <Typography variant="body2" sx={{ fontWeight: '500', color: '#34495e' }}>
+                        {record.reason}
+                    </Typography>
                 )}
             />
 
@@ -436,7 +418,7 @@ export const PromotionProposalList = () => (
                         label={record.effectType} 
                         size="small" 
                         variant="outlined" 
-                        sx={{ borderColor: '#ddd', color: '#555' }}
+                        sx={{ borderColor: '#bdc3c7', color: '#7f8c8d' }}
                     />
                 )}
             />
@@ -445,67 +427,55 @@ export const PromotionProposalList = () => (
                 label="Rabat"
                 sortBy="discount"
                 render={(record: any) => {
-                    const style = { color: '#d32f2f', fontWeight: 'bold', fontSize: '1.1em' };
+                    const style = { color: '#d32f2f', fontWeight: 'bold' };
                     if (record.effectType === 'FIXED') {
-                        return (
-                            <span style={style}>
-                                {record.discount.toFixed(2)} zł
-                            </span>
-                        );
+                        return <span style={style}>{record.discount.toFixed(2)} zł</span>;
                     }
-
                     if (record.effectType === 'PERCENT') {
-                        return (
-                            <span style={style}>
-                                {(record.discount * 100).toFixed(0)}%
-                            </span>
-                        );
+                        return <span style={style}>{(record.discount * 100).toFixed(0)}%</span>;
                     }
-                    
-                    return (
-                        <span style={style}>
-                            {"GRATIS"}
-                        </span>
-                    );
+                    return <span style={{...style, color: 'green'}}>GRATIS</span>;
                 }}
             />
 
             <NumberField 
                 source="support" 
-                label="Wsparcie" 
-                options={{ style: 'percent' }} 
-                sx={{ color: '#666' }}
+                label="Support" 
+                options={{ style: 'percent', minimumFractionDigits: 1 }} 
+                sx={{ color: '#7f8c8d', fontSize: '0.9em' }}
             />
             
             <NumberField 
                 source="confidence" 
-                label="Pewność" 
-                options={{ style: 'percent' }} 
-                sx={{ color: '#666' }}
+                label="Confidence" 
+                options={{ style: 'percent', minimumFractionDigits: 1 }} 
+                sx={{ color: '#7f8c8d', fontSize: '0.9em' }}
             />
             
             <NumberField 
                 source="lift" 
                 label="Lift" 
                 options={{ maximumFractionDigits: 2 }} 
-                sx={{ color: '#666' }}
+                sx={{ color: '#7f8c8d', fontSize: '0.9em' }}
             />
             
             <FunctionField 
                 label="AI Score"
                 source="score"
-                sortBy="score" // ZMIANA: Dodano sortBy
+                sortBy="score"
                 render={(record: any) => (
                     <Box 
                         sx={{ 
                             backgroundColor: getScoreColor(record.score),
                             color: '#fff',
-                            borderRadius: '16px',
-                            padding: '4px 12px',
+                            borderRadius: '12px',
+                            padding: '2px 10px',
                             textAlign: 'center',
                             fontWeight: 'bold',
+                            fontSize: '0.85em',
                             display: 'inline-block',
-                            minWidth: '60px'
+                            minWidth: '50px',
+                            boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
                         }}
                     >
                         {record.score?.toFixed(2)}
@@ -513,8 +483,7 @@ export const PromotionProposalList = () => (
                 )}
             />
 
-            <DateField source="createdAt" label="Stworzono" showTime />
-            <DateField source="updatedAt" label="Modyfikowano" showTime />
+            <DateField source="createdAt" label="Stworzono" showTime options={{ hour: '2-digit', minute: '2-digit' }} />
         </Datagrid>
     </List>
 );

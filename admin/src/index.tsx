@@ -1,8 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { App } from './App'; // Importujemy Twoją główną aplikację
+import { App } from './App';
 
-// Znajdujemy div-a w index.html
 const rootElement = document.getElementById('root');
 
 if (rootElement) {

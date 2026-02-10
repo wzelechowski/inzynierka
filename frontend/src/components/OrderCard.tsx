@@ -3,20 +3,23 @@ import { View, Text, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { colors } from '../constants/colors';
 import { OrderResponse } from '../types/order';
+import { DeliveryResponse } from '../types/delivery';
 
 interface OrderCardProps {
   order: OrderResponse;
   menuMap: Record<string, string>;
+  delivery?: DeliveryResponse | null;
 }
 
-export const OrderCard = ({ order, menuMap }: OrderCardProps) => {
+export const OrderCard = ({ order, menuMap, delivery }: OrderCardProps) => {
 
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'NEW': return colors.primary;
-      case 'IN_PROGRESS': return '#F57C00';
-      case 'READY': return '#1976D2';
-      case 'DELIVERED': return colors.success;
+      case 'IN_PREPARATION': return '#F57C00';
+      case 'READY': return '#1976D2';  
+      case 'DELIVERY': return '#8E24AA';     
+      case 'COMPLETED': return colors.success;
       case 'CANCELLED': return '#D32F2F';
       default: return '#757575';
     }
@@ -25,9 +28,10 @@ export const OrderCard = ({ order, menuMap }: OrderCardProps) => {
   const translateStatus = (status: string) => {
     const map: Record<string, string> = {
       'NEW': 'Nowe',
-      'IN_PROGRESS': 'W kuchni',
-      'READY': 'Gotowe',
-      'DELIVERED': 'Dostarczone',
+      'IN_PREPARATION': 'W przygotowaniu',
+      'READY': 'Gotowe do odbioru',
+      'DELIVERY': 'W dostawie',
+      'COMPLETED': 'Zakończone',
       'CANCELLED': 'Anulowane'
     };
     return map[status] || status;
@@ -43,7 +47,7 @@ export const OrderCard = ({ order, menuMap }: OrderCardProps) => {
   return (
     <View style={styles.orderCard}>
       <View style={styles.orderHeader}>
-        <Text style={styles.orderId}>#{order.id.substring(0, 64)}</Text>
+        <Text style={styles.orderId}>#{order.id.substring(0, 8)}</Text>
         <View style={[styles.statusBadge, { backgroundColor: getStatusColor(order.status) + '15' }]}>
            <Text style={[styles.statusText, { color: getStatusColor(order.status) }]}>
              {translateStatus(order.status)}
@@ -63,6 +67,15 @@ export const OrderCard = ({ order, menuMap }: OrderCardProps) => {
             <Ionicons name={order.type === 'DELIVERY' ? "bicycle-outline" : "bag-handle-outline"} size={16} color="#666" style={{marginRight: 6}} />
             <Text style={styles.infoText}>{translateType(order.type)}</Text>
         </View>
+
+        {order.type === 'DELIVERY' && delivery && delivery.supplier && (
+          <View style={styles.supplierContainer}>
+             <Ionicons name="person-circle-outline" size={18} color={colors.primary} style={{marginRight: 6}} />
+             <Text style={styles.supplierText}>
+               Dostawca: <Text style={{fontWeight: 'bold'}}>{delivery.supplier.firstName} {delivery.supplier.lastName}</Text>
+             </Text>
+          </View>
+        )}
       </View>
       
       {order.orderItems && order.orderItems.length > 0 && (
@@ -114,6 +127,15 @@ const styles = StyleSheet.create({
   cardBody: { marginBottom: 8 },
   infoRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 6 },
   infoText: { color: '#555', fontSize: 14 },
+  supplierContainer: { 
+    flexDirection: 'row', 
+    alignItems: 'center', 
+    marginTop: 4, 
+    backgroundColor: '#F3E5F5', 
+    padding: 6, 
+    borderRadius: 6 
+  },
+  supplierText: { color: colors.primary, fontSize: 13 },
   itemsListContainer: { marginBottom: 12 },
   itemRow: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 6 },
   itemQuantity: { fontWeight: 'bold', color: colors.primary, marginRight: 8, width: 24 },

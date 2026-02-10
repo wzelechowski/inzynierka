@@ -20,6 +20,7 @@ import pizzeria.orders.order.repository.OrderRepository;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -40,6 +41,7 @@ public class OrderServiceImpl implements OrderService {
         if (isStaff) {
             return orderRepository.findAll()
                     .stream()
+                    .sorted(Comparator.comparing(Order::getCreatedAt).reversed())
                     .map(orderMapper::toResponse)
                     .collect(Collectors.toList());
         }
