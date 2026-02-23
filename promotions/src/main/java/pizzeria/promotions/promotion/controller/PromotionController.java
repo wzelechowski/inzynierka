@@ -30,7 +30,7 @@ public class PromotionController {
     @GetMapping("/active")
     public ResponseEntity<List<PromotionResponse>> getActivePromotions() {
         List<PromotionResponse> response = promotionService.getActivePromotions();
-        return  ResponseEntity.ok(response);
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/{id}")

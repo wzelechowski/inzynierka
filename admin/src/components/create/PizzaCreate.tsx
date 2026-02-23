@@ -1,6 +1,10 @@
 import { 
     Create, SimpleForm, TextInput, SelectInput, 
-    ReferenceArrayInput, SelectArrayInput, required 
+    ReferenceArrayInput, SelectArrayInput, required, 
+    ArrayInput,
+    SimpleFormIterator,
+    ReferenceInput,
+    NumberInput
 } from 'react-admin';
 
 export const PizzaCreate = () => (
@@ -20,9 +24,20 @@ export const PizzaCreate = () => (
                 ]} 
             />
 
-            <ReferenceArrayInput source="ingredientIds" reference="ingredients" label="Składniki">
-                <SelectArrayInput optionText="name" />
-            </ReferenceArrayInput>
+    <ArrayInput source="ingredientList" label="Składniki">
+                <SimpleFormIterator inline>
+                    <ReferenceInput source="ingredientId" reference="ingredients" label="Składnik">
+                        <SelectInput optionText="name" validate={required()} />
+                    </ReferenceInput>
+                    
+                    <NumberInput 
+                        source="quantity" 
+                        label="Ilość (np. 1.0)" 
+                        defaultValue={1.0} 
+                        validate={required()} 
+                    />
+                </SimpleFormIterator>
+            </ArrayInput>
         </SimpleForm>
     </Create>
 );

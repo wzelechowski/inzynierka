@@ -7,6 +7,7 @@ export interface PromotionResponse {
     startDate: string;
     endDate: string;
     discount: number;
+    effectType: EffectType;
     proposal?: PromotionProposalResponse;
 }
 

@@ -8,10 +8,12 @@ import PromotionCard, { PromotionItem } from '../../src/components/PromotionCard
 import { useCart } from '@/src/context/CartContext';
 import { colors } from '../../src/constants/colors';
 import { CartItem } from '@/src/types/cart'
+import { EffectType } from '@/src/types/enums';
 
 interface MergedPromotionData {
   id: string;
   promotionName: string;
+  effectType: EffectType;
   endDate: string;
   items: PromotionItem[];
 }
@@ -42,6 +44,7 @@ export default function HomeScreen() {
       try {
         const promotions = await PromotionService.getActivePromotions();
 
+        console.log(promotions);
         const mergedPromotions = await Promise.all(
           promotions.map(async (promo) => {
             const productsRefs = promo.proposal?.products;
@@ -52,9 +55,21 @@ export default function HomeScreen() {
               if (!menuItem) return null;
 
               const isConsequent = prodRef.role === 'CONSEQUENT';
-              const discountValue = isConsequent ? (promo.proposal?.discount || 0) : 0;
-              
-              let finalPrice = menuItem.basePrice - discountValue;
+              const discountValue = isConsequent ? (promo.discount || 0) : 0;
+              let finalPrice = menuItem.basePrice;
+
+              if (promo.effectType === 'PERCENT' && isConsequent) {
+                finalPrice = menuItem.basePrice * (1 - discountValue);
+              }
+
+              if (promo.effectType === 'FREE_PRODUCT' && isConsequent) {
+                finalPrice = 0;
+              }
+
+              if (promo.effectType === 'FIXED' && isConsequent) {
+                finalPrice = menuItem.basePrice - discountValue;
+              }
+
               if (finalPrice < 0) finalPrice = 0;
 
               return {
@@ -76,6 +91,7 @@ export default function HomeScreen() {
               id: promo.id,
               promotionName: String(promo.name),
               endDate: promo.endDate,
+              effectType: promo.effectType,
               items: validProducts,
             } as MergedPromotionData;
           })
@@ -130,6 +146,7 @@ export default function HomeScreen() {
             key={promo.id}
             promotionName={promo.promotionName}
             items={promo.items}
+            effectType={promo.effectType}
             endDate={promo.endDate}
             onPress={() => handleAddPromotionToCart(promo)}
           />

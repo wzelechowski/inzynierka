@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { colors } from '../constants/colors';
+import { EffectType } from '../types/enums';
 
 export interface PromotionItem {
   id: string;
@@ -8,12 +9,14 @@ export interface PromotionItem {
   description: string;
   originalPrice: number;
   finalPrice: number;
+  effectType: EffectType;
   discountAmount: number;
 }
 
 interface PromotionCardProps {
   promotionName: string;
   endDate: string;
+  effectType: EffectType;
   items: PromotionItem[];
   onPress: () => void;
 }
@@ -56,15 +59,34 @@ export default function PromotionCard({
             <View style={styles.itemHeader}>
               <Text style={styles.productName}>{item.productName}</Text>
               
-              <View style={styles.priceContainer}>
-                <Text style={styles.itemPrice}>{item.finalPrice.toFixed(2)} PLN</Text>
-                
-                {item.discountAmount > 0 && (
-                  <Text style={styles.discountInfo}>
-                    taniej o {item.discountAmount.toFixed(2)} PLN
-                  </Text>
-                )}
-              </View>
+            <View style={styles.priceContainer}>
+              <Text style={styles.itemPrice}>{item.finalPrice?.toFixed(2)} PLN</Text>
+              
+              {(() => {
+                switch (item.effectType) {
+                  case 'PERCENT':
+                    return (
+                      <Text style={styles.discountInfo}>
+                        Taniej o {item.discountAmount}%
+                      </Text>
+                    );
+                  case 'FIXED':
+                    return (
+                      <Text style={styles.discountInfo}>
+                        Taniej o {item.discountAmount.toFixed(2)} PLN
+                      </Text>
+                    );
+                  case 'FREE_PRODUCT':
+                    return (
+                      <Text style={[styles.discountInfo, { fontWeight: 'bold', color: '#27ae60' }]}>
+                        GRATIS
+                      </Text>
+                    );
+                  default:
+                    return null;
+                }
+              })()}
+            </View>
             </View>
 
             <Text style={styles.description} numberOfLines={2}>
